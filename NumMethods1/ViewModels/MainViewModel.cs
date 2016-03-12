@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows;
 using GalaSoft.MvvmLight;
 using NumMethods1.NumCore;
 
@@ -43,7 +44,7 @@ namespace NumMethods1.ViewModels
         private void UpdateChart()
         {
             ChartData.Clear();
-            for (int i = -10; i < 10; i++)
+            for (int i = -10; i < 15; i++)
             {
                 ChartData.Add(new KeyValuePair<double, double>(i,FunctionSelectorSelectedItem.GetValue(i)));
             }

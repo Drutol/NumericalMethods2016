@@ -14,16 +14,37 @@ namespace NumMethods1.NumCore
         /// <param name="source">
         /// Function definition that implements IFunction interface.
         /// </param>
+        /// <param name="args">
+        /// Arguments class containging info like max iterations value , start and and X coordinate.
+        /// </param>
         /// <returns>
         /// List of points where passed function's value equals 0.
         /// </returns>
-        public static List<double> GetFunctionRootBi(IFunction source,GetFunctionRootBiArgs args)
+        public static double GetFunctionRootBi(IFunction source,GetFunctionRootBiArgs args)
         {
-            var output = new List<double>();
+            double mid = 0;
+            int counter = 0;
 
+            double val1 = source.GetValue(args.FromX),
+                val2 = source.GetValue(args.ToX);
 
+            double from = args.FromX, to = args.ToX;
 
-            return output;
+            if (val1 * val2 >0)
+                throw new ArgumentException();
+
+            while (counter++ <= args.MaxIterations)
+            {
+                mid = (from + to) / 2;
+
+                var midVal = source.GetValue(mid);
+
+                if ((midVal < 0 && val1 < 0) || (midVal > 0 && val1 > 0))
+                    from = mid;
+                else
+                    to = mid;
+            }          
+            return mid;
         }
     }
 }

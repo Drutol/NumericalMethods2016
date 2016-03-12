@@ -10,7 +10,7 @@ namespace NumMethods1.NumCore
     {
         public double GetValue(double x)
         {
-            return x*x;
+            return Math.Pow(x, 3) - Math.Pow(x, 2)*2 + 50;
         }
 
         public string TextRepresentation => "x^2";
