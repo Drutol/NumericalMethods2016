@@ -10,7 +10,7 @@
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="5">
@@ -22,8 +22,10 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+            <TextBox Width="30" HorizontalAlignment="Left" Margin="5,5,0,0" Text=""/>
+            <TextBox Width="30" HorizontalAlignment="Left" Margin="5,5,0,0" Text=""/>
         </StackPanel>
-        <charting:Chart Grid.Row="1">
+        <charting:Chart Grid.Row="2">
             <charting:LineSeries
                 ItemsSource="{Binding ChartData}" 
                 DependentValueBinding="{Binding Path=Value}" 
