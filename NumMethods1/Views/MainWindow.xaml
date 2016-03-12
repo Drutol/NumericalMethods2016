@@ -10,7 +10,7 @@
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="5">
@@ -22,6 +22,51 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+            <Grid Height="50" Margin="0,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="From X:" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding FromXValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                             TextAlignment="Center"
+                             HorizontalAlignment="Center" MinWidth="50" MaxWidth="150"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="To X:" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding ToXValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                             TextAlignment="Center"
+                             HorizontalAlignment="Center" MinWidth="50" MaxWidth="150"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Max Iterations:" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding MaxIterValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                             TextAlignment="Center"
+                             HorizontalAlignment="Center" MinWidth="50" MaxWidth="150"/>
+                </StackPanel>
+            </Grid>
+            <!--<StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="From X:" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding FromXValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                             TextAlignment="Center"
+                             HorizontalAlignment="Center" Width="30"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="To X:" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding ToXValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                             TextAlignment="Center"
+                             HorizontalAlignment="Center" Width="30"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Max Iterations:" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding MaxIterValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                             TextAlignment="Center"
+                             HorizontalAlignment="Center" Width="70"/>
+                </StackPanel>
+            </StackPanel>-->
         </StackPanel>
         <charting:Chart Grid.Row="1">
             <charting:LineSeries

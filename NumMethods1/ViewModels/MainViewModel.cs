@@ -30,6 +30,47 @@ namespace NumMethods1.ViewModels
                 UpdateChart();
             }
         }
+
+        private double _fromXValue = -100;
+        public double FromXValue
+        {
+            get { return _fromXValue; }
+            set
+            {
+                _fromXValue = value;
+                RaisePropertyChanged(() => FromXValue);
+            }
+        }
+
+        private double _toXValue = 100;
+        public double ToXValue
+        {
+            get { return _toXValue; }
+            set
+            {
+                _toXValue = value;
+                RaisePropertyChanged(() => ToXValue);
+            }
+        }
+
+        private int _maxIterValue = 10;
+        public int MaxIterValue
+        {
+            get { return _maxIterValue; }
+            set
+            {
+                if (value > 0)
+                {
+                    _maxIterValue = value;
+                    RaisePropertyChanged(() => MaxIterValue);
+                }
+                else
+                {
+                    _maxIterValue = 10;
+                    RaisePropertyChanged(() => MaxIterValue);
+                }
+            }
+        }
         #endregion
 
 
