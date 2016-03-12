@@ -36,14 +36,14 @@
                              HorizontalAlignment="Center" Width="30"/>
                 </StackPanel>
                 <StackPanel>
-                    <TextBlock Text="Max Iterations X:" HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding MaxIterXValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                    <TextBlock Text="Max Iterations:" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding MaxIterValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                              TextAlignment="Center"
                              HorizontalAlignment="Center" Width="70"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-        <charting:Chart Grid.Row="2">
+        <charting:Chart Grid.Row="1">
             <charting:LineSeries
                 ItemsSource="{Binding ChartData}" 
                 DependentValueBinding="{Binding Path=Value}" 

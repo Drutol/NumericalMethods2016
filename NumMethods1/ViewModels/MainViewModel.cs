@@ -52,14 +52,14 @@ namespace NumMethods1.ViewModels
             }
         }
 
-        private double _maxIterXValue = -100;
-        public double MaxIterXValue
+        private double _maxIterValue = -100;
+        public double MaxIterValue
         {
-            get { return _maxIterXValue; }
+            get { return _maxIterValue; }
             set
             {
-                _maxIterXValue = value;
-                RaisePropertyChanged(() => MaxIterXValue);
+                _maxIterValue = value;
+                RaisePropertyChanged(() => MaxIterValue);
             }
         }
         #endregion
