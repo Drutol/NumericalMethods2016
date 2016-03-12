@@ -41,7 +41,7 @@ namespace NumMethods1.ViewModels
             }
         }
 
-        private double _toXValue = -100;
+        private double _toXValue = 100;
         public double ToXValue
         {
             get { return _toXValue; }
@@ -52,14 +52,22 @@ namespace NumMethods1.ViewModels
             }
         }
 
-        private double _maxIterValue = -100;
-        public double MaxIterValue
+        private int _maxIterValue = 10;
+        public int MaxIterValue
         {
             get { return _maxIterValue; }
             set
             {
-                _maxIterValue = value;
-                RaisePropertyChanged(() => MaxIterValue);
+                if (value > 0)
+                {
+                    _maxIterValue = value;
+                    RaisePropertyChanged(() => MaxIterValue);
+                }
+                else
+                {
+                    _maxIterValue = 10;
+                    RaisePropertyChanged(() => MaxIterValue);
+                }
             }
         }
         #endregion
