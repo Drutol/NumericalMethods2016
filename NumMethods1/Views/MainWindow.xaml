@@ -47,11 +47,10 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="1" Grid.Column="0"/>
-                <TextBlock Text="{Binding ElementName=AccuracySlider,Path=Value,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Grid.Column="1"/>
+                <TextBlock Text="{Binding SliderValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Grid.Column="1"/>
                 <TextBlock Text="100" Grid.Column="2"/>
             </Grid>
-            <Slider Name="AccuracySlider"
-                    ValueChanged="{Binding ChartAccuracyValueChangedCommand}" 
+            <Slider Value="{Binding SliderValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                     TickPlacement="BottomRight" IsSnapToTickEnabled="True"
                     Minimum="1" Maximum="100"/>
         </StackPanel>

@@ -78,28 +78,21 @@ namespace NumMethods1.ViewModels
 
         public ICommand SubmitDataCommand =>
             _submitDataCommand ?? (_submitDataCommand = new RelayCommand(SubmitData));
-
-        public int SliderAcc { get; set; }
-
+        
         private int _sliderValue = 1;
 
-        public int SliderValue
+        public double SliderValue
         {
             get { return _sliderValue; }
             set
             {
-                _sliderValue = value;
+                _sliderValue = (int)value;
                 RaisePropertyChanged(() => SliderValue);
             }
         }
-
-        private ICommand _chartAccuracyValueChangedCommand;
-
-        public ICommand ChartAccuracyValueChangedCommand =>
-            _chartAccuracyValueChangedCommand ?? (_chartAccuracyValueChangedCommand = new RelayCommand(ChartAccuracyValueChanged));
         #endregion
 
-
+        
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -108,15 +101,11 @@ namespace NumMethods1.ViewModels
             FunctionSelectorSelectedItem = AvailableFunctions[0];
         }
 
-        private void ChartAccuracyValueChanged()
-        {
-            SliderAcc = /*Slider.value*/ 5;
-        }
-
         private void UpdateChart()
         {
+            int accVal = _sliderValue;
             ChartData.Clear();
-            for (int i = (int)FromX; i < (int)ToX; i += (int)((Math.Abs(ToX) + Math.Abs(FromX)) * SliderAcc / 100))
+            for (int i = (int)FromX; i < (int)ToX; i += (int)((Math.Abs(ToX) + Math.Abs(FromX)) * accVal / 100))
             {
                 ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
             }
