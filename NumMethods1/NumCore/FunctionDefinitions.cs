@@ -13,7 +13,7 @@ namespace NumMethods1.NumCore
             return Math.Pow(x, 3) - Math.Pow(x, 2)*2 + 50;
         }
 
-        public string TextRepresentation => "x^2";
+        public string TextRepresentation => "x^3-(x^2)*2 + 50";
 
     }
 

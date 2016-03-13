@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
 using NumMethods1.NumCore;
 
 namespace NumMethods1.ViewModels
@@ -30,6 +33,51 @@ namespace NumMethods1.ViewModels
                 UpdateChart();
             }
         }
+
+        private string _fromXValue = "-100";
+        public string FromXValueBind 
+        {
+            get { return _fromXValue; }
+            set
+            {
+                _fromXValue = value;
+                RaisePropertyChanged(() => FromXValueBind);
+            }
+        }
+
+        public double FromX { get; set; }
+        public double ToX { get; set; }
+
+        private string _toXValue = "100";
+        public string ToXValueBind 
+        {
+            get { return _toXValue; }
+            set
+            {
+                _toXValue = value;
+                RaisePropertyChanged(() => ToXValueBind);
+            }
+        }
+
+        private int _maxIterations = 100;
+        public string MaxIterations 
+        {
+            get { return _maxIterations.ToString(); }
+            set
+            {
+                int val;
+                if (!int.TryParse(value, out val) || val <= 0)
+                    val = 100;
+                _maxIterations = val;
+                RaisePropertyChanged(() => MaxIterations);
+            }
+        }
+
+        private ICommand _submitDataCommand;
+
+        public ICommand SubmitDataCommand => 
+            _submitDataCommand ?? (_submitDataCommand = new RelayCommand(SubmitData));
+
         #endregion
 
 
@@ -38,16 +86,29 @@ namespace NumMethods1.ViewModels
         /// </summary>
         public MainViewModel()
         {
-
+            FunctionSelectorSelectedItem = AvailableFunctions[0];
         }
 
         private void UpdateChart()
         {
             ChartData.Clear();
-            for (int i = -10; i < 15; i++)
+            for (int i = (int)FromX; i < (int)ToX; i+= (int)((Math.Abs(ToX) + Math.Abs(FromX))*5/100))
             {
                 ChartData.Add(new KeyValuePair<double, double>(i,FunctionSelectorSelectedItem.GetValue(i)));
             }
+        }
+
+        private void SubmitData()
+        {
+            double from, to;
+            if (!double.TryParse(FromXValueBind, out from) || !double.TryParse(ToXValueBind, out to))
+                return; //TODO : Display feedback msg
+            if(from >= to)
+                return; //TODO: Disp feedback msg.
+
+            FromX = from;
+            ToX = to;
+            UpdateChart();
         }
     }
 }
