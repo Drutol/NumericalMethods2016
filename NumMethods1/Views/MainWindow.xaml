@@ -34,25 +34,31 @@
                              HorizontalAlignment="Center" MinWidth="100"/>
                 </StackPanel>
                 <StackPanel>
-                    <TextBlock Text="MaxIter X" HorizontalAlignment="Center"/>
+                    <TextBlock Text="MaxIter" HorizontalAlignment="Center"/>
                     <TextBox Text="{Binding MaxIterations,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                              HorizontalAlignment="Center" MinWidth="100"/>
                 </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Approximation" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding ApproxValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                             HorizontalAlignment="Center" MinWidth="100"/>
+                </StackPanel>
             </StackPanel>
-            <Button Content="Submit" Command="{Binding SubmitDataCommand}" HorizontalAlignment="Stretch" Margin="5"/>
+            <TextBlock Text="Set Chart Precision:" HorizontalAlignment="Center"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="1" Grid.Column="0"/>
-                <TextBlock Text="{Binding SliderValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Grid.Column="1"/>
-                <TextBlock Text="100" Grid.Column="2"/>
+                <TextBlock Text="High" Grid.Column="0"/>
+                <TextBlock Text="{Binding SliderValue,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Grid.Column="1"/>
+                <TextBlock Text="Low" Grid.Column="2"/>
             </Grid>
             <Slider Value="{Binding SliderValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                     TickPlacement="BottomRight" IsSnapToTickEnabled="True"
-                    Minimum="1" Maximum="100"/>
+                    Minimum="1" Maximum="15"/>
+            <Button Content="Submit" Command="{Binding SubmitDataCommand}" HorizontalAlignment="Stretch" Margin="5"/>
         </StackPanel>
         <charting:Chart Grid.Row="1">
             <charting:LineSeries

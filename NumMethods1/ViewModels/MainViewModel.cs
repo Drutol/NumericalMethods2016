@@ -74,6 +74,17 @@ namespace NumMethods1.ViewModels
             }
         }
 
+        private string _approxValue = "0.5";
+        public string ApproxValueBind
+        {
+            get { return _approxValue; }
+            set
+            {
+                _approxValue = value;
+                RaisePropertyChanged(() => ApproxValueBind);
+            }
+        }
+
         private ICommand _submitDataCommand;
 
         public ICommand SubmitDataCommand =>
@@ -103,9 +114,9 @@ namespace NumMethods1.ViewModels
 
         private void UpdateChart()
         {
-            int accVal = _sliderValue;
+            int precVal = _sliderValue;
             ChartData.Clear();
-            for (int i = (int)FromX; i < (int)ToX; i += (int)((Math.Abs(ToX) + Math.Abs(FromX)) * accVal / 100))
+            for (int i = (int)FromX; i < (int)ToX; i += (int)((Math.Abs(ToX) + Math.Abs(FromX)) * precVal / 100))
             {
                 ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
             }
@@ -123,5 +134,6 @@ namespace NumMethods1.ViewModels
             ToX = to;
             UpdateChart();
         }
+        
     }
 }

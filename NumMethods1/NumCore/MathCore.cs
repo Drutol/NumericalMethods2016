@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -45,6 +46,23 @@ namespace NumMethods1.NumCore
                     to = mid;
             }          
             return mid;
+        }
+
+        public static double GetFunctionRootFalsi(IFunction source, GetFunctionRootBiArgs args)
+        {
+            double a = args.FromX, b = args.ToX, approx= args.Approx;
+            int iter = args.MaxIterations;
+
+            int counter = 0;
+            double x;
+
+            while (counter < iter)
+            { 
+                
+                counter++;
+            }
+
+            return 0;
         }
     }
 }
