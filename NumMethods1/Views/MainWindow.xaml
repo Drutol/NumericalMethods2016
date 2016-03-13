@@ -27,12 +27,12 @@
                     <TextBlock Text="From X" HorizontalAlignment="Center"/>
                     <TextBox Text="{Binding FromXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                              HorizontalAlignment="Center" MinWidth="100"/>
-                </StackPanel>                
+                </StackPanel>
                 <StackPanel>
                     <TextBlock Text="To X" HorizontalAlignment="Center"/>
                     <TextBox Text="{Binding ToXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                              HorizontalAlignment="Center" MinWidth="100"/>
-                </StackPanel>                
+                </StackPanel>
                 <StackPanel>
                     <TextBlock Text="MaxIter X" HorizontalAlignment="Center"/>
                     <TextBox Text="{Binding MaxIterations,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
@@ -40,6 +40,20 @@
                 </StackPanel>
             </StackPanel>
             <Button Content="Submit" Command="{Binding SubmitDataCommand}" HorizontalAlignment="Stretch" Margin="5"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="1" Grid.Column="0"/>
+                <TextBlock Text="{Binding ElementName=AccuracySlider,Path=Value,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Grid.Column="1"/>
+                <TextBlock Text="100" Grid.Column="2"/>
+            </Grid>
+            <Slider Name="AccuracySlider"
+                    ValueChanged="{Binding ChartAccuracyValueChangedCommand}" 
+                    TickPlacement="BottomRight" IsSnapToTickEnabled="True"
+                    Minimum="1" Maximum="100"/>
         </StackPanel>
         <charting:Chart Grid.Row="1">
             <charting:LineSeries
