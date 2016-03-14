@@ -10,6 +10,12 @@ using NumMethods1.NumCore;
 
 namespace NumMethods1.ViewModels
 {
+    public enum ApproxMethodEnum
+    {
+        Iterations,
+        Value
+    }
+
     public class MainViewModel : ViewModelBase
     {
         #region Properties
@@ -21,8 +27,17 @@ namespace NumMethods1.ViewModels
             new Function3()
         };
 
+        //for command param purposes
+        public ApproxMethodEnum Iter => ApproxMethodEnum.Iterations;
+        public ApproxMethodEnum Val => ApproxMethodEnum.Value;
+
+        private ApproxMethodEnum SelectedApproxMethod { get; set; } = ApproxMethodEnum.Value;
+
         public ObservableCollection<KeyValuePair<double, double>> ChartData { get; } =
             new ObservableCollection<KeyValuePair<double, double>>();
+
+        private double FromX { get; set; }
+        private double ToX { get; set; }
 
         private IFunction _functionSelectorSelectedItem;
         public IFunction FunctionSelectorSelectedItem
@@ -45,9 +60,6 @@ namespace NumMethods1.ViewModels
                 RaisePropertyChanged(() => FromXValueBind);
             }
         }
-
-        public double FromX { get; set; }
-        public double ToX { get; set; }
 
         private string _toXValue = "100";
         public string ToXValueBind
@@ -85,13 +97,7 @@ namespace NumMethods1.ViewModels
             }
         }
 
-        private ICommand _submitDataCommand;
-
-        public ICommand SubmitDataCommand =>
-            _submitDataCommand ?? (_submitDataCommand = new RelayCommand(SubmitData));
-        
-        private int _sliderValue = 1;
-
+        private int _sliderValue = 3;
         public double SliderValue
         {
             get { return _sliderValue; }
@@ -101,6 +107,17 @@ namespace NumMethods1.ViewModels
                 RaisePropertyChanged(() => SliderValue);
             }
         }
+
+        private ICommand _submitDataCommand;
+        public ICommand SubmitDataCommand =>
+            _submitDataCommand ?? (_submitDataCommand = new RelayCommand(SubmitData));
+
+        private ICommand _setApproxMethodCommand;
+
+        public ICommand SetApproxMethodCommand =>
+            _setApproxMethodCommand ??
+            (_setApproxMethodCommand = new RelayCommand<ApproxMethodEnum>(method => SelectedApproxMethod = method));
+        
         #endregion
 
         
