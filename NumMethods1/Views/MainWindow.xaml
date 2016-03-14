@@ -27,18 +27,37 @@
                     <TextBlock Text="From X" HorizontalAlignment="Center"/>
                     <TextBox Text="{Binding FromXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                              HorizontalAlignment="Center" MinWidth="100"/>
-                </StackPanel>                
+                </StackPanel>
                 <StackPanel>
                     <TextBlock Text="To X" HorizontalAlignment="Center"/>
                     <TextBox Text="{Binding ToXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                              HorizontalAlignment="Center" MinWidth="100"/>
-                </StackPanel>                
+                </StackPanel>
                 <StackPanel>
-                    <TextBlock Text="MaxIter X" HorizontalAlignment="Center"/>
+                    <TextBlock Text="MaxIter" HorizontalAlignment="Center"/>
                     <TextBox Text="{Binding MaxIterations,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                              HorizontalAlignment="Center" MinWidth="100"/>
                 </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Approximation" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding ApproxValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                             HorizontalAlignment="Center" MinWidth="100"/>
+                </StackPanel>
             </StackPanel>
+            <TextBlock Text="Set Chart Precision:" HorizontalAlignment="Center"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="High" Grid.Column="0"/>
+                <TextBlock Text="{Binding SliderValue,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Grid.Column="1"/>
+                <TextBlock Text="Low" Grid.Column="2"/>
+            </Grid>
+            <Slider Value="{Binding SliderValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                    TickPlacement="BottomRight" IsSnapToTickEnabled="True"
+                    Minimum="1" Maximum="15"/>
             <Button Content="Submit" Command="{Binding SubmitDataCommand}" HorizontalAlignment="Stretch" Margin="5"/>
         </StackPanel>
         <charting:Chart Grid.Row="1">

@@ -36,4 +36,5 @@ namespace NumMethods1.NumCore
 
         public string TextRepresentation => "sqrt(x)";
     }
+    
 }

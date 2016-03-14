@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using NumMethods1.NumCore;
@@ -17,7 +18,7 @@ namespace NumMethods1.ViewModels
         {
             new Function1(),
             new Function2(),
-            new Function3()           
+            new Function3()
         };
 
         public ObservableCollection<KeyValuePair<double, double>> ChartData { get; } =
@@ -35,7 +36,7 @@ namespace NumMethods1.ViewModels
         }
 
         private string _fromXValue = "-100";
-        public string FromXValueBind 
+        public string FromXValueBind
         {
             get { return _fromXValue; }
             set
@@ -49,7 +50,7 @@ namespace NumMethods1.ViewModels
         public double ToX { get; set; }
 
         private string _toXValue = "100";
-        public string ToXValueBind 
+        public string ToXValueBind
         {
             get { return _toXValue; }
             set
@@ -60,7 +61,7 @@ namespace NumMethods1.ViewModels
         }
 
         private int _maxIterations = 100;
-        public string MaxIterations 
+        public string MaxIterations
         {
             get { return _maxIterations.ToString(); }
             set
@@ -73,14 +74,36 @@ namespace NumMethods1.ViewModels
             }
         }
 
+        private string _approxValue = "0.5";
+        public string ApproxValueBind
+        {
+            get { return _approxValue; }
+            set
+            {
+                _approxValue = value;
+                RaisePropertyChanged(() => ApproxValueBind);
+            }
+        }
+
         private ICommand _submitDataCommand;
 
-        public ICommand SubmitDataCommand => 
+        public ICommand SubmitDataCommand =>
             _submitDataCommand ?? (_submitDataCommand = new RelayCommand(SubmitData));
+        
+        private int _sliderValue = 1;
 
+        public double SliderValue
+        {
+            get { return _sliderValue; }
+            set
+            {
+                _sliderValue = (int)value;
+                RaisePropertyChanged(() => SliderValue);
+            }
+        }
         #endregion
 
-
+        
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -91,10 +114,11 @@ namespace NumMethods1.ViewModels
 
         private void UpdateChart()
         {
+            int precVal = _sliderValue;
             ChartData.Clear();
-            for (int i = (int)FromX; i < (int)ToX; i+= (int)((Math.Abs(ToX) + Math.Abs(FromX))*5/100))
+            for (int i = (int)FromX; i < (int)ToX; i += (int)((Math.Abs(ToX) + Math.Abs(FromX)) * precVal / 100))
             {
-                ChartData.Add(new KeyValuePair<double, double>(i,FunctionSelectorSelectedItem.GetValue(i)));
+                ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
             }
         }
 
@@ -103,12 +127,13 @@ namespace NumMethods1.ViewModels
             double from, to;
             if (!double.TryParse(FromXValueBind, out from) || !double.TryParse(ToXValueBind, out to))
                 return; //TODO : Display feedback msg
-            if(from >= to)
+            if (from >= to)
                 return; //TODO: Disp feedback msg.
 
             FromX = from;
             ToX = to;
             UpdateChart();
         }
+        
     }
 }
