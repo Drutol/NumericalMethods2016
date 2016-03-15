@@ -47,9 +47,11 @@ namespace NumMethods1.NumCore
                     to = mid;
                 counter++;
             }          
-            return new FunctionRoot {
+            return new FunctionRoot
+            {
                 X =mid,Y=midVal,
-                Iterated = counter+1,Method_Used = "Bi"};
+                Iterated = counter+1,Method_Used = "Bi"
+            };
         }
         
         /// <summary>
@@ -87,9 +89,11 @@ namespace NumMethods1.NumCore
                 counter++;
             }
 
-            return new FunctionRoot {
+            return new FunctionRoot
+            {
                 X = x, Y = fxVal,
-                Iterated = counter+1 , Method_Used = "Falsi"};
+                Iterated = counter+1 , Method_Used = "Falsi"
+            };
         }
     }
 }

@@ -36,5 +36,15 @@ namespace NumMethods1.NumCore
 
         public string TextRepresentation => "sqrt(x)";
     }
-    
+
+    class Function4 : IFunction
+    {
+        public double GetValue(double x)
+        {
+            return Math.Pow(x, 3) / 2 - 10 * x + 18;
+        }
+
+        public string TextRepresentation => "(x^3)/2 - x*10 + 18";
+
+    }
 }
