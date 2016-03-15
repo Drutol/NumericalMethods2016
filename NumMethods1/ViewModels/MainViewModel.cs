@@ -27,6 +27,10 @@ namespace NumMethods1.ViewModels
             new Function3()
         };
 
+        //trying roots collection
+        public ObservableCollection<FunctionRoot> RootsCollection { get; } = 
+            new ObservableCollection<FunctionRoot>();
+
         //for command param purposes
         public ApproxMethodEnum Iter => ApproxMethodEnum.Iterations;
         public ApproxMethodEnum Val => ApproxMethodEnum.Value;
@@ -113,7 +117,6 @@ namespace NumMethods1.ViewModels
             _submitDataCommand ?? (_submitDataCommand = new RelayCommand(SubmitData));
 
         private ICommand _setApproxMethodCommand;
-
         public ICommand SetApproxMethodCommand =>
             _setApproxMethodCommand ??
             (_setApproxMethodCommand = new RelayCommand<ApproxMethodEnum>(method => SelectedApproxMethod = method));
@@ -126,17 +129,24 @@ namespace NumMethods1.ViewModels
         /// </summary>
         public MainViewModel()
         {
+
             FunctionSelectorSelectedItem = AvailableFunctions[0];
+            var lol = Math.Sin(0);
         }
 
         private void UpdateChart()
         {
             int precVal = _sliderValue;
             ChartData.Clear();
-            for (int i = (int)FromX; i < (int)ToX; i += (int)((Math.Abs(ToX) + Math.Abs(FromX)) * precVal / 100))
+            for (int i = (int)FromX; i < (int)ToX; i ++/*= (int)((Math.Abs(ToX) + Math.Abs(FromX)) * precVal / 100)*/)
             {
                 ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
             }
+            //foreach (var elem in RootsCollection)
+            //{
+            //    ChartData.Add(new KeyValuePair<double, double>(elem.Key, FunctionSelectorSelectedItem.GetValue(elem.Key)));
+            //}
+            
         }
 
         private void SubmitData()
@@ -150,6 +160,28 @@ namespace NumMethods1.ViewModels
             FromX = from;
             ToX = to;
             UpdateChart();
+            try
+            {
+                RootsCollection.Add(MathCore.GetFunctionRootFalsi(FunctionSelectorSelectedItem, new GetFunctionRootBiArgs
+                {
+                    FromX = from,
+                    ToX = to,
+                    Approx = .5,
+                    MaxIterations = SelectedApproxMethod == ApproxMethodEnum.Iterations ? _maxIterations : -1
+                }));
+                RootsCollection.Add(MathCore.GetFunctionRootBi(FunctionSelectorSelectedItem, new GetFunctionRootBiArgs
+                {
+                    FromX = from,
+                    ToX = to,
+                    Approx = .5,
+                    MaxIterations = SelectedApproxMethod == ApproxMethodEnum.Iterations ? _maxIterations : -1
+                }));
+            }
+            catch (ArgumentException e)
+            {
+                //lol
+            }
+            
         }
         
     }
