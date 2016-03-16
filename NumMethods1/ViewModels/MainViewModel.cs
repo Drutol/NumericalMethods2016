@@ -24,7 +24,8 @@ namespace NumMethods1.ViewModels
         {
             new Function1(),
             new Function2(),
-            new Function3()
+            new Function3(),
+            new Function4()
         };
 
         //trying roots collection
@@ -42,6 +43,7 @@ namespace NumMethods1.ViewModels
 
         private double FromX { get; set; }
         private double ToX { get; set; }
+        private double ApproxValue { get; set; }
 
         private IFunction _functionSelectorSelectedItem;
         public IFunction FunctionSelectorSelectedItem
@@ -129,24 +131,18 @@ namespace NumMethods1.ViewModels
         /// </summary>
         public MainViewModel()
         {
-
             FunctionSelectorSelectedItem = AvailableFunctions[0];
-            var lol = Math.Sin(0);
+
         }
 
         private void UpdateChart()
         {
             int precVal = _sliderValue;
             ChartData.Clear();
-            for (int i = (int)FromX; i < (int)ToX; i ++/*= (int)((Math.Abs(ToX) + Math.Abs(FromX)) * precVal / 100)*/)
+            for (int i = (int)FromX; i < (int)ToX; i+=precVal/* = (int)((Math.Abs(ToX) + Math.Abs(FromX)) * precVal / 100)*/)
             {
                 ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
             }
-            //foreach (var elem in RootsCollection)
-            //{
-            //    ChartData.Add(new KeyValuePair<double, double>(elem.Key, FunctionSelectorSelectedItem.GetValue(elem.Key)));
-            //}
-            
         }
 
         private void SubmitData()
@@ -159,7 +155,7 @@ namespace NumMethods1.ViewModels
 
             FromX = from;
             ToX = to;
-            UpdateChart();
+
             try
             {
                 RootsCollection.Add(MathCore.GetFunctionRootFalsi(FunctionSelectorSelectedItem, new GetFunctionRootBiArgs
@@ -181,7 +177,8 @@ namespace NumMethods1.ViewModels
             {
                 //lol
             }
-            
+
+            UpdateChart();
         }
         
     }
