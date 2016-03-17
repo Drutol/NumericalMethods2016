@@ -35,7 +35,7 @@ namespace NumMethods1.NumCore
             if (val1 * val2 >0)
                 throw new ArgumentException();
             double midVal = source.GetValue(mid);
-            while (args.MaxIterations == -1 ? Math.Abs(midVal) >= args.Approx : counter <= args.MaxIterations)
+            while (args.MaxIterations == -1 ? Math.Abs(midVal) >= args.Approx : counter < args.MaxIterations)
             {
                 mid = (from + to) / 2;
 
@@ -50,7 +50,8 @@ namespace NumMethods1.NumCore
             return new FunctionRoot
             {
                 X =mid,Y=midVal,
-                Iterated = counter+1,Method_Used = "Bi"
+                Iterated = counter,Method_Used = "Bi",
+                Group = source.TextRepresentation
             };
         }
         
@@ -62,8 +63,8 @@ namespace NumMethods1.NumCore
         /// <returns></returns>
         public static FunctionRoot GetFunctionRootFalsi(IFunction source, GetFunctionRootBiArgs args)
         {
-            double a = args.FromX, b = args.ToX, approx= args.Approx;
-            int iter = args.MaxIterations, counter = 0;
+            double a = args.FromX, b = args.ToX, approx = args.Approx;
+            int iter = args.MaxIterations, counter = 1;
             
             double faVal = source.GetValue(a), fbVal = source.GetValue(b);
             double x=(a*fbVal-b*faVal)/(fbVal-faVal);
@@ -72,7 +73,7 @@ namespace NumMethods1.NumCore
             if (faVal*fbVal > 0)
                 throw new ArgumentException();
 
-            while (iter == -1 ? Math.Abs(fxVal)>=approx : counter <= iter)
+            while (iter == -1 ? Math.Abs(fxVal)>=approx : counter < iter)
             {
                 if (faVal*fxVal < 0)
                 {
@@ -92,7 +93,8 @@ namespace NumMethods1.NumCore
             return new FunctionRoot
             {
                 X = x, Y = fxVal,
-                Iterated = counter+1 , Method_Used = "Falsi"
+                Iterated = counter , Method_Used = "Falsi",
+                Group = source.TextRepresentation
             };
         }
     }

@@ -106,13 +106,39 @@
                  DependentValueBinding="{Binding Path=Value}" 
                  IndependentValueBinding="{Binding Path=Key}"/>
         </charting:Chart>
-        <DataGrid ItemsSource="{Binding RootsCollection}" 
+        <DataGrid ItemsSource="{Binding RootsView}" 
                   Grid.Column="1" Grid.Row="0" Margin="5,5,10,0" 
                   Height="Auto" Width="374"
                   ColumnWidth="*" CanUserAddRows="False"
                   HorizontalScrollBarVisibility="Auto"
                   CanUserResizeRows="False"
-                  Background="Transparent" BorderBrush="Transparent">
+                  Background="Transparent" BorderBrush="Transparent" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding X}" Header="X Value" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Y}" Header="Y Value" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Iterated}" Header="Iterations" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Method_Used}" Header="Method Used" Width="*"/>
+            </DataGrid.Columns>
+            <DataGrid.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <StackPanel HorizontalAlignment="Stretch" Background="WhiteSmoke">
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <TextBlock Text="{Binding Name}" Margin="0,5" FontSize="16" FontWeight="Bold"/>
+                                                </StackPanel>
+                                                <ItemsPresenter />
+                                            </StackPanel>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </DataGrid.GroupStyle>
         </DataGrid>
     </Grid>
 </Window>

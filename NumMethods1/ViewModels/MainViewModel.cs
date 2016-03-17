@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using GalaSoft.MvvmLight;
@@ -29,7 +32,17 @@ namespace NumMethods1.ViewModels
         };
 
         //trying roots collection
-        public ObservableCollection<FunctionRoot> RootsCollection { get; } = 
+        private ListCollectionView _rootsView;
+        public ListCollectionView RootsView
+        {
+            get { return _rootsView; }
+            set
+            {
+                _rootsView = value;
+                RaisePropertyChanged(() => RootsView);
+            }
+        }
+        private ObservableCollection<FunctionRoot> RootsCollection { get; } = 
             new ObservableCollection<FunctionRoot>();
 
         //for command param purposes
@@ -43,7 +56,6 @@ namespace NumMethods1.ViewModels
 
         private double FromX { get; set; }
         private double ToX { get; set; }
-        private double ApproxValue { get; set; }
 
         private IFunction _functionSelectorSelectedItem;
         public IFunction FunctionSelectorSelectedItem
@@ -62,7 +74,7 @@ namespace NumMethods1.ViewModels
             get { return _fromXValue; }
             set
             {
-                _fromXValue = value;
+                _fromXValue = value.Replace('.',',');
                 RaisePropertyChanged(() => FromXValueBind);
             }
         }
@@ -73,7 +85,7 @@ namespace NumMethods1.ViewModels
             get { return _toXValue; }
             set
             {
-                _toXValue = value;
+                _toXValue = value.Replace('.','.');
                 RaisePropertyChanged(() => ToXValueBind);
             }
         }
@@ -92,13 +104,13 @@ namespace NumMethods1.ViewModels
             }
         }
 
-        private string _approxValue = "0.5";
+        private string _approxValue = "0,5";
         public string ApproxValueBind
         {
             get { return _approxValue; }
             set
             {
-                _approxValue = value;
+                _approxValue = value.Replace('.',',');
                 RaisePropertyChanged(() => ApproxValueBind);
             }
         }
@@ -132,14 +144,13 @@ namespace NumMethods1.ViewModels
         public MainViewModel()
         {
             FunctionSelectorSelectedItem = AvailableFunctions[0];
-
         }
 
         private void UpdateChart()
         {
-            int precVal = _sliderValue;
+            int precVal = (int)((Math.Abs(ToX) + Math.Abs(FromX)) * _sliderValue / 100);
             ChartData.Clear();
-            for (int i = (int)FromX; i < (int)ToX; i+=precVal/* = (int)((Math.Abs(ToX) + Math.Abs(FromX)) * precVal / 100)*/)
+            for (int i = (int)FromX; i < (int)ToX; i+= precVal)
             {
                 ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
             }
@@ -147,11 +158,16 @@ namespace NumMethods1.ViewModels
 
         private void SubmitData()
         {
-            double from, to;
-            if (!double.TryParse(FromXValueBind, out from) || !double.TryParse(ToXValueBind, out to))
-                return; //TODO : Display feedback msg
+            double from, to, approx;
+            if (!double.TryParse(FromXValueBind, out from) || 
+                !double.TryParse(ToXValueBind, out to) ||
+                !double.TryParse(ApproxValueBind,out approx))
+            {
+                MessageBox.Show("Provided values cannot be parsed.", "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             if (from >= to)
-                return; //TODO: Disp feedback msg.
+                MessageBox.Show("Upper boundary is smaller than lower one.", "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
 
             FromX = from;
             ToX = to;
@@ -162,21 +178,24 @@ namespace NumMethods1.ViewModels
                 {
                     FromX = from,
                     ToX = to,
-                    Approx = .5,
+                    Approx = approx,
                     MaxIterations = SelectedApproxMethod == ApproxMethodEnum.Iterations ? _maxIterations : -1
                 }));
                 RootsCollection.Add(MathCore.GetFunctionRootBi(FunctionSelectorSelectedItem, new GetFunctionRootBiArgs
                 {
                     FromX = from,
                     ToX = to,
-                    Approx = .5,
+                    Approx = approx,
                     MaxIterations = SelectedApproxMethod == ApproxMethodEnum.Iterations ? _maxIterations : -1
                 }));
+                RootsView = new ListCollectionView(RootsCollection);
+                RootsView.GroupDescriptions.Add(new PropertyGroupDescription("Group"));
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
-                //lol
+                MessageBox.Show("For provided arguments function does not have root or has odd amount of them.","Try setting different values.",MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
 
             UpdateChart();
         }
