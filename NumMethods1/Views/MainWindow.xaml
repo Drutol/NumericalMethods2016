@@ -4,95 +4,96 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NumMethods1"
+        xmlns:converters="clr-namespace:NumMethods1.XamlConverters"
         xmlns:charting="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         xmlns:visualizationToolkit="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="625"
-        ResizeMode="NoResize"
+        Title="MainWindow" Height="600" Width="635"
+        MinWidth="635" MinHeight="600"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
+    <Window.Resources>
+        <converters:ClearFunctionResultsTooltipContentConverter x:Key="ClearFunctionResultsTooltipContentConverter" />
+    </Window.Resources>
     <Grid Background="#e6e6e6">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="262.5"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="262.5" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Grid.Row="0" Margin="5">
-            <TextBlock Text="Select desired function:" HorizontalAlignment="Center"/>
-            <ComboBox ItemsSource="{Binding AvailableFunctions}" Height="20" SelectedItem="{Binding FunctionSelectorSelectedItem,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Stretch">
+            <TextBlock Text="Select desired function:" HorizontalAlignment="Center" />
+            <ComboBox ItemsSource="{Binding AvailableFunctions}" Height="20"
+                      SelectedItem="{Binding FunctionSelectorSelectedItem,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                      HorizontalAlignment="Stretch">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding TextRepresentation}"/>
+                        <TextBlock Text="{Binding TextRepresentation}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <StackPanel Orientation="Horizontal" Margin="0,20" HorizontalAlignment="Center">
                 <StackPanel.Resources>
                     <Style TargetType="TextBox">
-                        <Setter Property="Margin" Value="5"/>
-                        <Setter Property="TextAlignment" Value="Center"/>
-                        <Setter Property="MinWidth" Value="50"/>
-                        <Setter Property="MaxWidth" Value="100"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="5" />
+                        <Setter Property="TextAlignment" Value="Center" />
+                        <Setter Property="MinWidth" Value="50" />
+                        <Setter Property="MaxWidth" Value="100" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
                     </Style>
                     <Style TargetType="TextBlock">
-                        <Setter Property="TextAlignment" Value="Center"></Setter>
+                        <Setter Property="TextAlignment" Value="Center" />
                     </Style>
                 </StackPanel.Resources>
                 <StackPanel>
                     <StackPanel>
                         <TextBlock Text="From X" />
-                        <TextBox Text="{Binding FromXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Text="{Binding FromXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="To X" />
-                        <TextBox Text="{Binding ToXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Text="{Binding ToXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </StackPanel>
                 <Border Margin="20,0,0,0" BorderBrush="LightGray" BorderThickness="2,0,0,0" Padding="5,0,0,0">
-                    <StackPanel >
-                        <StackPanel Orientation="Horizontal" >
-                            <RadioButton GroupName="ApproxMode" 
-                                         Command="{Binding SetApproxMethodCommand}" 
-                                         CommandParameter="{Binding Iter}"
-                                         VerticalAlignment="Center"/>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
                             <StackPanel x:Name="MaxIterStackPanel">
-                                <TextBlock Text="Maximum Iterations"/>
-                                <TextBox Text="{Binding MaxIterations,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
+                                <TextBlock Text="Maximum Iterations" />
+                                <TextBox Text="{Binding MaxIterations,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                         HorizontalAlignment="Stretch" />
                             </StackPanel>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <RadioButton GroupName="ApproxMode" 
-                                         Command="{Binding SetApproxMethodCommand}" 
-                                         CommandParameter="{Binding Val}"
-                                         VerticalAlignment="Center"
-                                         IsChecked="True"/>
                             <StackPanel Width="{Binding ElementName=MaxIterStackPanel,Path=ActualWidth}">
-                                <TextBlock Text="Approximation"/>
-                                <TextBox Text="{Binding ApproxValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
+                                <TextBlock Text="Approximation" />
+                                <TextBox
+                                    Text="{Binding ApproxValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                    HorizontalAlignment="Stretch" />
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </Border>
 
             </StackPanel>
-            <TextBlock Text="Set Chart Precision:" HorizontalAlignment="Center"/>
+            <TextBlock Text="Set Chart Precision:" HorizontalAlignment="Center" />
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="High" Grid.Column="0"/>
-                <TextBlock Text="{Binding SliderValue,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Grid.Column="1"/>
-                <TextBlock Text="Low" Grid.Column="2"/>
+                <TextBlock Text="High" Grid.Column="0" />
+                <TextBlock Text="{Binding SliderValue,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
+                           HorizontalAlignment="Center" Grid.Column="1" />
+                <TextBlock Text="Low" Grid.Column="2" />
             </Grid>
             <Slider Value="{Binding SliderValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                     TickPlacement="BottomRight" IsSnapToTickEnabled="True"
-                    Minimum="1" Maximum="15"/>
-            <Button Content="Submit" Command="{Binding SubmitDataCommand}" HorizontalAlignment="Stretch" Margin="5"/>
+                    Minimum="1" Maximum="15" />
+            <Button Content="Submit" Command="{Binding SubmitDataCommand}" HorizontalAlignment="Stretch" Margin="5" />
         </StackPanel>
         <charting:Chart Grid.ColumnSpan="2" Grid.Row="1" Margin="5,5,0,5">
             <charting:Chart.LegendStyle>
@@ -102,43 +103,65 @@
             </charting:Chart.LegendStyle>
 
             <charting:LineSeries
-                 ItemsSource="{Binding ChartData}" 
-                 DependentValueBinding="{Binding Path=Value}" 
-                 IndependentValueBinding="{Binding Path=Key}"/>
+                ItemsSource="{Binding ChartData}"
+                DependentValueBinding="{Binding Path=Value}"
+                IndependentValueBinding="{Binding Path=Key}" />
         </charting:Chart>
-        <DataGrid ItemsSource="{Binding RootsView}" 
-                  Grid.Column="1" Grid.Row="0" Margin="5,5,10,0" 
-                  Height="Auto" Width="374"
-                  ColumnWidth="*" CanUserAddRows="False"
-                  HorizontalScrollBarVisibility="Auto"
-                  CanUserResizeRows="False"
-                  Background="Transparent" BorderBrush="Transparent" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding X}" Header="X Value" Width="*"/>
-                <DataGridTextColumn Binding="{Binding Y}" Header="Y Value" Width="*"/>
-                <DataGridTextColumn Binding="{Binding Iterated}" Header="Iterations" Width="*"/>
-                <DataGridTextColumn Binding="{Binding Method_Used}" Header="Method Used" Width="*"/>
-            </DataGrid.Columns>
-            <DataGrid.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <StackPanel HorizontalAlignment="Stretch" Background="WhiteSmoke">
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                    <TextBlock Text="{Binding Name}" Margin="0,5" FontSize="16" FontWeight="Bold"/>
-                                                </StackPanel>
+        <Grid Grid.Column="1" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <DataGrid ItemsSource="{Binding RootsView}"
+                      Margin="5,5,10,0"
+                      Height="Auto" Width="Auto"
+                      ColumnWidth="*" CanUserAddRows="False"
+                      HorizontalScrollBarVisibility="Auto"
+                      HorizontalAlignment="Stretch"
+                      CanUserResizeRows="False"
+                      IsReadOnly="True"
+                      Background="Transparent" BorderBrush="Transparent" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding X}" Header="X Value" Width="*" />
+                    <DataGridTextColumn Binding="{Binding Y}" Header="Y Value" Width="*" />
+                    <DataGridTextColumn Binding="{Binding Iterated}" Header="Iterations" Width="*" />
+                    <DataGridTextColumn Binding="{Binding Method_Used}" Header="Method Used" Width="*" />
+                </DataGrid.Columns>
+                <DataGrid.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.ContainerStyle>
+                            <Style TargetType="{x:Type GroupItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                                            <StackPanel HorizontalAlignment="Stretch" Background="WhiteSmoke">
+                                                <Grid HorizontalAlignment="Stretch">
+                                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center"
+                                                               Margin="0,5" FontSize="16" FontWeight="Bold" />
+                                                    <Button HorizontalAlignment="Right" Margin="0,3,3,0"
+                                                            VerticalAlignment="Top" Width="20" Height="20"
+                                                            Command="{Binding Source={StaticResource Locator}, Path=Main.ClearParticularResultsCommand}"
+                                                            CommandParameter="{Binding Name}">
+                                                        <TextBlock Text="&#xE10A;"
+                                                                   ToolTip="{Binding Name,Converter={StaticResource ClearFunctionResultsTooltipContentConverter}}"
+                                                                   FontFamily="Segoe UI Symbol" />
+                                                    </Button>
+                                                </Grid>
                                                 <ItemsPresenter />
                                             </StackPanel>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </DataGrid.GroupStyle>
-        </DataGrid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>
+            </DataGrid>
+            <Button Grid.Column="1" Margin="0,6,6,0" VerticalAlignment="Top" Width="20" Height="20"
+                    Command="{Binding ClearResultsCommand}">
+                <TextBlock Text="&#xE10A;" ToolTip="Reset results." FontFamily="Segoe UI Symbol" />
+            </Button>
+        </Grid>
+
     </Grid>
 </Window>

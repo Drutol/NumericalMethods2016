@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NumMethods1.NumCore
-{   
+﻿namespace NumMethods1.NumCore
+{
     /// <summary>
-    /// Defines arguments passed to GetFunctionRootBi method.
+    ///     Defines arguments passed to GetFunctionRootBi method.
     /// </summary>
     public class GetFunctionRootBiArgs
     {

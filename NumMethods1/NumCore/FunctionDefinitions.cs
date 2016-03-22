@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NumMethods1.NumCore
 {
-    class Function1 : IFunction
+    internal class Function1 : IFunction
     {
         public double GetValue(double x)
         {
@@ -14,10 +10,9 @@ namespace NumMethods1.NumCore
         }
 
         public string TextRepresentation => "x^3-(x^2)*2 + 50";
-
     }
 
-    class Function2 : IFunction
+    internal class Function2 : IFunction
     {
         public double GetValue(double x)
         {
@@ -27,7 +22,7 @@ namespace NumMethods1.NumCore
         public string TextRepresentation => "sin(x)";
     }
 
-    class Function3 : IFunction
+    internal class Function3 : IFunction
     {
         public double GetValue(double x)
         {
@@ -37,14 +32,13 @@ namespace NumMethods1.NumCore
         public string TextRepresentation => "sqrt(x)";
     }
 
-    class Function4 : IFunction
+    internal class Function4 : IFunction
     {
         public double GetValue(double x)
         {
-            return Math.Pow(x, 3) / 2 - 10 * x + 18;
+            return Math.Pow(x, 3)/2 - 10*x + 18;
         }
 
         public string TextRepresentation => "(x^3)/2 - x*10 + 18";
-
     }
 }

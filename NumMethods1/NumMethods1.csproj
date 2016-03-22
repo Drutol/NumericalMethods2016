@@ -98,6 +98,7 @@
     <Compile Include="NumCore\MathCore.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
+    <Compile Include="XamlConverters\ClearFunctionResultsTooltipContentConverter.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
