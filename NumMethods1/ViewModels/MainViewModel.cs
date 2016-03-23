@@ -23,12 +23,10 @@ namespace NumMethods1.ViewModels
 
         private void UpdateChart()
         {
-            var precVal = (Math.Abs(_toX) + Math.Abs(_fromX))*_sliderValue/100;
+            var precVal = (Math.Abs(_toX) + Math.Abs(_fromX))*_sliderValue/200;
             ChartData.Clear();
             for (double i = (int) _fromX; i < (int) _toX; i += precVal)
                 ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
-
-            //ChartData.Add(new KeyValuePair<double, double>(0,FunctionSelectorSelectedItem.GetValue(0)));
         }
 
         private void SubmitData()
@@ -143,7 +141,7 @@ namespace NumMethods1.ViewModels
         /// <summary>
         ///     Value which is directly bound to corresponding textbox.
         /// </summary>
-        private string _fromXValue = "-100";
+        private string _fromXValue = "-10";
 
         public string FromXValueBind
         {
@@ -158,14 +156,14 @@ namespace NumMethods1.ViewModels
         /// <summary>
         ///     Value which is directly bound to corresponding textbox.
         /// </summary>
-        private string _toXValue = "100";
+        private string _toXValue = "10";
 
         public string ToXValueBind
         {
             get { return _toXValue; }
             set
             {
-                _toXValue = value.Replace('.', '.');
+                _toXValue = value.Replace('.', ',');
                 RaisePropertyChanged(() => ToXValueBind);
             }
         }

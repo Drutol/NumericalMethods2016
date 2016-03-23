@@ -6,7 +6,7 @@ namespace NumMethods1.NumCore
     {
         public double GetValue(double x)
         {
-            return Math.Pow(x, 3) - Math.Pow(x, 2)*2 + 50;
+            return x * x * x - x * x * 2 + 50;
         }
 
         public string TextRepresentation => "x^3-(x^2)*2 + 50";
@@ -36,7 +36,7 @@ namespace NumMethods1.NumCore
     {
         public double GetValue(double x)
         {
-            return Math.Pow(x, 3)/2 - 10*x + 18;
+            return x * x * x / 2 - 10 * x + 18;
         }
 
         public string TextRepresentation => "(x^3)/2 - x*10 + 18";
