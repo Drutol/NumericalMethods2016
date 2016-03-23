@@ -10,5 +10,6 @@
         public double Y { get; set; }
         public int Iterated { get; set; }
         public string Method_Used { get; set; }
+        public string Interval { get; set; }
     }
 }

@@ -68,7 +68,7 @@ namespace NumMethods1.ViewModels
             }
             catch (ArgumentException)
             {
-                MessageBox.Show("For provided arguments function does not have root or has odd amount of them.",
+                MessageBox.Show("For provided arguments function does not have root or has even amount of them.",
                     "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 

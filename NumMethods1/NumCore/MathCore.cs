@@ -51,7 +51,8 @@ namespace NumMethods1.NumCore
                 Y = midVal,
                 Iterated = counter,
                 Method_Used = "Bi",
-                Group = source.TextRepresentation
+                Group = source.TextRepresentation,
+                Interval = $"[{args.FromX};{args.ToX}]"
             };
         }
 
@@ -70,30 +71,38 @@ namespace NumMethods1.NumCore
         /// </returns>
         public static FunctionRoot GetFunctionRootFalsi(IFunction source, GetFunctionRootBiArgs args)
         {
-            int counter=0;
-            double approx = args.Approx, iter = args.MaxIterations;
+            double x = 0, fxVal = 0;
+            int counter, side = 0;
             double a = args.FromX, faVal = source.GetValue(args.FromX);
             double b = args.ToX, fbVal = source.GetValue(args.ToX);
-            double x = a - (faVal / (fbVal - faVal)) * (b - a);
-            double fxVal = source.GetValue(x);
 
-            if(faVal*fbVal>0)
+            if (faVal*fbVal>0)
                 throw new ArgumentException();
-            
-            while ((counter++ < iter) && (Math.Abs(fxVal) > approx))
+
+            for (counter = 0; counter < args.MaxIterations; counter++)
             {
-                if (faVal*fxVal < 0)
+               x = (faVal * b - fbVal * a) / (faVal - fbVal);
+               fxVal = source.GetValue(x);
+                if (Math.Abs(fxVal) < args.Approx)
+                    break;
+                if (fxVal * fbVal > 0)
                 {
                     b = x;
                     fbVal = fxVal;
+                    if (side == -1)
+                        faVal /= 2;
+                    side = -1;
                 }
-                else
+                else if (faVal * fxVal > 0)
                 {
                     a = x;
                     faVal = fxVal;
+                    if (side == +1)
+                        fbVal /= 2;
+                    side = +1;
                 }
-                x = a - (faVal / (fbVal - faVal)) * (b - a);
-                fxVal = source.GetValue(x);
+                else
+                    break;
             }
 
             return new FunctionRoot
@@ -102,7 +111,8 @@ namespace NumMethods1.NumCore
                 Y = fxVal,
                 Iterated = counter,
                 Method_Used = "Falsi",
-                Group = source.TextRepresentation
+                Group = source.TextRepresentation,
+                Interval = $"[{args.FromX};{args.ToX}]"
             };
         }
     }
