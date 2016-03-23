@@ -5,6 +5,8 @@
     /// </summary>
     public interface IFunction
     {
+        int Id { get; }
+
         /// <summary>
         ///     Function text representation for GUI.
         /// </summary>

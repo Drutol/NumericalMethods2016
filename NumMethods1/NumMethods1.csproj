@@ -96,7 +96,7 @@
     </ApplicationDefinition>
     <Compile Include="NumCore\FunctionDefinitions.cs" />
     <Compile Include="NumCore\FunctionRoot.cs" />
-    <Compile Include="NumCore\GetFunctionRootBiArgs.cs" />
+    <Compile Include="NumCore\GetFunctionRootArgs.cs" />
     <Compile Include="NumCore\IFunction.cs" />
     <Compile Include="NumCore\MathCore.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

@@ -20,7 +20,7 @@ namespace NumMethods1.NumCore
         /// <returns>
         ///     Function root and metadata.
         /// </returns>
-        public static FunctionRoot GetFunctionRootBi(IFunction source, GetFunctionRootBiArgs args)
+        public static FunctionRoot GetFunctionRootBi(IFunction source, GetFunctionRootArgs args)
         {
             var counter = 0;
 
@@ -52,6 +52,7 @@ namespace NumMethods1.NumCore
                 Iterated = counter,
                 Method_Used = "Bi",
                 Group = source.TextRepresentation,
+                SourceId = source.Id,
                 Interval = $"[{args.FromX};{args.ToX}]"
             };
         }
@@ -69,7 +70,7 @@ namespace NumMethods1.NumCore
         /// <returns>
         ///     Function root and metadata.
         /// </returns>
-        public static FunctionRoot GetFunctionRootFalsi(IFunction source, GetFunctionRootBiArgs args)
+        public static FunctionRoot GetFunctionRootFalsi(IFunction source, GetFunctionRootArgs args)
         {
             double x = 0, fxVal = 0;
             int counter, side = 0;
@@ -112,6 +113,7 @@ namespace NumMethods1.NumCore
                 Iterated = counter,
                 Method_Used = "Falsi",
                 Group = source.TextRepresentation,
+                SourceId = source.Id,
                 Interval = $"[{args.FromX};{args.ToX}]"
             };
         }

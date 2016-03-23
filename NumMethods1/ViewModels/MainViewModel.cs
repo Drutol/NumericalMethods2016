@@ -13,69 +13,6 @@ namespace NumMethods1.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        /// <summary>
-        ///     Initializes a new instance of the MainViewModel class.
-        /// </summary>
-        public MainViewModel()
-        {
-            FunctionSelectorSelectedItem = AvailableFunctions[0];
-        }
-
-        private void UpdateChart()
-        {
-            var precVal = (Math.Abs(_toX) + Math.Abs(_fromX))*_sliderValue/200;
-            ChartData.Clear();
-            for (double i = (int) _fromX; i < (int) _toX; i += precVal)
-                ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
-        }
-
-        private void SubmitData()
-        {
-            double from, to, approx;
-            if (!double.TryParse(FromXValueBind, out from) ||
-                !double.TryParse(ToXValueBind, out to) ||
-                !double.TryParse(ApproxValueBind, out approx))
-            {
-                MessageBox.Show("Provided values cannot be parsed.", "Try setting different values.",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            if (from >= to)
-            {
-                MessageBox.Show("Upper endpoint is smaller than lower one.", "Try setting different values.",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            _fromX = from;
-            _toX = to;
-
-            try
-            {
-                //Prepare argument.
-                var arg = new GetFunctionRootBiArgs
-                {
-                    FromX = from,
-                    ToX = to,
-                    Approx = approx,
-                    MaxIterations = _maxIterations
-                };
-                //Add results to the list.
-                RootsCollection.Add(MathCore.GetFunctionRootFalsi(FunctionSelectorSelectedItem, arg));
-                RootsCollection.Add(MathCore.GetFunctionRootBi(FunctionSelectorSelectedItem, arg));
-                //Update DataGrid's groups definitions.
-                RootsView = new ListCollectionView(RootsCollection);
-            }
-            catch (ArgumentException)
-            {
-                MessageBox.Show("For provided arguments function does not have root or has even amount of them.",
-                    "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-            //Once we are done we can render the chart.
-            UpdateChart();
-        }
-
         #region Fields
 
         private double _fromX;
@@ -122,6 +59,8 @@ namespace NumMethods1.ViewModels
         public ObservableCollection<KeyValuePair<double, double>> ChartData { get; } =
             new ObservableCollection<KeyValuePair<double, double>>();
 
+        public ObservableCollection<KeyValuePair<double, double>> ChartRootData { get; } =
+            new ObservableCollection<KeyValuePair<double, double>>();
 
         /// <summary>
         ///     Curently selected function by user.
@@ -211,7 +150,7 @@ namespace NumMethods1.ViewModels
             get { return _sliderValue; }
             set
             {
-                _sliderValue = (int) value;
+                _sliderValue = (int)value;
                 RaisePropertyChanged(() => SliderValue);
             }
         }
@@ -252,5 +191,77 @@ namespace NumMethods1.ViewModels
             }));
 
         #endregion
+
+        /// <summary>
+        ///     Initializes a new instance of the MainViewModel class.
+        /// </summary>
+        public MainViewModel()
+        {
+            FunctionSelectorSelectedItem = AvailableFunctions[0];
+        }
+
+        private void UpdateChart()
+        {
+            var precVal = (Math.Abs(_toX) + Math.Abs(_fromX))*_sliderValue/200;
+            ChartData.Clear();
+            ChartRootData.Clear();
+            for (double i = (int) _fromX; i < (int) _toX; i += precVal)
+                ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
+
+            foreach (var root in RootsCollection.Where(root => root.SourceId==FunctionSelectorSelectedItem.Id ))
+            {
+                ChartRootData.Add(new KeyValuePair<double, double>(root.X,root.Y));
+            }
+        }
+
+        private void SubmitData()
+        {
+            double from, to, approx;
+            if (!double.TryParse(FromXValueBind, out from) ||
+                !double.TryParse(ToXValueBind, out to) ||
+                !double.TryParse(ApproxValueBind, out approx))
+            {
+                MessageBox.Show("Provided values cannot be parsed.", "Try setting different values.",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (from >= to)
+            {
+                MessageBox.Show("Upper endpoint is smaller than lower one.", "Try setting different values.",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            _fromX = from;
+            _toX = to;
+
+            try
+            {
+                //Prepare argument.
+                var arg = new GetFunctionRootArgs
+                {
+                    FromX = from,
+                    ToX = to,
+                    Approx = approx,
+                    MaxIterations = _maxIterations
+                };
+                //Add results to the list.
+                RootsCollection.Add(MathCore.GetFunctionRootFalsi(FunctionSelectorSelectedItem, arg));
+                RootsCollection.Add(MathCore.GetFunctionRootBi(FunctionSelectorSelectedItem, arg));
+                //Update DataGrid's groups definitions.
+                RootsView = new ListCollectionView(RootsCollection);
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show("For provided arguments function does not have root or has even amount of them.",
+                    "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            //Once we are done we can render the chart.
+            UpdateChart();
+
+        }
+
+        
     }
 }

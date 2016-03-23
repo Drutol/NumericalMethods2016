@@ -105,7 +105,31 @@
             <charting:LineSeries
                 ItemsSource="{Binding ChartData}"
                 DependentValueBinding="{Binding Path=Value}"
-                IndependentValueBinding="{Binding Path=Key}" />
+                IndependentValueBinding="{Binding Path=Key}" >
+                <charting:LineSeries.DataPointStyle >
+                    <Style TargetType="charting:DataPoint">
+                        <Setter Property="Background" Value="Yellow"/>
+                        <Setter Property="Template" Value="{x:Null}"/>
+                        
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                    </Style>
+                </charting:LineSeries.DataPointStyle>
+            </charting:LineSeries>
+            <charting:LineSeries
+                ItemsSource="{Binding ChartRootData}"
+                DependentValueBinding="{Binding Path=Value}"
+                IndependentValueBinding="{Binding Path=Key}" >
+                <charting:LineSeries.PolylineStyle>
+                    <Style TargetType="Polyline">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                    </Style>
+                </charting:LineSeries.PolylineStyle>
+                <charting:LineSeries.DataPointStyle>
+                    <Style TargetType="charting:DataPoint">
+                        <Setter Property="Background" Value="Crimson"/>
+                    </Style>
+                </charting:LineSeries.DataPointStyle>
+            </charting:LineSeries>
         </charting:Chart>
         <Grid Grid.Column="1" Grid.Row="0">
             <Grid.ColumnDefinitions>

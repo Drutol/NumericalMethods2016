@@ -6,6 +6,7 @@
     public class FunctionRoot
     {
         public string Group { get; set; }
+        public int SourceId { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
         public int Iterated { get; set; }
