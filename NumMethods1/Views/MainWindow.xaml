@@ -108,7 +108,7 @@
                 IndependentValueBinding="{Binding Path=Key}" >
                 <charting:LineSeries.DataPointStyle >
                     <Style TargetType="charting:DataPoint">
-                        <Setter Property="Background" Value="Yellow"/>
+                        <Setter Property="Background" Value="Gold"/>
                         <Setter Property="Template" Value="{x:Null}"/>
                         
                         <Setter Property="BorderBrush" Value="Transparent"/>
@@ -116,8 +116,9 @@
                 </charting:LineSeries.DataPointStyle>
             </charting:LineSeries>
             <charting:LineSeries
-                ItemsSource="{Binding ChartRootData}"
+                ItemsSource="{Binding ChartBiRootData}"
                 DependentValueBinding="{Binding Path=Value}"
+                
                 IndependentValueBinding="{Binding Path=Key}" >
                 <charting:LineSeries.PolylineStyle>
                     <Style TargetType="Polyline">
@@ -127,6 +128,21 @@
                 <charting:LineSeries.DataPointStyle>
                     <Style TargetType="charting:DataPoint">
                         <Setter Property="Background" Value="Crimson"/>
+                    </Style>
+                </charting:LineSeries.DataPointStyle>
+            </charting:LineSeries>
+            <charting:LineSeries
+                ItemsSource="{Binding ChartFalsiRootData}"
+                DependentValueBinding="{Binding Path=Value}"
+                IndependentValueBinding="{Binding Path=Key}" >
+                <charting:LineSeries.PolylineStyle>
+                    <Style TargetType="Polyline">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                    </Style>
+                </charting:LineSeries.PolylineStyle>
+                <charting:LineSeries.DataPointStyle>
+                    <Style TargetType="charting:DataPoint">
+                        <Setter Property="Background" Value="ForestGreen"/>
                     </Style>
                 </charting:LineSeries.DataPointStyle>
             </charting:LineSeries>

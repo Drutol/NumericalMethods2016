@@ -30,6 +30,10 @@ namespace NumMethods1.NumCore
             double from = args.FromX, to = args.ToX;
             var mid = (from + to)/2;
 
+            if (Math.Abs(val1) < args.Approx)
+            {
+                
+            }
             if (val1*val2 > 0)
                 throw new ArgumentException();
             var midVal = source.GetValue(mid);

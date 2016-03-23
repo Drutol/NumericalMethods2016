@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using NumMethods1.NumCore;
@@ -59,7 +60,10 @@ namespace NumMethods1.ViewModels
         public ObservableCollection<KeyValuePair<double, double>> ChartData { get; } =
             new ObservableCollection<KeyValuePair<double, double>>();
 
-        public ObservableCollection<KeyValuePair<double, double>> ChartRootData { get; } =
+        public ObservableCollection<KeyValuePair<double, double>> ChartBiRootData { get; } =
+            new ObservableCollection<KeyValuePair<double, double>>();
+
+        public ObservableCollection<KeyValuePair<double, double>> ChartFalsiRootData { get; } =
             new ObservableCollection<KeyValuePair<double, double>>();
 
         /// <summary>
@@ -170,6 +174,8 @@ namespace NumMethods1.ViewModels
             {
                 var data = RootsCollection.Where(root => root.Group != s).ToList();
                 RootsCollection.Clear();
+                ChartBiRootData.Clear();
+                ChartFalsiRootData.Clear();
                 foreach (var functionRoot in data)
                     RootsCollection.Add(functionRoot);
 
@@ -178,6 +184,7 @@ namespace NumMethods1.ViewModels
                 //Clearing the chart when there is no more data diplayed.
                 if (data.Count == 0)
                     ChartData.Clear();
+                
             }));
 
         private ICommand _clearResultsCommand;
@@ -188,6 +195,8 @@ namespace NumMethods1.ViewModels
                 RootsCollection.Clear();
                 RootsView = new ListCollectionView(RootsCollection);
                 ChartData.Clear();
+                ChartBiRootData.Clear();
+                ChartFalsiRootData.Clear();
             }));
 
         #endregion
@@ -204,13 +213,17 @@ namespace NumMethods1.ViewModels
         {
             var precVal = (Math.Abs(_toX) + Math.Abs(_fromX))*_sliderValue/200;
             ChartData.Clear();
-            ChartRootData.Clear();
-            for (double i = (int) _fromX; i < (int) _toX; i += precVal)
+            ChartBiRootData.Clear();
+            ChartFalsiRootData.Clear();
+            for (double i = _fromX; i < _toX; i += precVal)
                 ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
 
-            foreach (var root in RootsCollection.Where(root => root.SourceId==FunctionSelectorSelectedItem.Id ))
+            foreach (var root in RootsCollection.Where(root => root.SourceId == FunctionSelectorSelectedItem.Id))
             {
-                ChartRootData.Add(new KeyValuePair<double, double>(root.X,root.Y));
+                if (root.Method_Used == "Bi")
+                    ChartBiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
+                else
+                    ChartFalsiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
             }
         }
 
