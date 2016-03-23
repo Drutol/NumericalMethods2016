@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NumMethods1.NumCore
+﻿namespace NumMethods1.NumCore
 {
+    /// <summary>
+    ///     This class is yielded as a result of MathCore methods.
+    /// </summary>
     public class FunctionRoot
     {
         public string Group { get; set; }
