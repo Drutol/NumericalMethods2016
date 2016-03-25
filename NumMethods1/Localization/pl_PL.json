@@ -1,20 +1,24 @@
 ﻿{
-  "#SelectFunction": "Wybierz funkcję:",
-  "#MaxIterations": "Ilość iteracji:",
   "#Approx": "Przybliżenie",
-  "#ChartPrec": "Dokładność wykresu",
-  "#ChartLow": "Niska",
-  "#ChartHigh": "Wysoka",
-  "#ChartColX": "Wartość X",
-  "#ChartColY": "Wartość Y",
+  "#ChartColInterval": "Przedział",
   "#ChartColIterations": "Iteracje",
   "#ChartColMethodUsed": "Użyta metoda",
-  "#ChartColInterval": "Przedział",
+  "#ChartColX": "Wartość X",
+  "#ChartColY": "Wartość Y",
+  "#ChartHigh": "Wysoka",
+  "#ChartLow": "Niska",
+  "#ChartPrec": "Dokładność wykresu",
   "#FromX": "Dolny X",
-  "#ToX": "Górny X",
-  "#Submit": "Zatwierdz",
+  "#MaxIterations": "Ilość iteracji:",
   "#ResetResults": "Resetuj wyniki.",
-  "#ResetResultsFor": "Resetuj wyniki dla"
+  "#ResetResultsFor": "Resetuj wyniki dla",
+  "#SelectFunction": "Wybierz funkcję:",
+  "#Submit": "Zatwierdz",
+  "#ToX": "Górny X",
+  "#EvenOrNoRootsException": "Dla podanych argumentów funkcja nie posiada pierwiastków lub funkcja ma parzystą ilość pierwiastków.",
+  "#CannotParseException": "Podane wartości nie mogą zostać przeanalizowane.",
+  "#IntervalEndpointsException": "Górny X jest mniejszy niż dolny.",
+  "#RecommendDiffrentArgs": "Spróbuj ustawić inne wartości."
 }
 
 

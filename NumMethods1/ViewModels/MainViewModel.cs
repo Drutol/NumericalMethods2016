@@ -96,6 +96,10 @@ namespace NumMethods1.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Phrase which indicates which flag image to use.
+        /// </summary>
+
         private string _langImgSource;
 
         public string LangImgSourceBind
@@ -294,12 +298,12 @@ namespace NumMethods1.ViewModels
             double from, to, approx;
             if (!double.TryParse(FromXValueBind, out from) || !double.TryParse(ToXValueBind, out to) || !double.TryParse(ApproxValueBind, out approx))
             {
-                MessageBox.Show("Provided values cannot be parsed.", "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ViewModelLocator.Main.Locale["#CannotParseException"], ViewModelLocator.Main.Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (from >= to)
             {
-                MessageBox.Show("Upper endpoint is smaller than lower one.", "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ViewModelLocator.Main.Locale["#IntervalEndpointsException"], ViewModelLocator.Main.Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -321,7 +325,7 @@ namespace NumMethods1.ViewModels
             }
             catch (ArgumentException)
             {
-                MessageBox.Show("For provided arguments function does not have root or has even amount of them.", "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ViewModelLocator.Main.Locale["#EvenOrNoRootsException"],ViewModelLocator.Main.Locale["#RecommendDiffrentArgs"],MessageBoxButton.OK,MessageBoxImage.Error);
             }
 
             //Once we are done we can render the chart.
