@@ -11,6 +11,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Newtonsoft.Json;
 using NumMethods1.NumCore;
+using NumMethods1.Utils;
 
 namespace NumMethods1.ViewModels
 {
@@ -20,13 +21,22 @@ namespace NumMethods1.ViewModels
 
         private double _fromX;
         private double _toX;
-        private bool _isEnglish;
 
         #endregion
 
         #region Properties
 
-        public Dictionary<string, string> Locale { get; set; }
+        private Dictionary<string, string> _locale;
+
+        public Dictionary<string, string> Locale
+        {
+            get { return _locale; }
+            set
+            {
+                _locale = value;
+                RaisePropertyChanged(() => Locale);
+            }
+        }
 
         /// <summary>
         ///     Selection of functions in combobox.
@@ -86,14 +96,14 @@ namespace NumMethods1.ViewModels
             }
         }
 
-        private string _langImgSource = "../Localization/GB.png";
+        private string _langImgSource;
 
         public string LangImgSourceBind
         {
             get { return _langImgSource; }
             set
             {
-                _langImgSource = value;
+                _langImgSource = $@"../Localization/{value}.png";
                 RaisePropertyChanged(() => LangImgSourceBind);
             }
         }
@@ -219,7 +229,36 @@ namespace NumMethods1.ViewModels
         private ICommand _changeLanguageCommand;
 
         public ICommand ChangeLanguageCommand =>
-            _changeLanguageCommand ?? (_changeLanguageCommand = new RelayCommand(ChangeLanguage));
+            _changeLanguageCommand ?? (_changeLanguageCommand = new RelayCommand(() =>
+            {
+                if ((int)CurrentLocale == Enum.GetNames(typeof (AvailableLocale)).Length -1 )
+                    CurrentLocale = 0;
+                else
+                    CurrentLocale += 1;
+            }));
+
+        private AvailableLocale _currentLocale;
+
+        public AvailableLocale CurrentLocale
+        {
+            get { return _currentLocale; }
+            set
+            {
+                _currentLocale = value;
+                switch (value)
+                {
+                    case AvailableLocale.PL:
+                        Locale = LocalizationManager.PlDictionary;
+                        break;
+                    case AvailableLocale.EN:
+                        Locale = LocalizationManager.EnDictionary;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(value), value, null);
+                }
+                LangImgSourceBind = value.ToString();
+            }
+        }
 
         #endregion
 
@@ -229,25 +268,7 @@ namespace NumMethods1.ViewModels
         public MainViewModel()
         {
             FunctionSelectorSelectedItem = AvailableFunctions[0];
-            ChangeLanguage();
-        }
-
-        private void ChangeLanguage()
-        {
-            if (_isEnglish)
-            {
-                Locale = Utils.LocalizationManager.PlDictionary;
-                RaisePropertyChanged(() => Locale);
-                _isEnglish = false;
-                LangImgSourceBind = "../Localization/PL.png";
-            }
-            else
-            {
-                Locale = Utils.LocalizationManager.EnDictionary;
-                RaisePropertyChanged(() => Locale);
-                _isEnglish = true;
-                LangImgSourceBind = "../Localization/GB.png";
-            }
+            CurrentLocale = AvailableLocale.EN;
         }
 
         private void UpdateChart()
@@ -271,18 +292,14 @@ namespace NumMethods1.ViewModels
         private void SubmitData()
         {
             double from, to, approx;
-            if (!double.TryParse(FromXValueBind, out from) ||
-                !double.TryParse(ToXValueBind, out to) ||
-                !double.TryParse(ApproxValueBind, out approx))
+            if (!double.TryParse(FromXValueBind, out from) || !double.TryParse(ToXValueBind, out to) || !double.TryParse(ApproxValueBind, out approx))
             {
-                MessageBox.Show("Provided values cannot be parsed.", "Try setting different values.",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Provided values cannot be parsed.", "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (from >= to)
             {
-                MessageBox.Show("Upper endpoint is smaller than lower one.", "Try setting different values.",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Upper endpoint is smaller than lower one.", "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -294,10 +311,7 @@ namespace NumMethods1.ViewModels
                 //Prepare argument.
                 var arg = new GetFunctionRootArgs
                 {
-                    FromX = from,
-                    ToX = to,
-                    Approx = approx,
-                    MaxIterations = _maxIterations
+                    FromX = from, ToX = to, Approx = approx, MaxIterations = _maxIterations
                 };
                 //Add results to the list.
                 RootsCollection.Add(MathCore.GetFunctionRootFalsi(FunctionSelectorSelectedItem, arg));
@@ -307,15 +321,11 @@ namespace NumMethods1.ViewModels
             }
             catch (ArgumentException)
             {
-                MessageBox.Show("For provided arguments function does not have root or has even amount of them.",
-                    "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("For provided arguments function does not have root or has even amount of them.", "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             //Once we are done we can render the chart.
             UpdateChart();
-
         }
-
-        
     }
 }

@@ -9,7 +9,13 @@ using Newtonsoft.Json;
 
 namespace NumMethods1.Utils
 {
-    public class LocalizationManager
+    public enum AvailableLocale
+    {
+        PL,
+        EN,
+    }
+
+    public static class LocalizationManager
     {
         public static Dictionary<string,string> EnDictionary { get; }
         public static Dictionary<string,string> PlDictionary { get; } 

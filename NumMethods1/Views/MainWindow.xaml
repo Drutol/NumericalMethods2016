@@ -218,14 +218,17 @@
                     </GroupStyle>
                 </DataGrid.GroupStyle>
             </DataGrid>
-            <Button Grid.Column="1" Margin="0,6,6,0" VerticalAlignment="Top" Width="20" Height="20"
+            <StackPanel Grid.Column="1" Margin="0,5,5,0">
+                <Button  VerticalAlignment="Top" Width="30" Height="30"
                     Command="{Binding ClearResultsCommand}">
-                <TextBlock Text="&#xE10A;" ToolTip="{Binding Locale[#ResetResults]}" FontFamily="Segoe UI Symbol" />
-            </Button>
-            <Button Grid.Column="1" Margin="0,32,0,0" VerticalAlignment="Top" Width="26" Height="20"
+                    <TextBlock Text="&#xE10A;" ToolTip="{Binding Locale[#ResetResults]}" FontFamily="Segoe UI Symbol" />
+                </Button>
+                <Button Margin="0,5"  VerticalAlignment="Top" Width="30" Height="20"
                     Command="{Binding ChangeLanguageCommand}">
-                <Image Source="{Binding LangImgSourceBind}"/>
-            </Button>
+                    <Image Source="{Binding LangImgSourceBind}"/>
+                </Button>
+            </StackPanel>
+
         </Grid>
 
     </Grid>
