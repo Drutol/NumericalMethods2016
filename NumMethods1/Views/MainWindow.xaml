@@ -9,7 +9,7 @@
         xmlns:visualizationToolkit="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="635"
-        MinWidth="635" MinHeight="600"
+        MinWidth="686" MinHeight="600"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Window.Resources>
         <converters:ClearFunctionResultsTooltipContentConverter x:Key="ClearFunctionResultsTooltipContentConverter" />
@@ -105,7 +105,47 @@
             <charting:LineSeries
                 ItemsSource="{Binding ChartData}"
                 DependentValueBinding="{Binding Path=Value}"
-                IndependentValueBinding="{Binding Path=Key}" />
+                IndependentValueBinding="{Binding Path=Key}" >
+                <charting:LineSeries.DataPointStyle >
+                    <Style TargetType="charting:DataPoint">
+                        <Setter Property="Background" Value="Gold"/>
+                        <Setter Property="Template" Value="{x:Null}"/>
+                        
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                    </Style>
+                </charting:LineSeries.DataPointStyle>
+            </charting:LineSeries>
+            <charting:LineSeries
+                ItemsSource="{Binding ChartBiRootData}"
+                DependentValueBinding="{Binding Path=Value}"
+                
+                IndependentValueBinding="{Binding Path=Key}" >
+                <charting:LineSeries.PolylineStyle>
+                    <Style TargetType="Polyline">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                    </Style>
+                </charting:LineSeries.PolylineStyle>
+                <charting:LineSeries.DataPointStyle>
+                    <Style TargetType="charting:DataPoint">
+                        <Setter Property="Background" Value="Crimson"/>
+                    </Style>
+                </charting:LineSeries.DataPointStyle>
+            </charting:LineSeries>
+            <charting:LineSeries
+                ItemsSource="{Binding ChartFalsiRootData}"
+                DependentValueBinding="{Binding Path=Value}"
+                IndependentValueBinding="{Binding Path=Key}" >
+                <charting:LineSeries.PolylineStyle>
+                    <Style TargetType="Polyline">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                    </Style>
+                </charting:LineSeries.PolylineStyle>
+                <charting:LineSeries.DataPointStyle>
+                    <Style TargetType="charting:DataPoint">
+                        <Setter Property="Background" Value="ForestGreen"/>
+                    </Style>
+                </charting:LineSeries.DataPointStyle>
+            </charting:LineSeries>
         </charting:Chart>
         <Grid Grid.Column="1" Grid.Row="0">
             <Grid.ColumnDefinitions>
@@ -122,10 +162,31 @@
                       IsReadOnly="True"
                       Background="Transparent" BorderBrush="Transparent" AutoGenerateColumns="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding X}" Header="X Value" Width="*" />
-                    <DataGridTextColumn Binding="{Binding Y}" Header="Y Value" Width="*" />
-                    <DataGridTextColumn Binding="{Binding Iterated}" Header="Iterations" Width="*" />
-                    <DataGridTextColumn Binding="{Binding Method_Used}" Header="Method Used" Width="*" />
+                    <DataGridTextColumn Binding="{Binding X}" MinWidth="50" Width="Auto">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="X Value" TextWrapping="Wrap"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Binding="{Binding Y}" MinWidth="50" Width="Auto">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="Y Value" TextWrapping="Wrap"/>
+                        </DataGridTextColumn.Header>    
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Binding="{Binding Iterated}" MinWidth="60">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="Iterations" TextWrapping="Wrap"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Binding="{Binding Method_Used}" MinWidth="55">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="Method Used" TextWrapping="Wrap"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Binding="{Binding Interval}" MinWidth="50">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="Interval" TextWrapping="Wrap"/>
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
                 </DataGrid.Columns>
                 <DataGrid.GroupStyle>
                     <GroupStyle>

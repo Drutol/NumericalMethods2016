@@ -3,7 +3,7 @@
     /// <summary>
     ///     Defines arguments passed to GetFunctionRootBi method.
     /// </summary>
-    public class GetFunctionRootBiArgs
+    public class GetFunctionRootArgs
     {
         public int MaxIterations { get; set; }
         public double Approx { get; set; }
