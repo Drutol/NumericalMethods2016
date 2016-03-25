@@ -1,6 +1,6 @@
 ﻿{
   "#SelectFunction": "Select desired function:",
-  "#MaxIterations": "Maximum Iterations",
+  "#MaxIterations": "Iterations",
   "#Approx": "Approximation",
   "#ChartPrec": "Set Chart Precision:",
   "#ChartLow": "Low",

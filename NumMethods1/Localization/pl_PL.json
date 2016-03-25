@@ -1,6 +1,6 @@
 ﻿{
   "#SelectFunction": "Wybierz funkcję:",
-  "#MaxIterations": "Maksymalna ilość iteracji:",
+  "#MaxIterations": "Ilość iteracji:",
   "#Approx": "Przybliżenie",
   "#ChartPrec": "Dokładność wykresu",
   "#ChartLow": "Niska",

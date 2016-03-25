@@ -20,6 +20,7 @@ namespace NumMethods1.ViewModels
 
         private double _fromX;
         private double _toX;
+        private bool _isEnglish;
 
         #endregion
 
@@ -82,6 +83,18 @@ namespace NumMethods1.ViewModels
             {
                 _functionSelectorSelectedItem = value;
                 UpdateChart();
+            }
+        }
+
+        private string _langImgSource = "../Localization/GB.png";
+
+        public string LangImgSourceBind
+        {
+            get { return _langImgSource; }
+            set
+            {
+                _langImgSource = value;
+                RaisePropertyChanged(() => LangImgSourceBind);
             }
         }
 
@@ -203,6 +216,11 @@ namespace NumMethods1.ViewModels
                 ChartFalsiRootData.Clear();
             }));
 
+        private ICommand _changeLanguageCommand;
+
+        public ICommand ChangeLanguageCommand =>
+            _changeLanguageCommand ?? (_changeLanguageCommand = new RelayCommand(ChangeLanguage));
+
         #endregion
 
         /// <summary>
@@ -211,8 +229,25 @@ namespace NumMethods1.ViewModels
         public MainViewModel()
         {
             FunctionSelectorSelectedItem = AvailableFunctions[0];
-            Locale = Utils.LocalizationManager.PlDictionary;
-            RaisePropertyChanged(() => Locale);
+            ChangeLanguage();
+        }
+
+        private void ChangeLanguage()
+        {
+            if (_isEnglish)
+            {
+                Locale = Utils.LocalizationManager.PlDictionary;
+                RaisePropertyChanged(() => Locale);
+                _isEnglish = false;
+                LangImgSourceBind = "../Localization/PL.png";
+            }
+            else
+            {
+                Locale = Utils.LocalizationManager.EnDictionary;
+                RaisePropertyChanged(() => Locale);
+                _isEnglish = true;
+                LangImgSourceBind = "../Localization/GB.png";
+            }
         }
 
         private void UpdateChart()

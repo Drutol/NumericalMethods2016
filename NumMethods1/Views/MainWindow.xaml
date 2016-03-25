@@ -60,14 +60,14 @@
                 <Border Margin="20,0,0,0" BorderBrush="LightGray" BorderThickness="2,0,0,0" Padding="5,0,0,0">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <StackPanel x:Name="MaxIterStackPanel">
+                            <StackPanel Width="{Binding ElementName=ApproxStackPanel,Path=ActualWidth}">
                                 <TextBlock Text="{Binding Locale[#MaxIterations]}"/>
                                 <TextBox Text="{Binding MaxIterations,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                          HorizontalAlignment="Stretch" />
                             </StackPanel>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <StackPanel Width="{Binding ElementName=MaxIterStackPanel,Path=ActualWidth}">
+                            <StackPanel x:Name="ApproxStackPanel">
                                 <TextBlock Text="{Binding Locale[#Approx]}" />
                                 <TextBox
                                     Text="{Binding ApproxValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
@@ -221,6 +221,10 @@
             <Button Grid.Column="1" Margin="0,6,6,0" VerticalAlignment="Top" Width="20" Height="20"
                     Command="{Binding ClearResultsCommand}">
                 <TextBlock Text="&#xE10A;" ToolTip="{Binding Locale[#ResetResults]}" FontFamily="Segoe UI Symbol" />
+            </Button>
+            <Button Grid.Column="1" Margin="0,32,0,0" VerticalAlignment="Top" Width="26" Height="20"
+                    Command="{Binding ChangeLanguageCommand}">
+                <Image Source="{Binding LangImgSourceBind}"/>
             </Button>
         </Grid>
 
