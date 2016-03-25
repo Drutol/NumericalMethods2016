@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -8,11 +9,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using Newtonsoft.Json;
 using NumMethods1.NumCore;
 
 namespace NumMethods1.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public sealed class MainViewModel : ViewModelBase
     {
         #region Fields
 
@@ -22,6 +24,8 @@ namespace NumMethods1.ViewModels
         #endregion
 
         #region Properties
+
+        public Dictionary<string, string> Locale { get; set; }
 
         /// <summary>
         ///     Selection of functions in combobox.
@@ -207,6 +211,8 @@ namespace NumMethods1.ViewModels
         public MainViewModel()
         {
             FunctionSelectorSelectedItem = AvailableFunctions[0];
+            Locale = Utils.LocalizationManager.PlDictionary;
+            RaisePropertyChanged(() => Locale);
         }
 
         private void UpdateChart()

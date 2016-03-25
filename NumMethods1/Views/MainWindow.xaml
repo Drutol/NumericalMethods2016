@@ -24,7 +24,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Grid.Row="0" Margin="5">
-            <TextBlock Text="Select desired function:" HorizontalAlignment="Center" />
+            <TextBlock Text="{Binding Locale[#SelectFunction]}" HorizontalAlignment="Center" />
             <ComboBox ItemsSource="{Binding AvailableFunctions}" Height="20"
                       SelectedItem="{Binding FunctionSelectorSelectedItem,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                       HorizontalAlignment="Stretch">
@@ -49,11 +49,11 @@
                 </StackPanel.Resources>
                 <StackPanel>
                     <StackPanel>
-                        <TextBlock Text="From X" />
+                        <TextBlock Text="{Binding Locale[#FromX]}" />
                         <TextBox Text="{Binding FromXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <StackPanel>
-                        <TextBlock Text="To X" />
+                        <TextBlock Text="{Binding Locale[#ToX]}" />
                         <TextBox Text="{Binding ToXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </StackPanel>
@@ -61,14 +61,14 @@
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <StackPanel x:Name="MaxIterStackPanel">
-                                <TextBlock Text="Maximum Iterations" />
+                                <TextBlock Text="{Binding Locale[#MaxIterations]}"/>
                                 <TextBox Text="{Binding MaxIterations,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                          HorizontalAlignment="Stretch" />
                             </StackPanel>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <StackPanel Width="{Binding ElementName=MaxIterStackPanel,Path=ActualWidth}">
-                                <TextBlock Text="Approximation" />
+                                <TextBlock Text="{Binding Locale[#Approx]}" />
                                 <TextBox
                                     Text="{Binding ApproxValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                     HorizontalAlignment="Stretch" />
@@ -78,22 +78,22 @@
                 </Border>
 
             </StackPanel>
-            <TextBlock Text="Set Chart Precision:" HorizontalAlignment="Center" />
+            <TextBlock Text="{Binding Locale[#ChartPrec]}" HorizontalAlignment="Center" />
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="High" Grid.Column="0" />
+                <TextBlock Text="{Binding Locale[#ChartHigh]}" Grid.Column="0" />
                 <TextBlock Text="{Binding SliderValue,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
                            HorizontalAlignment="Center" Grid.Column="1" />
-                <TextBlock Text="Low" Grid.Column="2" />
+                <TextBlock Text="{Binding Locale[#ChartLow]}" Grid.Column="2" />
             </Grid>
             <Slider Value="{Binding SliderValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                     TickPlacement="BottomRight" IsSnapToTickEnabled="True"
                     Minimum="1" Maximum="15" />
-            <Button Content="Submit" Command="{Binding SubmitDataCommand}" HorizontalAlignment="Stretch" Margin="5" />
+            <Button Content="{Binding Locale[#Submit]}" Command="{Binding SubmitDataCommand}" HorizontalAlignment="Stretch" Margin="5" />
         </StackPanel>
         <charting:Chart Grid.ColumnSpan="2" Grid.Row="1" Margin="5,5,0,5">
             <charting:Chart.LegendStyle>
@@ -164,27 +164,27 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding X}" MinWidth="50" Width="Auto">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="X Value" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding  Source={StaticResource Locator},Path=Main.Locale[#ChartColX]}" TextWrapping="Wrap"/>
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
                     <DataGridTextColumn Binding="{Binding Y}" MinWidth="50" Width="Auto">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="Y Value" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColY]}"  TextWrapping="Wrap"/>
                         </DataGridTextColumn.Header>    
                     </DataGridTextColumn>
                     <DataGridTextColumn Binding="{Binding Iterated}" MinWidth="60">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="Iterations" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColIterations]}" TextWrapping="Wrap"/>
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
                     <DataGridTextColumn Binding="{Binding Method_Used}" MinWidth="55">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="Method Used" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColMethodUsed]}" TextWrapping="Wrap"/>
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
                     <DataGridTextColumn Binding="{Binding Interval}" MinWidth="50">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="Interval" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColInterval]}" TextWrapping="Wrap"/>
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
                 </DataGrid.Columns>
@@ -220,7 +220,7 @@
             </DataGrid>
             <Button Grid.Column="1" Margin="0,6,6,0" VerticalAlignment="Top" Width="20" Height="20"
                     Command="{Binding ClearResultsCommand}">
-                <TextBlock Text="&#xE10A;" ToolTip="Reset results." FontFamily="Segoe UI Symbol" />
+                <TextBlock Text="&#xE10A;" ToolTip="{Binding Locale[#ResetResults]}" FontFamily="Segoe UI Symbol" />
             </Button>
         </Grid>
 

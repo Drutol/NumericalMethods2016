@@ -1,0 +1,18 @@
+﻿{
+  "#SelectFunction": "Select desired function:",
+  "#MaxIterations": "Maximum Iterations",
+  "#Approx": "Approximation",
+  "#ChartPrec": "Set Chart Precision:",
+  "#ChartLow": "Low",
+  "#ChartHigh": "High",
+  "#ChartColX": "X Value",
+  "#ChartColY": "Y Value",
+  "#ChartColIterations": "Iterations",
+  "#ChartColMethodUsed": "Method Used",
+  "#ChartColInterval": "Interval",
+  "#FromX": "From X",
+  "#ToX": "To X",
+  "#Submit": "Sumbit",
+  "#ResetResults": "Reset results.",
+  "#ResetResultsFor": "Reset results for "
+}

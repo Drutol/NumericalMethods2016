@@ -1,0 +1,27 @@
+﻿{
+  "#SelectFunction": "Wybierz funkcję:",
+  "#MaxIterations": "Maksymalna ilość iteracji:",
+  "#Approx": "Przybliżenie",
+  "#ChartPrec": "Dokładność wykresu",
+  "#ChartLow": "Niska",
+  "#ChartHigh": "Wysoka",
+  "#ChartColX": "Wartość X",
+  "#ChartColY": "Wartość Y",
+  "#ChartColIterations": "Iteracje",
+  "#ChartColMethodUsed": "Użyta metoda",
+  "#ChartColInterval": "Przedział",
+  "#FromX": "Dolny X",
+  "#ToX": "Górny X",
+  "#Submit": "Zatwierdz",
+  "#ResetResults": "Resetuj wyniki.",
+  "#ResetResultsFor": "Resetuj wyniki dla"
+}
+
+
+
+
+
+
+
+
+

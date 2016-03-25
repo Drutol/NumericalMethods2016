@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:NumMethods1"
              StartupUri="Views/MainWindow.xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              d1p1:Ignorable="d" xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:NumMethods1.ViewModels">
+             xmlns:viewModels="clr-namespace:NumMethods1.ViewModels"
+             xmlns:locale="clr-namespace:NumMethods1.Utils">
     <Application.Resources>
         <ResourceDictionary>
             <viewModels:ViewModelLocator x:Key="Locator" d:IsDataSource="True"
