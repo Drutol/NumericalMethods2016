@@ -31,5 +31,12 @@ namespace NumMethods1.Utils
                 EnDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(writer.ReadToEnd());
             }
         }
+
+        public static AvailableLocale GetNextLocale(AvailableLocale locale)
+        {
+            return (int)locale + 1 > 1 ? AvailableLocale.PL : locale + 1;
+        }
     }
+
+    
 }

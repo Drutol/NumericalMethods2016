@@ -98,6 +98,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Exceptions\BoundaryFunctionValuesOfTheSameSignException.cs" />
+    <Compile Include="Exceptions\MaxIterationsReachedException.cs" />
     <Compile Include="NumCore\FunctionDefinitions.cs" />
     <Compile Include="NumCore\FunctionRoot.cs" />
     <Compile Include="NumCore\GetFunctionRootArgs.cs" />
@@ -155,10 +157,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Localization\PL.png">
+    <Resource Include="Localization\EN.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Localization\EN.png">
+    <Resource Include="Localization\PL.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

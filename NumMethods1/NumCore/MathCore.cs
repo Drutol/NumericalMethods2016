@@ -1,4 +1,5 @@
 ﻿using System;
+using NumMethods1.Exceptions;
 using NumMethods1.Utils;
 
 namespace NumMethods1.NumCore
@@ -32,7 +33,12 @@ namespace NumMethods1.NumCore
             var mid = (from + to)/2;
 
             if (val1*val2 > 0)
-                throw new ArgumentException();
+                throw new BoundaryFunctionValuesOfTheSameSignException
+                {
+                    LeftValue = val1,
+                    RightValue = val2
+                };
+
             var midVal = source.GetValue(mid);
             while (counter < args.MaxIterations)
             {
@@ -61,7 +67,7 @@ namespace NumMethods1.NumCore
                 counter++;
             }
             
-            throw new ArgumentException();
+            throw new MaxIterationsReachedException();
         }
 
         /// <summary>
@@ -83,8 +89,12 @@ namespace NumMethods1.NumCore
             double a = args.FromX, faVal = source.GetValue(args.FromX);
             double b = args.ToX, fbVal = source.GetValue(args.ToX);
 
-            if (faVal*fbVal>0)
-                throw new ArgumentException();
+            if (faVal*fbVal > 0)
+                throw new BoundaryFunctionValuesOfTheSameSignException
+                {
+                    LeftValue = faVal,
+                    RightValue = fbVal,
+                };
 
             for (counter = 0; counter < args.MaxIterations; counter++)
             {
@@ -123,7 +133,7 @@ namespace NumMethods1.NumCore
                 }
             }
 
-            throw new ArgumentException();
+            throw new MaxIterationsReachedException();
         }
     }
 }

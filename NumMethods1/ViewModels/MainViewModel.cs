@@ -10,6 +10,7 @@ using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Newtonsoft.Json;
+using NumMethods1.Exceptions;
 using NumMethods1.NumCore;
 using NumMethods1.Utils;
 
@@ -190,6 +191,29 @@ namespace NumMethods1.ViewModels
             }
         }
 
+        private bool _isIntervalDivisionEnabled;
+        public bool IsIntervalDivisionEnabled
+        {
+            get { return _isIntervalDivisionEnabled; }
+            set
+            {
+                _isIntervalDivisionEnabled = value;
+                RaisePropertyChanged(() => IsIntervalDivisionEnabled);
+            }
+        }
+
+        private string _divisionRate = "";
+
+        public string DivisionRateBind
+        {
+            get { return _divisionRate; }
+            set
+            {
+                _divisionRate = value.Replace('.', ',');
+                RaisePropertyChanged(() => DivisionRateBind);
+            }
+        }
+
         /// <summary>
         ///     Command bound to "Submit" button.
         /// </summary>
@@ -260,7 +284,8 @@ namespace NumMethods1.ViewModels
                     default:
                         throw new ArgumentOutOfRangeException(nameof(value), value, null);
                 }
-                LangImgSourceBind = value.ToString();
+                //sets flag of next locale
+                LangImgSourceBind = LocalizationManager.GetNextLocale(value).ToString();
             }
         }
 
@@ -272,7 +297,7 @@ namespace NumMethods1.ViewModels
         public MainViewModel()
         {
             FunctionSelectorSelectedItem = AvailableFunctions[0];
-            CurrentLocale = AvailableLocale.EN;
+            CurrentLocale = AvailableLocale.EN; //default
         }
 
         private void UpdateChart()
@@ -295,7 +320,7 @@ namespace NumMethods1.ViewModels
 
         private void SubmitData()
         {
-            double from, to, approx;
+            double from, to, approx , divRate = 1;
             if (!double.TryParse(FromXValueBind, out from) || !double.TryParse(ToXValueBind, out to) || !double.TryParse(ApproxValueBind, out approx))
             {
                 MessageBox.Show(Locale["#CannotParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
@@ -306,38 +331,64 @@ namespace NumMethods1.ViewModels
                 MessageBox.Show(Locale["#IntervalEndpointsException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+            if (IsIntervalDivisionEnabled && !double.TryParse(DivisionRateBind, out divRate))
+            {
+                MessageBox.Show("Cannot parse interval division value", Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             _fromX = from;
             _toX = to;
 
-            //Prepare argument.
-            var arg = new GetFunctionRootArgs
-            {
-                FromX = from,
-                ToX = to,
-                Approx = approx,
-                MaxIterations = _maxIterations
-            };
+
 
             //Add results to the list.
-            try
-            {
-                RootsCollection.Add(MathCore.GetFunctionRootFalsi(FunctionSelectorSelectedItem, arg));
+            int noRootsCounter = 0, maxIterCounter = 0, divisionsSuccesses = 0;
+            double intervalStep = (Math.Abs(from) + Math.Abs(to))/divRate;
+            for (double i = from; i < to; i += intervalStep)
+            {            
+                //Prepare argument.
+                var arg = new GetFunctionRootArgs
+                {
+                    FromX = i,
+                    ToX = i+intervalStep,
+                    Approx = approx,
+                    MaxIterations = _maxIterations
+                };
+                try
+                {
+                    RootsCollection.Add(MathCore.GetFunctionRootFalsi(FunctionSelectorSelectedItem, arg));
+                    RootsCollection.Add(MathCore.GetFunctionRootBi(FunctionSelectorSelectedItem, arg));
+                    divisionsSuccesses++;
+                }
+                catch (BoundaryFunctionValuesOfTheSameSignException e)
+                {
+                    if (!IsIntervalDivisionEnabled)
+                        MessageBox.Show($"{Locale["#EvenOrNoRootsException"]}\nFrom X value: {e.LeftValue}\nTo X value: {e.RightValue}", Locale["#RecommendDiffrentArgs"],
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    else
+                        noRootsCounter++;
+                }
+                catch (MaxIterationsReachedException)
+                {
+                    if (!IsIntervalDivisionEnabled)
+                        MessageBox.Show(Locale["#EvenOrNoRootsException"], Locale["#RecommendDiffrentArgs"],
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    else
+                        maxIterCounter++;
+                }
+
             }
-            catch (ArgumentException)
+            if (maxIterCounter > 0 || noRootsCounter > 0)
             {
-                MessageBox.Show(Locale["#EvenOrNoRootsException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK,
+                MessageBox.Show(
+                    $"Managed to find {divisionsSuccesses} roots total.\n\nExceptions during division:\n\n{maxIterCounter} intervals exceeded max iteration value.\n{noRootsCounter} intervals had boundary values of the same sign.",
+                    "Interval division failures", MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
-            try
-            {
-                RootsCollection.Add(MathCore.GetFunctionRootBi(FunctionSelectorSelectedItem, arg));
-            }
-            catch (ArgumentException)
-            {
-                MessageBox.Show(Locale["#EvenOrNoRootsException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
+
 
             //Update DataGrid's groups definitions.
             RootsView = new ListCollectionView(RootsCollection);

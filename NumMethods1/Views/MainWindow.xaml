@@ -16,11 +16,11 @@
     </Window.Resources>
     <Grid Background="#e6e6e6">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="250" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="262.5" />
+            <RowDefinition Height="300" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Grid.Row="0" Margin="5">
@@ -57,7 +57,7 @@
                         <TextBox Text="{Binding ToXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </StackPanel>
-                <Border Margin="20,0,0,0" BorderBrush="LightGray" BorderThickness="2,0,0,0" Padding="5,0,0,0">
+                <Border BorderBrush="LightGray" BorderThickness="2,0,0,0" Padding="5,0,0,0">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <StackPanel Width="{Binding ElementName=ApproxStackPanel,Path=ActualWidth}">
@@ -76,8 +76,23 @@
                         </StackPanel>
                     </StackPanel>
                 </Border>
-
             </StackPanel>
+            <Border BorderBrush="LightGray" BorderThickness="0,2,0,0">
+                <StackPanel>
+                    <TextBlock Text="If both values on ends of provided interval are of the same sign divide this interval:" TextWrapping="Wrap" TextAlignment="Center"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="EnableIntervalDivisionCheckbox" VerticalAlignment="Center"
+                                  IsChecked="{Binding IsIntervalDivisionEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                 IsEnabled="{Binding ElementName=EnableIntervalDivisionCheckbox,Path=IsChecked}"
+                                 Text="{Binding DivisionRateBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
             <TextBlock Text="{Binding Locale[#ChartPrec]}" HorizontalAlignment="Center" />
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -101,7 +116,6 @@
                     <Setter Property="Width" Value="0" />
                 </Style>
             </charting:Chart.LegendStyle>
-
             <charting:LineSeries
                 ItemsSource="{Binding ChartData}"
                 DependentValueBinding="{Binding Path=Value}"
@@ -117,8 +131,7 @@
             </charting:LineSeries>
             <charting:LineSeries
                 ItemsSource="{Binding ChartBiRootData}"
-                DependentValueBinding="{Binding Path=Value}"
-                
+                DependentValueBinding="{Binding Path=Value}"              
                 IndependentValueBinding="{Binding Path=Key}" >
                 <charting:LineSeries.PolylineStyle>
                     <Style TargetType="Polyline">
