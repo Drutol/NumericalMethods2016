@@ -96,6 +96,10 @@ namespace NumMethods1.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Phrase which indicates which flag image to use.
+        /// </summary>
+
         private string _langImgSource;
 
         public string LangImgSourceBind
@@ -294,35 +298,49 @@ namespace NumMethods1.ViewModels
             double from, to, approx;
             if (!double.TryParse(FromXValueBind, out from) || !double.TryParse(ToXValueBind, out to) || !double.TryParse(ApproxValueBind, out approx))
             {
-                MessageBox.Show("Provided values cannot be parsed.", "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Locale["#CannotParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (from >= to)
             {
-                MessageBox.Show("Upper endpoint is smaller than lower one.", "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Locale["#IntervalEndpointsException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             _fromX = from;
             _toX = to;
 
+            //Prepare argument.
+            var arg = new GetFunctionRootArgs
+            {
+                FromX = from,
+                ToX = to,
+                Approx = approx,
+                MaxIterations = _maxIterations
+            };
+
+            //Add results to the list.
             try
             {
-                //Prepare argument.
-                var arg = new GetFunctionRootArgs
-                {
-                    FromX = from, ToX = to, Approx = approx, MaxIterations = _maxIterations
-                };
-                //Add results to the list.
                 RootsCollection.Add(MathCore.GetFunctionRootFalsi(FunctionSelectorSelectedItem, arg));
-                RootsCollection.Add(MathCore.GetFunctionRootBi(FunctionSelectorSelectedItem, arg));
-                //Update DataGrid's groups definitions.
-                RootsView = new ListCollectionView(RootsCollection);
             }
             catch (ArgumentException)
             {
-                MessageBox.Show("For provided arguments function does not have root or has even amount of them.", "Try setting different values.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Locale["#EvenOrNoRootsException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
+            try
+            {
+                RootsCollection.Add(MathCore.GetFunctionRootBi(FunctionSelectorSelectedItem, arg));
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show(Locale["#EvenOrNoRootsException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+
+            //Update DataGrid's groups definitions.
+            RootsView = new ListCollectionView(RootsCollection);
 
             //Once we are done we can render the chart.
             UpdateChart();

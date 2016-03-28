@@ -1,4 +1,5 @@
 ﻿using System;
+using NumMethods1.Utils;
 
 namespace NumMethods1.NumCore
 {
@@ -30,15 +31,25 @@ namespace NumMethods1.NumCore
             double from = args.FromX, to = args.ToX;
             var mid = (from + to)/2;
 
-            if (Math.Abs(val1) < args.Approx)
-            {
-                
-            }
             if (val1*val2 > 0)
                 throw new ArgumentException();
             var midVal = source.GetValue(mid);
-            while (Math.Abs(midVal) >= args.Approx && counter < args.MaxIterations)
+            while (counter < args.MaxIterations)
             {
+                if (Math.Abs(midVal) < args.Approx)
+                {
+                    return new FunctionRoot
+                    {
+                        X = mid,
+                        Y = midVal,
+                        Iterated = counter,
+                        Method_Used = "Bi",
+                        Group = source.TextRepresentation,
+                        SourceId = source.Id,
+                        Interval = $"[{args.FromX};{args.ToX}]"
+                    };
+                }
+
                 mid = (from + to)/2;
 
                 midVal = source.GetValue(mid);
@@ -49,16 +60,8 @@ namespace NumMethods1.NumCore
                     to = mid;
                 counter++;
             }
-            return new FunctionRoot
-            {
-                X = mid,
-                Y = midVal,
-                Iterated = counter,
-                Method_Used = "Bi",
-                Group = source.TextRepresentation,
-                SourceId = source.Id,
-                Interval = $"[{args.FromX};{args.ToX}]"
-            };
+            
+            throw new ArgumentException();
         }
 
         /// <summary>
@@ -76,7 +79,6 @@ namespace NumMethods1.NumCore
         /// </returns>
         public static FunctionRoot GetFunctionRootFalsi(IFunction source, GetFunctionRootArgs args)
         {
-            double x = 0, fxVal = 0;
             int counter, side = 0;
             double a = args.FromX, faVal = source.GetValue(args.FromX);
             double b = args.ToX, fbVal = source.GetValue(args.ToX);
@@ -86,10 +88,23 @@ namespace NumMethods1.NumCore
 
             for (counter = 0; counter < args.MaxIterations; counter++)
             {
-               x = (faVal * b - fbVal * a) / (faVal - fbVal);
-               fxVal = source.GetValue(x);
+               double x = (faVal * b - fbVal * a) / (faVal - fbVal);
+               double fxVal = source.GetValue(x);
+
                 if (Math.Abs(fxVal) < args.Approx)
-                    break;
+                {
+                    return new FunctionRoot
+                    {
+                        X = x,
+                        Y = fxVal,
+                        Iterated = counter,
+                        Method_Used = "Falsi",
+                        Group = source.TextRepresentation,
+                        SourceId = source.Id,
+                        Interval = $"[{args.FromX};{args.ToX}]"
+                    };
+                }
+
                 if (fxVal * fbVal > 0)
                 {
                     b = x;
@@ -106,20 +121,9 @@ namespace NumMethods1.NumCore
                         fbVal /= 2;
                     side = +1;
                 }
-                else
-                    break;
             }
 
-            return new FunctionRoot
-            {
-                X = x,
-                Y = fxVal,
-                Iterated = counter,
-                Method_Used = "Falsi",
-                Group = source.TextRepresentation,
-                SourceId = source.Id,
-                Interval = $"[{args.FromX};{args.ToX}]"
-            };
+            throw new ArgumentException();
         }
     }
 }
