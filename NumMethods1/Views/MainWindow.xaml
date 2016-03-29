@@ -8,8 +8,8 @@
         xmlns:charting="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         xmlns:visualizationToolkit="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="635"
-        MinWidth="686" MinHeight="600"
+        Title="MainWindow" Height="600" Width="742"
+        MinWidth="742" MinHeight="600"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Window.Resources>
         <converters:ClearFunctionResultsTooltipContentConverter x:Key="ClearFunctionResultsTooltipContentConverter" />

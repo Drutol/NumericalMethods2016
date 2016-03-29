@@ -27,6 +27,9 @@ namespace NumMethods1.ViewModels
 
         #region Properties
 
+        /// <summary>
+        ///     Stores pre-defined phrases.
+        /// </summary>
         private Dictionary<string, string> _locale;
 
         public Dictionary<string, string> Locale
@@ -191,7 +194,11 @@ namespace NumMethods1.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Indicates if the base interval sould be divided.
+        /// </summary>
         private bool _isIntervalDivisionEnabled;
+
         public bool IsIntervalDivisionEnabled
         {
             get { return _isIntervalDivisionEnabled; }
@@ -202,6 +209,9 @@ namespace NumMethods1.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Current ammount subintervals to be created.
+        /// </summary>
         private string _divisionRate = "";
 
         public string DivisionRateBind
@@ -222,6 +232,9 @@ namespace NumMethods1.ViewModels
         public ICommand SubmitDataCommand =>
             _submitDataCommand ?? (_submitDataCommand = new RelayCommand(SubmitData));
 
+        /// <summary>
+        ///     Command bound to inner "clear results" button.
+        /// </summary>
         private ICommand _clearParticularResultsCommand;
 
         public ICommand ClearParticularResultsCommand =>
@@ -242,6 +255,9 @@ namespace NumMethods1.ViewModels
                 
             }));
 
+        /// <summary>
+        ///     Command bound to main "clear results" button.
+        /// </summary>
         private ICommand _clearResultsCommand;
 
         public ICommand ClearResultsCommand =>
@@ -254,6 +270,9 @@ namespace NumMethods1.ViewModels
                 ChartFalsiRootData.Clear();
             }));
 
+        /// <summary>
+        ///     Command bound to "flag" button.
+        /// </summary>
         private ICommand _changeLanguageCommand;
 
         public ICommand ChangeLanguageCommand =>
@@ -265,6 +284,9 @@ namespace NumMethods1.ViewModels
                     CurrentLocale += 1;
             }));
 
+        /// <summary>
+        ///     Indicates which language should be used.
+        /// </summary>
         private AvailableLocale _currentLocale;
 
         public AvailableLocale CurrentLocale
@@ -318,7 +340,7 @@ namespace NumMethods1.ViewModels
                 MessageBox.Show(Locale["#IntervalDivParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-
+            
             _fromX = from;
             _toX = to;
             

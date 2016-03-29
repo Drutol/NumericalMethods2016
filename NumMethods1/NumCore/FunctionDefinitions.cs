@@ -20,10 +20,10 @@ namespace NumMethods1.NumCore
         public int Id => _id;
         public double GetValue(double x)
         {
-            return Math.Sin(x);
+            return 15 * Math.Sin(5 * x) - 2 * Math.Tan(x - 2);
         }
 
-        public string TextRepresentation => "sin(x)";
+        public string TextRepresentation => "15*sin(5*x)-2*tan(x-2)";
     }
 
     internal class Function3 : IFunction
