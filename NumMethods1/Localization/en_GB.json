@@ -16,7 +16,8 @@
   "#Submit": "Sumbit",
   "#ToX": "To X",
   "#EvenOrNoRootsException": "For provided arguments function does not have root or has even amount of them.",
-  "#CannotParseException": "Provided values cannot be parsed.",
+  "#ValuesParseException": "Provided values cannot be parsed.",
   "#IntervalEndpointsException": "Upper endpoint is smaller than lower one.",
+  "#IntervalDivParseException": "Cannot parse interval division value",
   "#RecommendDiffrentArgs": "Try setting different values."
 }

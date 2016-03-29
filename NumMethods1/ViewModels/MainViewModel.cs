@@ -309,7 +309,7 @@ namespace NumMethods1.ViewModels
             for (double i = _fromX; i < _toX; i += precVal)
                 ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
 
-            foreach (var root in RootsCollection.Where(root => root.SourceId == FunctionSelectorSelectedItem.Id))
+            foreach (var root in RootsCollection.Where(root => (root.SourceId == FunctionSelectorSelectedItem.Id) && (root.X>_fromX) && (root.X<_toX)))
             {
                 if (root.Method_Used == "Bi")
                     ChartBiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
@@ -323,7 +323,7 @@ namespace NumMethods1.ViewModels
             double from, to, approx , divRate = 1;
             if (!double.TryParse(FromXValueBind, out from) || !double.TryParse(ToXValueBind, out to) || !double.TryParse(ApproxValueBind, out approx))
             {
-                MessageBox.Show(Locale["#CannotParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Locale["#ValuesParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (from >= to)
@@ -333,7 +333,7 @@ namespace NumMethods1.ViewModels
             }
             if (IsIntervalDivisionEnabled && !double.TryParse(DivisionRateBind, out divRate))
             {
-                MessageBox.Show("Cannot parse interval division value", Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Locale["#IntervalDivParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -364,7 +364,8 @@ namespace NumMethods1.ViewModels
                 catch (BoundaryFunctionValuesOfTheSameSignException e)
                 {
                     if (!IsIntervalDivisionEnabled)
-                        MessageBox.Show($"{Locale["#EvenOrNoRootsException"]}\nFrom X value: {e.LeftValue}\nTo X value: {e.RightValue}", Locale["#RecommendDiffrentArgs"],
+                        MessageBox.Show($"{Locale["#EvenOrNoRootsException"]}\nFrom X value: {e.LeftValue}\n" +
+                                        $"To X value: {e.RightValue}", Locale["#RecommendDiffrentArgs"],
                             MessageBoxButton.OK,
                             MessageBoxImage.Error);
                     else

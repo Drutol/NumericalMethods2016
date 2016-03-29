@@ -6,7 +6,6 @@ namespace NumMethods1.NumCore
     {
         private static int _id = 1;
         public int Id => _id;
-
         public double GetValue(double x)
         {
             return x * x * ( x - 2 ) + 50;
@@ -45,9 +44,9 @@ namespace NumMethods1.NumCore
         public int Id => _id;
         public double GetValue(double x)
         {
-            return x * ( x * x / 2*x - 10*x*x*x ) + 2000;
+            return x * x * ( 1 / 2 - 10*x*x ) + 2000;
         }
 
-        public string TextRepresentation => "(x^3)/2 - x*10 + 18";
+        public string TextRepresentation => "(x^2)/2 - (x^4)*10 + 18";
     }
 }

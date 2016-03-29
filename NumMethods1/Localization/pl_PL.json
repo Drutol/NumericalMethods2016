@@ -18,6 +18,7 @@
   "#EvenOrNoRootsException": "Dla podanych argumentów funkcja nie posiada pierwiastków lub funkcja ma parzystą ilość pierwiastków.",
   "#CannotParseException": "Podane wartości nie mogą zostać przeanalizowane.",
   "#IntervalEndpointsException": "Górny X jest mniejszy niż dolny.",
+  "#IntervalDivParseException": "Wystąpił błąd przy dzieleniu przedziału.",
   "#RecommendDiffrentArgs": "Spróbuj ustawić inne wartości."
 }
 
