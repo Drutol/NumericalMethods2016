@@ -297,25 +297,7 @@ namespace NumMethods1.ViewModels
         public MainViewModel()
         {
             FunctionSelectorSelectedItem = AvailableFunctions[0];
-            CurrentLocale = AvailableLocale.EN; //default
-        }
-
-        private void UpdateChart()
-        {
-            var precVal = (Math.Abs(_toX) + Math.Abs(_fromX))*_sliderValue/200;
-            ChartData.Clear();
-            ChartBiRootData.Clear();
-            ChartFalsiRootData.Clear();
-            for (double i = _fromX; i < _toX; i += precVal)
-                ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
-
-            foreach (var root in RootsCollection.Where(root => (root.SourceId == FunctionSelectorSelectedItem.Id) && (root.X>_fromX) && (root.X<_toX)))
-            {
-                if (root.Method_Used == "Bi")
-                    ChartBiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
-                else
-                    ChartFalsiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
-            }
+            CurrentLocale = AvailableLocale.EN; //Setting default language.
         }
 
         private void SubmitData()
@@ -339,9 +321,7 @@ namespace NumMethods1.ViewModels
 
             _fromX = from;
             _toX = to;
-
-
-
+            
             //Add results to the list.
             int noRootsCounter = 0, maxIterCounter = 0, divisionsSuccesses = 0;
             double intervalStep = (Math.Abs(from) + Math.Abs(to))/divRate;
@@ -400,6 +380,24 @@ namespace NumMethods1.ViewModels
 
             //Once we are done we can render the chart.
             UpdateChart();
+        }
+
+        private void UpdateChart()
+        {
+            var precVal = (Math.Abs(_toX) + Math.Abs(_fromX)) * _sliderValue / 200;
+            ChartData.Clear();
+            ChartBiRootData.Clear();
+            ChartFalsiRootData.Clear();
+            for (double i = _fromX; i < _toX; i += precVal)
+                ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
+
+            foreach (var root in RootsCollection.Where(root => (root.SourceId == FunctionSelectorSelectedItem.Id) && (root.X > _fromX) && (root.X < _toX)))
+            {
+                if (root.Method_Used == "Bi")
+                    ChartBiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
+                else
+                    ChartFalsiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
+            }
         }
     }
 }

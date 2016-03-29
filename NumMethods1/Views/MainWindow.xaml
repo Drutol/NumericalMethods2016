@@ -113,10 +113,11 @@
         <charting:Chart Grid.ColumnSpan="2" Grid.Row="1" Margin="5,5,0,5">
             <charting:Chart.LegendStyle>
                 <Style TargetType="visualizationToolkit:Legend">
-                    <Setter Property="Width" Value="0" />
+                    <Setter Property="Width" Value="130" />
                 </Style>
             </charting:Chart.LegendStyle>
             <charting:LineSeries
+                Title="{Binding Locale[#Func]}"
                 ItemsSource="{Binding ChartData}"
                 DependentValueBinding="{Binding Path=Value}"
                 IndependentValueBinding="{Binding Path=Key}" >
@@ -130,6 +131,7 @@
                 </charting:LineSeries.DataPointStyle>
             </charting:LineSeries>
             <charting:LineSeries
+                Title="{Binding Locale[#BiRoots]}"
                 ItemsSource="{Binding ChartBiRootData}"
                 DependentValueBinding="{Binding Path=Value}"              
                 IndependentValueBinding="{Binding Path=Key}" >
@@ -145,6 +147,7 @@
                 </charting:LineSeries.DataPointStyle>
             </charting:LineSeries>
             <charting:LineSeries
+                Title="{Binding Locale[#FalsiRoots]}"
                 ItemsSource="{Binding ChartFalsiRootData}"
                 DependentValueBinding="{Binding Path=Value}"
                 IndependentValueBinding="{Binding Path=Key}" >
