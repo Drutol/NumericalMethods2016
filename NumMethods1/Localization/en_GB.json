@@ -15,9 +15,16 @@
   "#SelectFunction": "Select desired function:",
   "#Submit": "Sumbit",
   "#ToX": "To X",
-  "#EvenOrNoRootsException": "For provided arguments function does not have root or has even amount of them.",
+  "#IntervalDiv": "Divide the base interval:",
+  "#EvenOrNoRootsException1": "For provided arguments function does not have root or has even amount of them.\n\nLeft endpoint value: ",
+  "#EvenOrNoRootsException2": "Right endpoint value: ",
   "#ValuesParseException": "Provided values cannot be parsed.",
   "#IntervalEndpointsException": "Upper endpoint is smaller than lower one.",
   "#IntervalDivParseException": "Cannot parse interval division value",
-  "#RecommendDiffrentArgs": "Try setting different values."
+  "#RecommendDiffrentArgs": "Try setting different values.",
+  "#DividedIntervalRaport1": "Managed to find ",
+  "#DividedIntervalRaport2": " roots total.\n\nExceptions during division:\n",
+  "#DividedIntervalRaport3": " intervals exceeded max iteration value.\n",
+  "#DividedIntervalRaport4": " intervals had boundary values of the same sign.",
+  "#DividedIntervalRaport5": "Interval division failures"
 }

@@ -79,7 +79,7 @@
             </StackPanel>
             <Border BorderBrush="LightGray" BorderThickness="0,2,0,0">
                 <StackPanel>
-                    <TextBlock Text="If both values on ends of provided interval are of the same sign divide this interval:" TextWrapping="Wrap" TextAlignment="Center"/>
+                    <TextBlock Text="{Binding Locale[#IntervalDiv]}" TextWrapping="Wrap" TextAlignment="Center"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>

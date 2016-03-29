@@ -15,11 +15,18 @@
   "#SelectFunction": "Wybierz funkcję:",
   "#Submit": "Zatwierdz",
   "#ToX": "Górny X",
-  "#EvenOrNoRootsException": "Dla podanych argumentów funkcja nie posiada pierwiastków lub funkcja ma parzystą ilość pierwiastków.",
+  "#IntervalDiv": "Podziel przedział bazowy:",
+  "#EvenOrNoRootsException1": "Dla podanych argumentów funkcja nie posiada pierwiastków lub funkcja ma parzystą ilość pierwiastków.\n\nWartość na lewym krańcu: ",
+  "#EvenOrNoRootsException2": "Wartość na prawym krańcu: ",
   "#CannotParseException": "Podane wartości nie mogą zostać przeanalizowane.",
   "#IntervalEndpointsException": "Górny X jest mniejszy niż dolny.",
   "#IntervalDivParseException": "Wystąpił błąd przy dzieleniu przedziału.",
-  "#RecommendDiffrentArgs": "Spróbuj ustawić inne wartości."
+  "#RecommendDiffrentArgs": "Spróbuj ustawić inne wartości.",
+  "#DividedIntervalRaport1": "Ilość znalexionych pierwiastków: ",
+  "#DividedIntervalRaport2": "\n\nWyjątki w czasie podziału:\n",
+  "#DividedIntervalRaport3": " przedziały w których przkroczono maksymalną ilość iteracji.\n",
+  "#DividedIntervalRaport4": " przedziały mające wartości tego samego znaku na krańcach przedziału.",
+  "#DividedIntervalRaport5": "Interval division failures"
 }
 
 

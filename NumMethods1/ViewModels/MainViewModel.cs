@@ -364,8 +364,9 @@ namespace NumMethods1.ViewModels
                 catch (BoundaryFunctionValuesOfTheSameSignException e)
                 {
                     if (!IsIntervalDivisionEnabled)
-                        MessageBox.Show($"{Locale["#EvenOrNoRootsException"]}\nFrom X value: {e.LeftValue}\n" +
-                                        $"To X value: {e.RightValue}", Locale["#RecommendDiffrentArgs"],
+                        MessageBox.Show($"{Locale["#EvenOrNoRootsException1"]}{e.LeftValue}\n" +
+                                        $"{Locale["#EvenOrNoRootsException2"]}{e.RightValue}", 
+                                        Locale["#RecommendDiffrentArgs"],
                             MessageBoxButton.OK,
                             MessageBoxImage.Error);
                     else
@@ -385,8 +386,11 @@ namespace NumMethods1.ViewModels
             if (maxIterCounter > 0 || noRootsCounter > 0)
             {
                 MessageBox.Show(
-                    $"Managed to find {divisionsSuccesses} roots total.\n\nExceptions during division:\n\n{maxIterCounter} intervals exceeded max iteration value.\n{noRootsCounter} intervals had boundary values of the same sign.",
-                    "Interval division failures", MessageBoxButton.OK,
+                    $"{Locale["#DividedIntervalRaport1"]}{divisionsSuccesses}" +
+                    $"{Locale["#DividedIntervalRaport2"]}{maxIterCounter}" +
+                    $"{Locale["#DividedIntervalRaport3"]}{noRootsCounter}" +
+                    $"{Locale["#DividedIntervalRaport4"]}",
+                    Locale["#DividedIntervalRaport5"], MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
 
