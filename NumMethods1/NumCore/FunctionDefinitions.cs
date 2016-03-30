@@ -6,7 +6,6 @@ namespace NumMethods1.NumCore
     {
         private static int _id = 1;
         public int Id => _id;
-
         public double GetValue(double x)
         {
             return x * x * ( x - 2 ) + 50;
@@ -21,10 +20,10 @@ namespace NumMethods1.NumCore
         public int Id => _id;
         public double GetValue(double x)
         {
-            return Math.Sin(x);
+            return 15 * Math.Sin(5 * x) - 2 * Math.Tan(x - 2);
         }
 
-        public string TextRepresentation => "sin(x)";
+        public string TextRepresentation => "15*sin(5*x)-2*tan(x-2)";
     }
 
     internal class Function3 : IFunction
@@ -45,9 +44,9 @@ namespace NumMethods1.NumCore
         public int Id => _id;
         public double GetValue(double x)
         {
-            return x * ( x * x / 2*x - 10*x*x*x ) + 2000;
+            return x * x * ( 1 / 2 - 10*x*x ) + 2000;
         }
 
-        public string TextRepresentation => "(x^3)/2 - x*10 + 18";
+        public string TextRepresentation => "(x^2)/2 - (x^4)*10 + 18";
     }
 }

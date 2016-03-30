@@ -27,6 +27,9 @@ namespace NumMethods1.ViewModels
 
         #region Properties
 
+        /// <summary>
+        ///     Stores pre-defined phrases.
+        /// </summary>
         private Dictionary<string, string> _locale;
 
         public Dictionary<string, string> Locale
@@ -191,7 +194,11 @@ namespace NumMethods1.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Indicates if the base interval sould be divided.
+        /// </summary>
         private bool _isIntervalDivisionEnabled;
+
         public bool IsIntervalDivisionEnabled
         {
             get { return _isIntervalDivisionEnabled; }
@@ -202,6 +209,9 @@ namespace NumMethods1.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Current ammount subintervals to be created.
+        /// </summary>
         private string _divisionRate = "";
 
         public string DivisionRateBind
@@ -222,6 +232,9 @@ namespace NumMethods1.ViewModels
         public ICommand SubmitDataCommand =>
             _submitDataCommand ?? (_submitDataCommand = new RelayCommand(SubmitData));
 
+        /// <summary>
+        ///     Command bound to inner "clear results" button.
+        /// </summary>
         private ICommand _clearParticularResultsCommand;
 
         public ICommand ClearParticularResultsCommand =>
@@ -242,6 +255,9 @@ namespace NumMethods1.ViewModels
                 
             }));
 
+        /// <summary>
+        ///     Command bound to main "clear results" button.
+        /// </summary>
         private ICommand _clearResultsCommand;
 
         public ICommand ClearResultsCommand =>
@@ -254,6 +270,9 @@ namespace NumMethods1.ViewModels
                 ChartFalsiRootData.Clear();
             }));
 
+        /// <summary>
+        ///     Command bound to "flag" button.
+        /// </summary>
         private ICommand _changeLanguageCommand;
 
         public ICommand ChangeLanguageCommand =>
@@ -265,6 +284,9 @@ namespace NumMethods1.ViewModels
                     CurrentLocale += 1;
             }));
 
+        /// <summary>
+        ///     Indicates which language should be used.
+        /// </summary>
         private AvailableLocale _currentLocale;
 
         public AvailableLocale CurrentLocale
@@ -297,25 +319,7 @@ namespace NumMethods1.ViewModels
         public MainViewModel()
         {
             FunctionSelectorSelectedItem = AvailableFunctions[0];
-            CurrentLocale = AvailableLocale.EN; //default
-        }
-
-        private void UpdateChart()
-        {
-            var precVal = (Math.Abs(_toX) + Math.Abs(_fromX))*_sliderValue/200;
-            ChartData.Clear();
-            ChartBiRootData.Clear();
-            ChartFalsiRootData.Clear();
-            for (double i = _fromX; i < _toX; i += precVal)
-                ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
-
-            foreach (var root in RootsCollection.Where(root => root.SourceId == FunctionSelectorSelectedItem.Id))
-            {
-                if (root.Method_Used == "Bi")
-                    ChartBiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
-                else
-                    ChartFalsiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
-            }
+            CurrentLocale = AvailableLocale.EN; //Setting default language.
         }
 
         private void SubmitData()
@@ -323,7 +327,7 @@ namespace NumMethods1.ViewModels
             double from, to, approx , divRate = 1;
             if (!double.TryParse(FromXValueBind, out from) || !double.TryParse(ToXValueBind, out to) || !double.TryParse(ApproxValueBind, out approx))
             {
-                MessageBox.Show(Locale["#CannotParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Locale["#ValuesParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (from >= to)
@@ -333,15 +337,13 @@ namespace NumMethods1.ViewModels
             }
             if (IsIntervalDivisionEnabled && !double.TryParse(DivisionRateBind, out divRate))
             {
-                MessageBox.Show("Cannot parse interval division value", Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Locale["#IntervalDivParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-
+            
             _fromX = from;
             _toX = to;
-
-
-
+            
             //Add results to the list.
             int noRootsCounter = 0, maxIterCounter = 0, divisionsSuccesses = 0;
             double intervalStep = (Math.Abs(from) + Math.Abs(to))/divRate;
@@ -364,7 +366,9 @@ namespace NumMethods1.ViewModels
                 catch (BoundaryFunctionValuesOfTheSameSignException e)
                 {
                     if (!IsIntervalDivisionEnabled)
-                        MessageBox.Show($"{Locale["#EvenOrNoRootsException"]}\nFrom X value: {e.LeftValue}\nTo X value: {e.RightValue}", Locale["#RecommendDiffrentArgs"],
+                        MessageBox.Show($"{Locale["#EvenOrNoRootsException1"]}{e.LeftValue}\n" +
+                                        $"{Locale["#EvenOrNoRootsException2"]}{e.RightValue}", 
+                                        Locale["#RecommendDiffrentArgs"],
                             MessageBoxButton.OK,
                             MessageBoxImage.Error);
                     else
@@ -384,8 +388,11 @@ namespace NumMethods1.ViewModels
             if (maxIterCounter > 0 || noRootsCounter > 0)
             {
                 MessageBox.Show(
-                    $"Managed to find {divisionsSuccesses} roots total.\n\nExceptions during division:\n\n{maxIterCounter} intervals exceeded max iteration value.\n{noRootsCounter} intervals had boundary values of the same sign.",
-                    "Interval division failures", MessageBoxButton.OK,
+                    $"{Locale["#DividedIntervalRaport1"]}{divisionsSuccesses}" +
+                    $"{Locale["#DividedIntervalRaport2"]}{maxIterCounter}" +
+                    $"{Locale["#DividedIntervalRaport3"]}{noRootsCounter}" +
+                    $"{Locale["#DividedIntervalRaport4"]}",
+                    Locale["#DividedIntervalRaport5"], MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
 
@@ -395,6 +402,24 @@ namespace NumMethods1.ViewModels
 
             //Once we are done we can render the chart.
             UpdateChart();
+        }
+
+        private void UpdateChart()
+        {
+            var precVal = (Math.Abs(_toX) + Math.Abs(_fromX)) * _sliderValue / 200;
+            ChartData.Clear();
+            ChartBiRootData.Clear();
+            ChartFalsiRootData.Clear();
+            for (double i = _fromX; i < _toX; i += precVal)
+                ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
+
+            foreach (var root in RootsCollection.Where(root => (root.SourceId == FunctionSelectorSelectedItem.Id) && (root.X > _fromX) && (root.X < _toX)))
+            {
+                if (root.Method_Used == "Bi")
+                    ChartBiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
+                else
+                    ChartFalsiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
+            }
         }
     }
 }
