@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using Newtonsoft.Json;
 using NumMethods1.Exceptions;
 using NumMethods1.NumCore;
 using NumMethods1.Utils;
@@ -18,6 +17,160 @@ namespace NumMethods1.ViewModels
 {
     public sealed class MainViewModel : ViewModelBase
     {
+        /// <summary>
+        ///     Initializes a new instance of the MainViewModel class.
+        /// </summary>
+        public MainViewModel()
+        {
+            FunctionSelectorSelectedItem = AvailableFunctions[0];
+            CurrentLocale = AvailableLocale.EN; //Setting default language.
+        }
+
+        private async void SubmitData()
+        {
+            double from, to, approx, divRate = 1;
+            if (!double.TryParse(FromXValueBind, out from) || !double.TryParse(ToXValueBind, out to) ||
+                !double.TryParse(ApproxValueBind, out approx))
+            {
+                MessageBox.Show(Locale["#ValuesParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+            if (from >= to)
+            {
+                MessageBox.Show(Locale["#IntervalEndpointsException"], Locale["#RecommendDiffrentArgs"],
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (IsIntervalDivisionEnabled && !double.TryParse(DivisionRateBind, out divRate))
+            {
+                MessageBox.Show(Locale["#IntervalDivParseException"], Locale["#RecommendDiffrentArgs"],
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            ProgressBarVisibility = (int)divRate != 1 ? Visibility.Visible : Visibility.Collapsed;
+            _fromX = from;
+            _toX = to;
+
+            //Add results to the list.
+            int noRootsCounter = 0, maxIterCounter = 0, divisionsSuccesses = 0;
+            var intervalStep = Math.Abs(from - to) / divRate;
+            var roots = await Task.Run(() =>
+            {
+                List<FunctionRoot> output = new List<FunctionRoot>();
+                for (var i = from; i < to; i += intervalStep)
+                {
+                    //Prepare argument.
+                    var arg = new GetFunctionRootArgs
+                    {
+                        FromX = i,
+                        ToX = i + intervalStep,
+                        Approx = approx,
+                        MaxIterations = _maxIterations
+                    };
+                    try
+                    {
+                        output.Add(MathCore.GetFunctionRootBi(FunctionSelectorSelectedItem, arg));
+                    }
+                    catch (Exception e)
+                    {
+                        //if this function return true , it means that values on the interval's borders are of the same sign
+                        if (CatchFunction(e, ref maxIterCounter, ref noRootsCounter,"Bi"))
+                            continue;
+                    }
+                    try
+                    {
+                        output.Add(MathCore.GetFunctionRootFalsi(FunctionSelectorSelectedItem, arg));
+                    }
+                    catch (Exception e)
+                    {
+                        CatchFunction(e, ref maxIterCounter, ref noRootsCounter, "Falsi");
+                    }
+
+                }
+                return output;
+            });
+            foreach (var functionRoot in roots)
+                RootsCollection.Add(functionRoot);
+            
+            
+
+            if (maxIterCounter > 0 || noRootsCounter > 0)
+            {
+                MessageBox.Show(Locale["#DividedIntervalRaport"]
+                    .Replace("&s1;", divisionsSuccesses.ToString())
+                    .Replace("&s2;", maxIterCounter.ToString())
+                    .Replace("&s3;", noRootsCounter.ToString()),
+                    Locale["#DividedIntervalRaport1"], MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
+
+            //Update DataGrid's groups definitions.
+            RootsView = new ListCollectionView(RootsCollection);
+
+            //Once we are done we can render the chart.
+            UpdateChart();
+        }
+
+        private bool CatchFunction(Exception e,ref int counterIter,ref int counterBoundary,string method)
+        {
+            if (e is BoundaryFunctionValuesOfTheSameSignException)
+            {
+                if (!IsIntervalDivisionEnabled)
+                    MessageBox.Show($"{Locale["#EvenOrNoRootsException1"]}{(e as BoundaryFunctionValuesOfTheSameSignException).LeftValue}\n" +
+                                    $"{Locale["#EvenOrNoRootsException2"]}{(e as BoundaryFunctionValuesOfTheSameSignException).RightValue}",
+                        Locale["#RecommendDiffrentArgs"],
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                else
+                    counterBoundary++;
+
+                return true;
+            }
+            if(e is MaxIterationsReachedException)
+            {
+                if (!IsIntervalDivisionEnabled)
+                    MessageBox.Show(Locale["#TooManyIterationsException"], $"{Locale["#RecommendDiffrentArgs"]} - {method}",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                else
+                    counterIter++;
+            }
+            return false;
+        }
+
+
+        private void UpdateChart()
+        {
+            var precVal = (Math.Abs(_toX) + Math.Abs(_fromX))*_sliderValue/200;
+            ChartData.Clear();
+            ChartBiRootData.Clear();
+            ChartFalsiRootData.Clear();
+            for (var i = _fromX; i < _toX; i += precVal)
+                ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
+
+            int step = RootsCollection.Count > 100 ? Convert.ToInt32(_divisionRate) / 10 : 1;
+
+            IntervalDivNoteBind = step == 1 ? "" : Locale["#IntervalDivNote"].Replace("&arg;",step.ToString());
+
+            RaisePropertyChanged(() => IntervalDivNoteBind);
+            foreach (
+                var root in
+                    RootsCollection.Where(
+                        (root,i) =>
+                           (i % step == 0) && (root.SourceId == FunctionSelectorSelectedItem.Id) && (root.X > _fromX) && (root.X < _toX)))
+            {
+                if (root.Method_Used == "Bi")
+                    ChartBiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
+                else
+                    ChartFalsiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
+            }
+
+            ProgressBarVisibility = Visibility.Collapsed;
+
+        }
+
         #region Fields
 
         private double _fromX;
@@ -103,7 +256,6 @@ namespace NumMethods1.ViewModels
         /// <summary>
         ///     Phrase which indicates which flag image to use.
         /// </summary>
-
         private string _langImgSource;
 
         public string LangImgSourceBind
@@ -116,6 +268,19 @@ namespace NumMethods1.ViewModels
             }
         }
 
+        private string _intervalDivNote = "";
+
+        public string IntervalDivNoteBind { get; set; }
+        //{
+        //    get { return _intervalDivNote; }
+        //    set
+        //    {
+        //        int rate = Convert.ToInt32(_divisionRate);
+        //        _intervalDivNote = "sztec" + ;
+        //        RaisePropertyChanged(() => IntervalDivNoteBind);
+        //    }
+        //}
+        
         /// <summary>
         ///     Value which is directly bound to corresponding textbox.
         /// </summary>
@@ -157,7 +322,7 @@ namespace NumMethods1.ViewModels
             set
             {
                 int val;
-                if (!int.TryParse(value, out val) || val <= 1)
+                if (!int.TryParse(value, out val) || val < 1)
                     val = 100;
                 _maxIterations = val;
                 RaisePropertyChanged(() => MaxIterations);
@@ -189,7 +354,7 @@ namespace NumMethods1.ViewModels
             get { return _sliderValue; }
             set
             {
-                _sliderValue = (int)value;
+                _sliderValue = (int) value;
                 RaisePropertyChanged(() => SliderValue);
             }
         }
@@ -252,7 +417,6 @@ namespace NumMethods1.ViewModels
                 //Clearing the chart when there is no more data diplayed.
                 if (data.Count == 0)
                     ChartData.Clear();
-                
             }));
 
         /// <summary>
@@ -278,7 +442,7 @@ namespace NumMethods1.ViewModels
         public ICommand ChangeLanguageCommand =>
             _changeLanguageCommand ?? (_changeLanguageCommand = new RelayCommand(() =>
             {
-                if ((int)CurrentLocale == Enum.GetNames(typeof (AvailableLocale)).Length -1 )
+                if ((int) CurrentLocale == Enum.GetNames(typeof (AvailableLocale)).Length - 1)
                     CurrentLocale = 0;
                 else
                     CurrentLocale += 1;
@@ -311,115 +475,18 @@ namespace NumMethods1.ViewModels
             }
         }
 
+        private Visibility _progressBarVisibility = Visibility.Collapsed;
+
+        public Visibility ProgressBarVisibility
+        {
+            get { return _progressBarVisibility; }
+            set
+            {
+                _progressBarVisibility = value;
+                RaisePropertyChanged(() => ProgressBarVisibility);
+            }
+        }
+
         #endregion
-
-        /// <summary>
-        ///     Initializes a new instance of the MainViewModel class.
-        /// </summary>
-        public MainViewModel()
-        {
-            FunctionSelectorSelectedItem = AvailableFunctions[0];
-            CurrentLocale = AvailableLocale.EN; //Setting default language.
-        }
-
-        private void SubmitData()
-        {
-            double from, to, approx , divRate = 1;
-            if (!double.TryParse(FromXValueBind, out from) || !double.TryParse(ToXValueBind, out to) || !double.TryParse(ApproxValueBind, out approx))
-            {
-                MessageBox.Show(Locale["#ValuesParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            if (from >= to)
-            {
-                MessageBox.Show(Locale["#IntervalEndpointsException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            if (IsIntervalDivisionEnabled && !double.TryParse(DivisionRateBind, out divRate))
-            {
-                MessageBox.Show(Locale["#IntervalDivParseException"], Locale["#RecommendDiffrentArgs"], MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            
-            _fromX = from;
-            _toX = to;
-            
-            //Add results to the list.
-            int noRootsCounter = 0, maxIterCounter = 0, divisionsSuccesses = 0;
-            double intervalStep = (Math.Abs(from) + Math.Abs(to))/divRate;
-            for (double i = from; i < to; i += intervalStep)
-            {            
-                //Prepare argument.
-                var arg = new GetFunctionRootArgs
-                {
-                    FromX = i,
-                    ToX = i+intervalStep,
-                    Approx = approx,
-                    MaxIterations = _maxIterations
-                };
-                try
-                {
-                    RootsCollection.Add(MathCore.GetFunctionRootFalsi(FunctionSelectorSelectedItem, arg));
-                    RootsCollection.Add(MathCore.GetFunctionRootBi(FunctionSelectorSelectedItem, arg));
-                    divisionsSuccesses++;
-                }
-                catch (BoundaryFunctionValuesOfTheSameSignException e)
-                {
-                    if (!IsIntervalDivisionEnabled)
-                        MessageBox.Show($"{Locale["#EvenOrNoRootsException1"]}{e.LeftValue}\n" +
-                                        $"{Locale["#EvenOrNoRootsException2"]}{e.RightValue}", 
-                                        Locale["#RecommendDiffrentArgs"],
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error);
-                    else
-                        noRootsCounter++;
-                }
-                catch (MaxIterationsReachedException)
-                {
-                    if (!IsIntervalDivisionEnabled)
-                        MessageBox.Show(Locale["#EvenOrNoRootsException"], Locale["#RecommendDiffrentArgs"],
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error);
-                    else
-                        maxIterCounter++;
-                }
-
-            }
-            if (maxIterCounter > 0 || noRootsCounter > 0)
-            {
-                MessageBox.Show(
-                    $"{Locale["#DividedIntervalRaport1"]}{divisionsSuccesses}" +
-                    $"{Locale["#DividedIntervalRaport2"]}{maxIterCounter}" +
-                    $"{Locale["#DividedIntervalRaport3"]}{noRootsCounter}" +
-                    $"{Locale["#DividedIntervalRaport4"]}",
-                    Locale["#DividedIntervalRaport5"], MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
-
-
-            //Update DataGrid's groups definitions.
-            RootsView = new ListCollectionView(RootsCollection);
-
-            //Once we are done we can render the chart.
-            UpdateChart();
-        }
-
-        private void UpdateChart()
-        {
-            var precVal = (Math.Abs(_toX) + Math.Abs(_fromX)) * _sliderValue / 200;
-            ChartData.Clear();
-            ChartBiRootData.Clear();
-            ChartFalsiRootData.Clear();
-            for (double i = _fromX; i < _toX; i += precVal)
-                ChartData.Add(new KeyValuePair<double, double>(i, FunctionSelectorSelectedItem.GetValue(i)));
-
-            foreach (var root in RootsCollection.Where(root => (root.SourceId == FunctionSelectorSelectedItem.Id) && (root.X > _fromX) && (root.X < _toX)))
-            {
-                if (root.Method_Used == "Bi")
-                    ChartBiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
-                else
-                    ChartFalsiRootData.Add(new KeyValuePair<double, double>(root.X, root.Y));
-            }
-        }
     }
 }
