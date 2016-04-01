@@ -28,7 +28,7 @@
   "#IntervalEndpointsException": "Górny X jest mniejszy niż dolny.",
   "#IntervalDivParseException": "Wystąpił błąd przy dzieleniu przedziału.",
   "#RecommendDiffrentArgs": "Spróbuj ustawić inne wartości.",
-  "#DividedIntervalRaport": "Ilość znalezionych pierwiastków: &s1;\n\nWyjątki w czasie podziału:\n&s2; przedziały w których przkroczono maksymalną ilość iteracji.\n &s3; przedziały mające wartości tego samego znaku na krańcach przedziału.",
+  "#DividedIntervalRaport": "Ilość znalezionych przybliżeń pierwiastków: &s1;\n\nWyjątki w czasie podziału:\n&s2; przedziały w których przkroczono maksymalną ilość iteracji.\n &s3; przedziały mające wartości tego samego znaku na krańcach przedziału.",
   "#DividedIntervalRaport1": "Raport z podziału przedziału."
   
 }
