@@ -28,6 +28,6 @@
   "#IntervalEndpointsException": "Upper endpoint is smaller than lower one.",
   "#IntervalDivParseException": "Cannot parse interval division value",
   "#RecommendDiffrentArgs": "Try setting different values.",
-  "#DividedIntervalRaport": "Managed to find &s1; roots total.\n\nExceptions during division:\n&s2; intervals exceeded max iteration value.\n&s3; intervals had boundary values of the same sign.",
+  "#DividedIntervalRaport": "Managed to find &s1; roots' approximations total.\n\nExceptions during division:\n&s2; intervals exceeded max iteration value.\n&s3; intervals had boundary values of the same sign.",
   "#DividedIntervalRaport1": "Interval division raport"
 }
