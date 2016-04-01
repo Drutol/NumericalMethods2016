@@ -72,6 +72,7 @@ namespace NumMethods1.ViewModels
                     try
                     {
                         output.Add(MathCore.GetFunctionRootBi(FunctionSelectorSelectedItem, arg));
+                        divisionsSuccesses++;
                     }
                     catch (Exception e)
                     {
@@ -82,6 +83,7 @@ namespace NumMethods1.ViewModels
                     try
                     {
                         output.Add(MathCore.GetFunctionRootFalsi(FunctionSelectorSelectedItem, arg));
+                        divisionsSuccesses++;
                     }
                     catch (Exception e)
                     {
