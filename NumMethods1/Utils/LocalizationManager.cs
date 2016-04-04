@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using Newtonsoft.Json;
 
 namespace NumMethods1.Utils
@@ -12,31 +7,29 @@ namespace NumMethods1.Utils
     public enum AvailableLocale
     {
         PL,
-        EN,
+        EN
     }
 
     public static class LocalizationManager
     {
-        public static Dictionary<string,string> EnDictionary { get; }
-        public static Dictionary<string,string> PlDictionary { get; } 
-
-        static LocalizationManager ()
+        static LocalizationManager()
         {
-            using (StreamReader writer = new StreamReader(@"./Localization/pl_PL.json"))
+            using (var writer = new StreamReader(@"./Localization/pl_PL.json"))
             {
                 PlDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(writer.ReadToEnd());
             }
-            using (StreamReader writer = new StreamReader(@"./Localization/en_GB.json"))
+            using (var writer = new StreamReader(@"./Localization/en_GB.json"))
             {
                 EnDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(writer.ReadToEnd());
             }
         }
 
+        public static Dictionary<string, string> EnDictionary { get; }
+        public static Dictionary<string, string> PlDictionary { get; }
+
         public static AvailableLocale GetNextLocale(AvailableLocale locale)
         {
-            return (int)locale + 1 > 1 ? AvailableLocale.PL : locale + 1;
+            return (int) locale + 1 > 1 ? AvailableLocale.PL : locale + 1;
         }
     }
-
-    
 }

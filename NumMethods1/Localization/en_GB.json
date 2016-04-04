@@ -15,8 +15,19 @@
   "#SelectFunction": "Select desired function:",
   "#Submit": "Sumbit",
   "#ToX": "To X",
-  "#EvenOrNoRootsException": "For provided arguments function does not have root or has even amount of them.",
-  "#CannotParseException": "Provided values cannot be parsed.",
+  "#IntervalDivNote": "*Note: Chart displays every &arg;th root.",
+  "#LangTooltip": "Zmień język.",
+  "#IntervalDiv": "Divide the base interval:",
+  "#BiRoots": "Bisection roots",
+  "#FalsiRoots": "Regula falsi roots",
+  "#Func": "Selected function",
+  "#EvenOrNoRootsException1": "For provided arguments function does not have root or has even amount of them.\n\nLeft endpoint value: ",
+  "#EvenOrNoRootsException2": "Right endpoint value: ",
+  "#TooManyIterationsException": "Iteration counter exceeded set threshold.",
+  "#ValuesParseException": "Provided values cannot be parsed.",
   "#IntervalEndpointsException": "Upper endpoint is smaller than lower one.",
-  "#RecommendDiffrentArgs": "Try setting different values."
+  "#IntervalDivParseException": "Cannot parse interval division value",
+  "#RecommendDiffrentArgs": "Try setting different values.",
+  "#DividedIntervalRaport": "Managed to find &s1; roots' approximations total.\n\nExceptions during division:\n&s2; intervals exceeded max iteration value.\n&s3; intervals had boundary values of the same sign.",
+  "#DividedIntervalRaport1": "Interval division raport"
 }

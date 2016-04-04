@@ -1,6 +1,5 @@
 ﻿using System;
 using NumMethods1.Exceptions;
-using NumMethods1.Utils;
 
 namespace NumMethods1.NumCore
 {
@@ -24,13 +23,12 @@ namespace NumMethods1.NumCore
         /// </returns>
         public static FunctionRoot GetFunctionRootBi(IFunction source, GetFunctionRootArgs args)
         {
-            var counter = 0;
+            var counter = 1;
 
             double val1 = source.GetValue(args.FromX),
                 val2 = source.GetValue(args.ToX);
 
             double from = args.FromX, to = args.ToX;
-            var mid = (from + to)/2;
 
             if (val1*val2 > 0)
                 throw new BoundaryFunctionValuesOfTheSameSignException
@@ -39,9 +37,11 @@ namespace NumMethods1.NumCore
                     RightValue = val2
                 };
 
-            var midVal = source.GetValue(mid);
             while (counter < args.MaxIterations)
             {
+                var mid = (from + to) / 2;
+                var midVal = source.GetValue(mid);
+
                 if (Math.Abs(midVal) < args.Approx)
                 {
                     return new FunctionRoot
@@ -57,7 +57,6 @@ namespace NumMethods1.NumCore
                 }
 
                 mid = (from + to)/2;
-
                 midVal = source.GetValue(mid);
 
                 if ((midVal < 0 && val1 < 0) || (midVal > 0 && val1 > 0))
@@ -66,7 +65,7 @@ namespace NumMethods1.NumCore
                     to = mid;
                 counter++;
             }
-            
+
             throw new MaxIterationsReachedException();
         }
 
@@ -93,13 +92,13 @@ namespace NumMethods1.NumCore
                 throw new BoundaryFunctionValuesOfTheSameSignException
                 {
                     LeftValue = faVal,
-                    RightValue = fbVal,
+                    RightValue = fbVal
                 };
 
-            for (counter = 0; counter < args.MaxIterations; counter++)
+            for (counter = 1; counter < args.MaxIterations; counter++)
             {
-               double x = (faVal * b - fbVal * a) / (faVal - fbVal);
-               double fxVal = source.GetValue(x);
+                var x = (faVal*b - fbVal*a)/(faVal - fbVal);
+                var fxVal = source.GetValue(x);
 
                 if (Math.Abs(fxVal) < args.Approx)
                 {
@@ -115,7 +114,7 @@ namespace NumMethods1.NumCore
                     };
                 }
 
-                if (fxVal * fbVal > 0)
+                if (fxVal*fbVal > 0)
                 {
                     b = x;
                     fbVal = fxVal;
@@ -123,13 +122,13 @@ namespace NumMethods1.NumCore
                         faVal /= 2;
                     side = -1;
                 }
-                else if (faVal * fxVal > 0)
+                else
                 {
                     a = x;
                     faVal = fxVal;
-                    if (side == +1)
+                    if (side == 1)
                         fbVal /= 2;
-                    side = +1;
+                    side = 1;
                 }
             }
 

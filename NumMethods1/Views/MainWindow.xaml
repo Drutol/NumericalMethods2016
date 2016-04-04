@@ -3,13 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:NumMethods1"
         xmlns:converters="clr-namespace:NumMethods1.XamlConverters"
         xmlns:charting="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         xmlns:visualizationToolkit="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="635"
-        MinWidth="686" MinHeight="600"
+        Title="MainWindow" Height="640" Width="742"
+        MinWidth="742" MinHeight="620"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Window.Resources>
         <converters:ClearFunctionResultsTooltipContentConverter x:Key="ClearFunctionResultsTooltipContentConverter" />
@@ -21,8 +20,10 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="300" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <ProgressBar Grid.ColumnSpan="2" Grid.Row="1"  IsIndeterminate="True" Visibility="{Binding ProgressBarVisibility}"/>
         <StackPanel Grid.Column="0" Grid.Row="0" Margin="5">
             <TextBlock Text="{Binding Locale[#SelectFunction]}" HorizontalAlignment="Center" />
             <ComboBox ItemsSource="{Binding AvailableFunctions}" Height="20"
@@ -61,7 +62,7 @@
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <StackPanel Width="{Binding ElementName=ApproxStackPanel,Path=ActualWidth}">
-                                <TextBlock Text="{Binding Locale[#MaxIterations]}"/>
+                                <TextBlock Text="{Binding Locale[#MaxIterations]}" />
                                 <TextBox Text="{Binding MaxIterations,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                          HorizontalAlignment="Stretch" />
                             </StackPanel>
@@ -79,17 +80,17 @@
             </StackPanel>
             <Border BorderBrush="LightGray" BorderThickness="0,2,0,0">
                 <StackPanel>
-                    <TextBlock Text="If both values on ends of provided interval are of the same sign divide this interval:" TextWrapping="Wrap" TextAlignment="Center"/>
+                    <TextBlock Text="{Binding Locale[#IntervalDiv]}" TextWrapping="Wrap" TextAlignment="Center" />
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <CheckBox x:Name="EnableIntervalDivisionCheckbox" VerticalAlignment="Center"
-                                  IsChecked="{Binding IsIntervalDivisionEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                                  IsChecked="{Binding IsIntervalDivisionEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                         <TextBox Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                                  IsEnabled="{Binding ElementName=EnableIntervalDivisionCheckbox,Path=IsChecked}"
-                                 Text="{Binding DivisionRateBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                                 Text="{Binding DivisionRateBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
                 </StackPanel>
             </Border>
@@ -108,58 +109,10 @@
             <Slider Value="{Binding SliderValue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                     TickPlacement="BottomRight" IsSnapToTickEnabled="True"
                     Minimum="1" Maximum="15" />
-            <Button Content="{Binding Locale[#Submit]}" Command="{Binding SubmitDataCommand}" HorizontalAlignment="Stretch" Margin="5" />
+            <Button Content="{Binding Locale[#Submit]}" Command="{Binding SubmitDataCommand}"
+                    HorizontalAlignment="Stretch" Margin="5" />
         </StackPanel>
-        <charting:Chart Grid.ColumnSpan="2" Grid.Row="1" Margin="5,5,0,5">
-            <charting:Chart.LegendStyle>
-                <Style TargetType="visualizationToolkit:Legend">
-                    <Setter Property="Width" Value="0" />
-                </Style>
-            </charting:Chart.LegendStyle>
-            <charting:LineSeries
-                ItemsSource="{Binding ChartData}"
-                DependentValueBinding="{Binding Path=Value}"
-                IndependentValueBinding="{Binding Path=Key}" >
-                <charting:LineSeries.DataPointStyle >
-                    <Style TargetType="charting:DataPoint">
-                        <Setter Property="Background" Value="Gold"/>
-                        <Setter Property="Template" Value="{x:Null}"/>
-                        
-                        <Setter Property="BorderBrush" Value="Transparent"/>
-                    </Style>
-                </charting:LineSeries.DataPointStyle>
-            </charting:LineSeries>
-            <charting:LineSeries
-                ItemsSource="{Binding ChartBiRootData}"
-                DependentValueBinding="{Binding Path=Value}"              
-                IndependentValueBinding="{Binding Path=Key}" >
-                <charting:LineSeries.PolylineStyle>
-                    <Style TargetType="Polyline">
-                        <Setter Property="Visibility" Value="Collapsed"/>
-                    </Style>
-                </charting:LineSeries.PolylineStyle>
-                <charting:LineSeries.DataPointStyle>
-                    <Style TargetType="charting:DataPoint">
-                        <Setter Property="Background" Value="Crimson"/>
-                    </Style>
-                </charting:LineSeries.DataPointStyle>
-            </charting:LineSeries>
-            <charting:LineSeries
-                ItemsSource="{Binding ChartFalsiRootData}"
-                DependentValueBinding="{Binding Path=Value}"
-                IndependentValueBinding="{Binding Path=Key}" >
-                <charting:LineSeries.PolylineStyle>
-                    <Style TargetType="Polyline">
-                        <Setter Property="Visibility" Value="Collapsed"/>
-                    </Style>
-                </charting:LineSeries.PolylineStyle>
-                <charting:LineSeries.DataPointStyle>
-                    <Style TargetType="charting:DataPoint">
-                        <Setter Property="Background" Value="ForestGreen"/>
-                    </Style>
-                </charting:LineSeries.DataPointStyle>
-            </charting:LineSeries>
-        </charting:Chart>
+
         <Grid Grid.Column="1" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -172,32 +125,40 @@
                       HorizontalScrollBarVisibility="Auto"
                       HorizontalAlignment="Stretch"
                       CanUserResizeRows="False"
-                      IsReadOnly="True"
+                      IsReadOnly="false"
                       Background="Transparent" BorderBrush="Transparent" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding X}" MinWidth="50" Width="Auto">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="{Binding  Source={StaticResource Locator},Path=Main.Locale[#ChartColX]}" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding  Source={StaticResource Locator},Path=Main.Locale[#ChartColX]}"
+                                       TextWrapping="Wrap" />
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
                     <DataGridTextColumn Binding="{Binding Y}" MinWidth="50" Width="Auto">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColY]}"  TextWrapping="Wrap"/>
-                        </DataGridTextColumn.Header>    
+                            <TextBlock Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColY]}"
+                                       TextWrapping="Wrap" />
+                        </DataGridTextColumn.Header>
                     </DataGridTextColumn>
                     <DataGridTextColumn Binding="{Binding Iterated}" MinWidth="60">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColIterations]}" TextWrapping="Wrap"/>
+                            <TextBlock
+                                Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColIterations]}"
+                                TextWrapping="Wrap" />
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
                     <DataGridTextColumn Binding="{Binding Method_Used}" MinWidth="55">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColMethodUsed]}" TextWrapping="Wrap"/>
+                            <TextBlock
+                                Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColMethodUsed]}"
+                                TextWrapping="Wrap" />
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
                     <DataGridTextColumn Binding="{Binding Interval}" MinWidth="50">
                         <DataGridTextColumn.Header>
-                            <TextBlock Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColInterval]}" TextWrapping="Wrap"/>
+                            <TextBlock
+                                Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#ChartColInterval]}"
+                                TextWrapping="Wrap" />
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
                 </DataGrid.Columns>
@@ -232,17 +193,79 @@
                 </DataGrid.GroupStyle>
             </DataGrid>
             <StackPanel Grid.Column="1" Margin="0,5,5,0">
-                <Button  VerticalAlignment="Top" Width="30" Height="30"
-                    Command="{Binding ClearResultsCommand}">
+                <Button VerticalAlignment="Top" Width="30" Height="30"
+                        Command="{Binding ClearResultsCommand}">
                     <TextBlock Text="&#xE10A;" ToolTip="{Binding Locale[#ResetResults]}" FontFamily="Segoe UI Symbol" />
                 </Button>
-                <Button Margin="0,5"  VerticalAlignment="Top" Width="30" Height="20"
-                    Command="{Binding ChangeLanguageCommand}">
-                    <Image Source="{Binding LangImgSourceBind}"/>
+                <Button Margin="0,5" VerticalAlignment="Top" Width="30" Height="20"
+                        Command="{Binding ChangeLanguageCommand}"
+                        ToolTip="{Binding Locale[#LangTooltip]}">
+                    <Image Source="{Binding LangImgSourceBind}" />
                 </Button>
             </StackPanel>
 
         </Grid>
 
+        <Grid Grid.ColumnSpan="2" Grid.Row="2" Margin="5,5,0,5" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <charting:Chart Grid.Row="0"  Margin="5,5,0,5" VerticalAlignment="Stretch">
+                <charting:Chart.LegendStyle>
+                    <Style TargetType="visualizationToolkit:Legend">
+                        <Setter Property="Width" Value="130" />
+                    </Style>
+                </charting:Chart.LegendStyle>
+                <charting:LineSeries
+                Title="{Binding Locale[#Func]}"
+                ItemsSource="{Binding ChartData}"
+                DependentValueBinding="{Binding Path=Value}"
+                IndependentValueBinding="{Binding Path=Key}">
+                    <charting:LineSeries.DataPointStyle>
+                        <Style TargetType="charting:DataPoint">
+                            <Setter Property="Background" Value="Gold" />
+                            <Setter Property="Template" Value="{x:Null}" />
+
+                            <Setter Property="BorderBrush" Value="Transparent" />
+                        </Style>
+                    </charting:LineSeries.DataPointStyle>
+                </charting:LineSeries>
+                <charting:LineSeries
+                Title="{Binding Locale[#BiRoots]}"
+                ItemsSource="{Binding ChartBiRootData}"
+                DependentValueBinding="{Binding Path=Value}"
+                IndependentValueBinding="{Binding Path=Key}">
+                    <charting:LineSeries.PolylineStyle>
+                        <Style TargetType="Polyline">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </Style>
+                    </charting:LineSeries.PolylineStyle>
+                    <charting:LineSeries.DataPointStyle>
+                        <Style TargetType="charting:DataPoint">
+                            <Setter Property="Background" Value="Crimson" />
+                        </Style>
+                    </charting:LineSeries.DataPointStyle>
+                </charting:LineSeries>
+                <charting:LineSeries
+                Title="{Binding Locale[#FalsiRoots]}"
+                ItemsSource="{Binding ChartFalsiRootData}"
+                DependentValueBinding="{Binding Path=Value}"
+                IndependentValueBinding="{Binding Path=Key}">
+                    <charting:LineSeries.PolylineStyle>
+                        <Style TargetType="Polyline">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </Style>
+                    </charting:LineSeries.PolylineStyle>
+                    <charting:LineSeries.DataPointStyle>
+                        <Style TargetType="charting:DataPoint">
+                            <Setter Property="Background" Value="ForestGreen" />
+                        </Style>
+                    </charting:LineSeries.DataPointStyle>
+                </charting:LineSeries>
+            </charting:Chart>
+            <TextBlock Grid.Row="1" Text="{Binding IntervalDivNoteBind}" HorizontalAlignment="Left" 
+                       FontSize="11" FontWeight="Light"/>
+        </Grid>
     </Grid>
 </Window>

@@ -5,6 +5,9 @@
     /// </summary>
     public interface IFunction
     {
+        /// <summary>
+        ///     Integer representation of function.
+        /// </summary>
         int Id { get; }
 
         /// <summary>
