@@ -1,0 +1,17 @@
+﻿<Window x:Class="NumMethods2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NumMethods2"
+        xmlns:grid="clr-namespace:Gu;assembly=Gu.Wpf.DataGrid2D"
+        xmlns:dataGrid2D="http://gu.se/DataGrid2D"
+        mc:Ignorable="d"
+        DataContext="{Binding Source={StaticResource Locator} , Path=Main}"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <DataGrid HeadersVisibility="None" x:Name="Grid" CanUserAddRows="True"
+          dataGrid2D:ItemsSource.Array2D="{Binding Matrix,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+        <Button VerticalAlignment="Bottom" Height="40" Click="DataGrid_OnCellEditEnding"/>
+    </Grid>
+</Window>
