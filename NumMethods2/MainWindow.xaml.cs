@@ -13,22 +13,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Gu.Wpf.DataGrid2D;
+using NumMethods2.ViewModel;
 
 namespace NumMethods2
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window , IMainPageViewInteraction
     {
         public MainWindow()
         {
             InitializeComponent();
+            (DataContext as MainViewModel).View = this;
         }
 
-        private void DataGrid_OnCellEditEnding(object sender,object e)
-        {
-            var lol = Grid.GetArray2D();
-        }
+        public DataGrid MatrixGrid => Grid;
     }
 }

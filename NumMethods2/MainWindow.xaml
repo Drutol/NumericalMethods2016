@@ -4,14 +4,30 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NumMethods2"
-        xmlns:grid="clr-namespace:Gu;assembly=Gu.Wpf.DataGrid2D"
         xmlns:dataGrid2D="http://gu.se/DataGrid2D"
         mc:Ignorable="d"
         DataContext="{Binding Source={StaticResource Locator} , Path=Main}"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <DataGrid HeadersVisibility="None" x:Name="Grid" CanUserAddRows="True"
-          dataGrid2D:ItemsSource.Array2D="{Binding Matrix,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-        <Button VerticalAlignment="Bottom" Height="40" Click="DataGrid_OnCellEditEnding"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <DataGrid HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="Grid" CanUserAddRows="True"
+          dataGrid2D:ItemsSource.Array2D="{Binding Matrix}">
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="MinHeight" Value="20" />
+                    <Setter Property="MinWidth" Value="20" />
+                </Style>
+            </DataGrid.CellStyle>
+            
+            </DataGrid>
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Button Margin="5" Content="Add column" Command="{Binding AddMatrixColumnCommand}"/>
+            <Button Margin="5" Content="Add eqation" Command="{Binding AddMatrixRowCommand}"/>
+        </StackPanel>
+        <Button Grid.Row="2" Margin="5" VerticalAlignment="Bottom" Content="Do maths..." Command="{Binding SubmitDataCommand}"/>
     </Grid>
 </Window>
