@@ -14,19 +14,21 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
-        <DataGrid HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="Grid" CanUserAddRows="True"
-          dataGrid2D:ItemsSource.Array2D="{Binding Matrix}">
-            <DataGrid.CellStyle>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel.Resources>
                 <Style TargetType="DataGridCell">
                     <Setter Property="MinHeight" Value="20" />
                     <Setter Property="MinWidth" Value="20" />
                 </Style>
-            </DataGrid.CellStyle>
-            
-            </DataGrid>
+            </StackPanel.Resources>
+            <DataGrid HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="Grid" CanUserAddRows="True"
+                      dataGrid2D:ItemsSource.Array2D="{Binding Matrix}"/>
+            <DataGrid Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="ResultsGrid" dataGrid2D:ItemsSource.Array2D="{Binding ResultsGrid}" />
+        </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="1">
             <Button Margin="5" Content="Add column" Command="{Binding AddMatrixColumnCommand}"/>
             <Button Margin="5" Content="Add eqation" Command="{Binding AddMatrixRowCommand}"/>
+            <Button Margin="5" Content="Load from file." Command="{Binding LoadFromFileCommand}"/>
         </StackPanel>
         <Button Grid.Row="2" Margin="5" VerticalAlignment="Bottom" Content="Do maths..." Command="{Binding SubmitDataCommand}"/>
     </Grid>

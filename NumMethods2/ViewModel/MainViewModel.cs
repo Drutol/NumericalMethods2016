@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Gu.Wpf.DataGrid2D;
+using Microsoft.Win32;
+using Newtonsoft.Json;
 
 namespace NumMethods2.ViewModel
 {
@@ -34,12 +37,19 @@ namespace NumMethods2.ViewModel
                 _matrix = (double[,]) View.MatrixGrid.GetArray2D();
             }));
 
+        private ICommand _loadFromFileCommand;
+
+        public object LoadFromFileCommand =>
+            _loadFromFileCommand ?? (_loadFromFileCommand = new RelayCommand(LoadFromFile));
+
+
+
         public IMainPageViewInteraction View { get; set; }
 
         public int Rows { get; set; } = 5;
         public int Columns { get; set; } = 3;
 
-        public double[,] _matrix { get; set; } = new double[,] { {1,1,0} , {2,2,0} , {3,3,0} , {1,2,0} , {3,1,0} };
+        public double[,] _matrix { get; set; } = new double[,] {  };
 
         public double[,] Matrix
         {
@@ -50,6 +60,24 @@ namespace NumMethods2.ViewModel
                 RaisePropertyChanged(() => Matrix);
             }
         }
+
+        private double[,] _resultsGrid = new double[,] { };
+
+        public double[,] ResultsGrid
+        {
+            get
+            {
+                return _resultsGrid;
+            }
+            set
+            {
+                _resultsGrid = value;
+                RaisePropertyChanged(() => ResultsGrid);
+            }
+        }
+
+
+
 
         public void AddMatrixColumn()
         {
@@ -80,9 +108,23 @@ namespace NumMethods2.ViewModel
                 newRow.Add(0);
             list.Add(newRow);
             Rows++;
+            ResultsGrid = Utils.ResizeArray(ResultsGrid, Rows, 1);
+            //new row in results grid is already initialized with default(double)
             Matrix = Utils.To2DArray<double>(list);
         }
 
+        private void LoadFromFile()
+        {
+            var fp = new OpenFileDialog();
+            if(fp.ShowDialog() ?? false)
+            using (var writer = new StreamReader(fp.OpenFile()))
+            {
+                var data = JsonConvert.DeserializeObject<Tuple<double[,], double[,]>>(writer.ReadToEnd());
+                Matrix = data.Item1;
+                ResultsGrid = data.Item2;
+            }
+
+        }
 
         public MainViewModel()
         {
