@@ -24,12 +24,21 @@
             <DataGrid HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="Grid" CanUserAddRows="True"
                       dataGrid2D:ItemsSource.Array2D="{Binding Matrix}"/>
             <DataGrid Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="ResultsGrid" dataGrid2D:ItemsSource.Array2D="{Binding ResultsGrid}" />
+            <ListView Margin="10,0,0,0" ItemsSource="{Binding MatrixSolutions}" VerticalAlignment="Center">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" MaxHeight="20">
+                            <TextBlock Text="x= "/>
+                            <TextBlock Text="{Binding}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Button Margin="5" Content="Add column" Command="{Binding AddMatrixColumnCommand}"/>
-            <Button Margin="5" Content="Add eqation" Command="{Binding AddMatrixRowCommand}"/>
-            <Button Margin="5" Content="Load from file." Command="{Binding LoadFromFileCommand}"/>
+            <Button Margin="5,0,0,5" Content="Extend matrix." Command="{Binding ExtendMatrixCommand}"/>
+            <Button Margin="5,0,0,5" Content="Load from file." Command="{Binding LoadFromFileCommand}"/>
         </StackPanel>
-        <Button Grid.Row="2" Margin="5" VerticalAlignment="Bottom" Content="Do maths..." Command="{Binding SubmitDataCommand}"/>
+        <Button Grid.Row="2" Margin="5,5" Height="30" VerticalAlignment="Bottom" Content="Do maths..." Command="{Binding SubmitDataCommand}"/>
     </Grid>
 </Window>

@@ -83,6 +83,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MatrixMath\NumCore.cs" />
     <Compile Include="Utils\MatrixFileLoadingManager.cs" />
     <Compile Include="Utils\Utils.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

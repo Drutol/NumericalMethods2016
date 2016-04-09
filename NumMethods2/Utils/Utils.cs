@@ -35,5 +35,31 @@ namespace NumMethods2
                     newArray[i, j] = original[i, j];
             return newArray;
         }
+
+        public static double[,] SwapRows(double[,] source,int row,int size)
+        {
+            var output = new double[size, size];
+            List<List<double>> list = new List<List<double>>();
+            var flatMatrix = source.Cast<double>();
+            for (int i = 0; i < size; i++)
+            {
+                var matrixRow = flatMatrix.Skip(i*size).Take(size).ToList();
+                matrixRow.Add(0);
+                list.Add(matrixRow);
+            }
+
+            for(int i = 1; i < size - row;i++)
+                if (list[row + i][row + i] != 0)
+                {
+                    var listRow = list[row];
+                    list.RemoveAt(row);
+                    list.Insert(row + i, listRow);
+                    return Utils.To2DArray<double>(list);
+                }
+
+
+            throw new Exception("Nieoznaczon");
+
+        }
     }
 }

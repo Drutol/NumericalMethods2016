@@ -19,15 +19,12 @@ namespace NumMethods2.ViewModel
 
     public class MainViewModel : ViewModelBase
     {
-        private ICommand _addMatrixColumnCommand;
+        private ICommand _extendMatrixCommand;
 
-        public ICommand AddMatrixColumnCommand =>
-            _addMatrixColumnCommand ?? (_addMatrixColumnCommand = new RelayCommand(AddMatrixColumn));
+        public ICommand ExtendMatrixCommand =>
+            _extendMatrixCommand ?? (_extendMatrixCommand = new RelayCommand(ExtendMatrix));
 
         private ICommand _addMatrixRowCommand;
-
-        public ICommand AddMatrixRowCommand =>
-            _addMatrixRowCommand ?? (_addMatrixRowCommand = new RelayCommand(AddMatrixRow));
 
         private ICommand _submitDataCommand;
 
@@ -35,6 +32,7 @@ namespace NumMethods2.ViewModel
             _submitDataCommand ?? (_submitDataCommand = new RelayCommand(() =>
             {
                 _matrix = (double[,]) View.MatrixGrid.GetArray2D();
+                MatrixSolutions = MatrixMath.NumCore.FindMatrixSolutions(_matrix, _resultsGrid);
             }));
 
         private ICommand _loadFromFileCommand;
@@ -42,14 +40,12 @@ namespace NumMethods2.ViewModel
         public object LoadFromFileCommand =>
             _loadFromFileCommand ?? (_loadFromFileCommand = new RelayCommand(LoadFromFile));
 
-
-
         public IMainPageViewInteraction View { get; set; }
 
-        public int Rows { get; set; } = 5;
-        public int Columns { get; set; } = 3;
+        public int Rows { get; set; } = 2;
+        public int Columns { get; set; } = 2;
 
-        public double[,] _matrix { get; set; } = new double[,] {  };
+        public double[,] _matrix { get; set; } = new double[,] { { 0, 0 }, { 0, 0 } };
 
         public double[,] Matrix
         {
@@ -61,7 +57,7 @@ namespace NumMethods2.ViewModel
             }
         }
 
-        private double[,] _resultsGrid = new double[,] { };
+        private double[,] _resultsGrid = new double[,] { { 0}, { 0 } };
 
         public double[,] ResultsGrid
         {
@@ -76,40 +72,40 @@ namespace NumMethods2.ViewModel
             }
         }
 
+        private List<double> _matrixSolutions = new List<double>();
 
-
-
-        public void AddMatrixColumn()
+        public List<double> MatrixSolutions
         {
-            
+            get
+            {
+                return _matrixSolutions;
+            }
+            set
+            {
+                _matrixSolutions = value;
+                RaisePropertyChanged(() => MatrixSolutions);
+            }
+        }
+
+
+
+        public void ExtendMatrix()
+        {
             List<List<double>> list = new List<List<double>>();
             var flatMatrix = Matrix.Cast<double>();
             for (int i = 0; i < Rows; i++)
             {
-                var row = flatMatrix.Skip(i*Columns).Take(Columns).ToList();
-                row.Add(0);
-                list.Add(row);
-            }
-            Columns++;
-            Matrix = Utils.To2DArray<double>(list);
-        }
-
-        public void AddMatrixRow()
-        {
-            List<List<double>> list = new List<List<double>>();
-            var flatMatrix = Matrix.Cast<double>().ToList();
-            for (int i = 0; i < Rows; i++)
-            {
                 var row = flatMatrix.Skip(i * Columns).Take(Columns).ToList();
+                row.Add(0);
                 list.Add(row);
             }
             var newRow = new List<double>();
             for (int i = 0; i < Columns; i++)
                 newRow.Add(0);
             list.Add(newRow);
+            Columns++;
             Rows++;
             ResultsGrid = Utils.ResizeArray(ResultsGrid, Rows, 1);
-            //new row in results grid is already initialized with default(double)
             Matrix = Utils.To2DArray<double>(list);
         }
 
@@ -122,6 +118,8 @@ namespace NumMethods2.ViewModel
                 var data = JsonConvert.DeserializeObject<Tuple<double[,], double[,]>>(writer.ReadToEnd());
                 Matrix = data.Item1;
                 ResultsGrid = data.Item2;
+                Rows = Columns = Matrix.GetLength(0);
+                
             }
 
         }
