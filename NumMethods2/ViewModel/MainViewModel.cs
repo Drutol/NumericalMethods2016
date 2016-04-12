@@ -9,6 +9,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using Gu.Wpf.DataGrid2D;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using NumMethods2.Exceptions;
 
 namespace NumMethods2.ViewModel
 {
@@ -40,10 +41,39 @@ namespace NumMethods2.ViewModel
         public object LoadFromFileCommand =>
             _loadFromFileCommand ?? (_loadFromFileCommand = new RelayCommand(LoadFromFile));
 
+        private int _currentlySelectedArraySizeIndex = 0;
+
+        public int CurrentlySelectedArraySizeIndex
+        {
+            get { return _currentlySelectedArraySizeIndex; }
+            set
+            {
+                _currentlySelectedArraySizeIndex = value;
+                Matrix = new double[PossibleArraySizes[value],PossibleArraySizes[value]];
+                ResultsGrid = new double[PossibleArraySizes[value],1];
+                Size = PossibleArraySizes[value];
+                RaisePropertyChanged(() => CurrentlySelectedArraySizeIndex);
+            }
+        }
+
+        public List<int> PossibleArraySizes { get; } = new List<int>
+        {
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+        };
+
+
+
         public IMainPageViewInteraction View { get; set; }
 
-        public int Rows { get; set; } = 2;
-        public int Columns { get; set; } = 2;
+        public int Size { get; set; } = 2;
 
         public double[,] _matrix { get; set; } = new double[,] { { 0, 0 }, { 0, 0 } };
 
@@ -93,19 +123,18 @@ namespace NumMethods2.ViewModel
         {
             List<List<double>> list = new List<List<double>>();
             var flatMatrix = Matrix.Cast<double>();
-            for (int i = 0; i < Rows; i++)
+            for (int i = 0; i < Size; i++)
             {
-                var row = flatMatrix.Skip(i * Columns).Take(Columns).ToList();
+                var row = flatMatrix.Skip(i * Size).Take(Size).ToList();
                 row.Add(0);
                 list.Add(row);
             }
             var newRow = new List<double>();
-            for (int i = 0; i < Columns; i++)
+            for (int i = 0; i < Size; i++)
                 newRow.Add(0);
             list.Add(newRow);
-            Columns++;
-            Rows++;
-            ResultsGrid = Utils.ResizeArray(ResultsGrid, Rows, 1);
+            Size++;
+            ResultsGrid = Utils.ResizeArray(ResultsGrid, Size, 1);
             Matrix = Utils.To2DArray<double>(list);
         }
 
@@ -115,13 +144,38 @@ namespace NumMethods2.ViewModel
             if(fp.ShowDialog() ?? false)
             using (var writer = new StreamReader(fp.OpenFile()))
             {
-                var data = JsonConvert.DeserializeObject<Tuple<double[,], double[,]>>(writer.ReadToEnd());
-                Matrix = data.Item1;
-                ResultsGrid = data.Item2;
-                Rows = Columns = Matrix.GetLength(0);
-                
-            }
+                try
+                {
+                    var data = MatrixFileLoadingManager.LoadData(writer.ReadToEnd());
+                    Matrix = data.Item1;
+                    ResultsGrid = data.Item2;
+                    Size = Matrix.GetLength(0);
+                }
+                catch (InvalidMatrixFileException)
+                {
+                    //
+                }
 
+            }
+        }
+
+        public void LoadFromFile(string path)
+        {
+            using (var writer = new StreamReader(path))
+            {
+                try
+                {
+                    var data = MatrixFileLoadingManager.LoadData(writer.ReadToEnd());
+                    Matrix = data.Item1;
+                    ResultsGrid = data.Item2;
+                    Size = Matrix.GetLength(0);
+                }
+                catch (InvalidMatrixFileException)
+                {
+                    //
+                }
+
+            }
         }
 
         public MainViewModel()
