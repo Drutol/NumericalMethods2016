@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -9,6 +10,9 @@ namespace NumMethods2.MatrixMath
 {
     class NumCore
     {
+        private static int _rowNum;
+        public static int RowNum { get; set; }
+
         public static List<double> FindMatrixSolutions(double[,] matrix , double[,] results)
         {
             var output = new List<double>();
@@ -18,21 +22,26 @@ namespace NumMethods2.MatrixMath
             double sum = 0;
             for (int n = 0; n < resLen - 1; n++)
             {
-                double diagonal = matrix[n, n];
+                
                 for (int i = n + 1; i < resLen; i++)
                 {
+                    double diagonal = matrix[n, n];
                     double rowFirst = matrix[i, n];
                     for (int j = n; j < resLen; j++)
                     {
-                        if (matrix[n, n] == 0)
-                            matrix = Utils.SwapRows(matrix, n, resLen);
+                        if (diagonal == 0)
+                        {
+                            matrix = Utils.SwapMatrixRows(matrix, n, resLen);
+                            diagonal = matrix[n, n];
+                            rowFirst = matrix[i, n];
+                            flatResults = Utils.SwapResultsRows(flatResults, n,_rowNum);
+                        }
                         matrix[i, j] -= (matrix[n, j] * rowFirst) / diagonal;
                     }
                     flatResults[i] -= (flatResults[n]*rowFirst)/diagonal;
                 }
             }
             
-
             output.Add(X[resLen-1]=flatResults[resLen-1]/matrix[resLen-1,resLen-1]);
 
             for (int i = resLen -2; i >= 0; i--)

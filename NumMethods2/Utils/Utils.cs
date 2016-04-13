@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NumMethods2.MatrixMath;
 
 namespace NumMethods2
 {
@@ -36,9 +37,16 @@ namespace NumMethods2
             return newArray;
         }
 
-        public static double[,] SwapRows(double[,] source,int row,int size)
+        public static double[] SwapResultsRows(double[] source, int rowFrom, int rowTo)
         {
-            var output = new double[size, size];
+            double elem = source[rowFrom];
+            source[rowFrom] = source[rowTo];
+            source[rowTo] = elem;
+            return source;
+        }
+
+        public static double[,] SwapMatrixRows(double[,] source,int row,int size)
+        {
             List<List<double>> list = new List<List<double>>();
             var flatMatrix = source.Cast<double>();
             for (int i = 0; i < size; i++)
@@ -51,6 +59,7 @@ namespace NumMethods2
             for(int i = 1; i < size - row;i++)
                 if (list[row + i][row + i] != 0)
                 {
+                    NumCore.RowNum = row + i;
                     var listRow = list[row];
                     list.RemoveAt(row);
                     list.Insert(row + i, listRow);
