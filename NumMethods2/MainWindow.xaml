@@ -30,7 +30,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Select matrix size:"/>
+            <TextBlock Text="{Binding Locale[#SelMatrixSize]}"/>
             <ComboBox Grid.Column="1" Margin="20,0,5,0" ItemsSource="{Binding PossibleArraySizes}" 
                       SelectedIndex="{Binding CurrentlySelectedArraySizeIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <ComboBox.ItemTemplate>
@@ -62,11 +62,16 @@
             </ListView>
         </StackPanel>
         <StackPanel Grid.Column="0"  Orientation="Horizontal" Grid.Row="2">
-            <Button Margin="5,0,0,5" Content="Extend matrix." Command="{Binding ExtendMatrixCommand}"/>
-            <Button Margin="5,0,0,5" Content="Load from file." Command="{Binding LoadFromFileCommand}"/>
-            <ToggleButton Margin="5,0,0,5" Content="Enable debug log." IsChecked="{Binding EnableDebugLog,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Margin="5,0,0,5" Content="{Binding Locale[#ExtendMatrix]}" Command="{Binding ExtendMatrixCommand}"/>
+            <Button Margin="5,0,0,5" Content="{Binding Locale[#FileLoad]}" Command="{Binding LoadFromFileCommand}"/>
+            <ToggleButton Margin="5,0,0,5" Content="{Binding Locale[#EnableLog]}" IsChecked="{Binding EnableDebugLog,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Margin="5,0,0,5" VerticalAlignment="Top" 
+                        Command="{Binding ChangeLanguageCommand}"
+                        ToolTip="{Binding Locale[#LangTooltip]}">
+                <Image Source="{Binding LangImgSourceBind}" />
+            </Button>
         </StackPanel>
-        <Button Grid.Column="0"  Grid.Row="3" Margin="5,5" Height="30" VerticalAlignment="Bottom" Content="Do maths..." Command="{Binding SubmitDataCommand}"/>
+        <Button Grid.Column="0"  Grid.Row="3" Margin="5,5" Height="30" VerticalAlignment="Bottom" Content="{Binding Locale[#DoMaths]}" Command="{Binding SubmitDataCommand}"/>
         <TabControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="4" HorizontalAlignment="Stretch" 
                     ItemsSource="{Binding IterationLog}" Visibility="{Binding IterationLog,Converter={StaticResource NullToVisibilityConverter}}">
             <TabControl.ItemTemplate>

@@ -14,6 +14,7 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using NumMethods2.Exceptions;
 using NumMethods2.MatrixMath;
+using NumMethods1.Utils;
 
 namespace NumMethods2.ViewModel
 {
@@ -25,6 +26,65 @@ namespace NumMethods2.ViewModel
 
     public class MainViewModel : ViewModelBase
     {
+        private Dictionary<string, string> _locale;
+
+        public Dictionary<string, string> Locale
+        {
+            get { return _locale; }
+            set
+            {
+                _locale = value;
+                RaisePropertyChanged(() => Locale);
+            }
+        }
+
+        private string _langImgSource;
+
+        public string LangImgSourceBind
+        {
+            get { return _langImgSource; }
+            set
+            {
+                _langImgSource = $@"../Localization/{value}.png";
+                RaisePropertyChanged(() => LangImgSourceBind);
+            }
+        }
+
+        private AvailableLocale _currentLocale;
+
+        public AvailableLocale CurrentLocale
+        {
+            get { return _currentLocale; }
+            set
+            {
+                _currentLocale = value;
+                switch (value)
+                {
+                    case AvailableLocale.PL:
+                        Locale = LocalizationManager.PlDictionary;
+                        break;
+                    case AvailableLocale.EN:
+                        Locale = LocalizationManager.EnDictionary;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(value), value, null);
+                }
+                //sets flag of next locale
+                LangImgSourceBind = LocalizationManager.GetNextLocale(value).ToString();
+            }
+        }
+
+        private ICommand _changeLanguageCommand;
+
+        public ICommand ChangeLanguageCommand =>
+            _changeLanguageCommand ?? (_changeLanguageCommand = new RelayCommand(() =>
+            {
+                if ((int)CurrentLocale == Enum.GetNames(typeof(AvailableLocale)).Length - 1)
+                    CurrentLocale = 0;
+                else
+                    CurrentLocale += 1;
+            }));
+
         private ICommand _extendMatrixCommand;
 
         public ICommand ExtendMatrixCommand =>
@@ -153,7 +213,10 @@ namespace NumMethods2.ViewModel
             }
         }
 
-
+        public MainViewModel()
+        {
+            CurrentLocale = AvailableLocale.EN;
+        }
 
         public void ExtendMatrix()
         {
@@ -211,7 +274,7 @@ namespace NumMethods2.ViewModel
             }
             catch (InvalidMatrixFileException)
             {
-                MessageBox.Show("File cannot be parsed.", "Invalid file.",
+                MessageBox.Show(Locale["#FileParseExceptionMsg"], Locale["#FileParseExceptionTitle"],
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
@@ -236,19 +299,21 @@ namespace NumMethods2.ViewModel
                 }
                 catch (NoSystemSolutionsException)
                 {
-                    MessageBox.Show("There are no solutions in provided system.", "System unsolvable",
+                    MessageBox.Show(Locale["#NoSolutionExceptionMsg"], Locale["#NoSolutionExceptionTitle"],
                         MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                        MessageBoxImage.Information);
                 }
                 catch (InfiniteSystemSolutionsException)
                 {
-                    MessageBox.Show("System has infinite solutions.", "Infinite number of soltions.",
+                    MessageBox.Show(Locale["#InfSolutionExceptionMsg"], Locale["#InfSolutionExceptionTitle"],
                         MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                        MessageBoxImage.Information);
                 }
                 catch (Exception)
                 {
-                    //something unexpected.. sshh
+                    MessageBox.Show(Locale["#UnexpectedExceptionMsg"], Locale["#UnexpectedExceptionTitle"],
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
 
             });

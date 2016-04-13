@@ -86,6 +86,7 @@
     <Compile Include="Exceptions\InfiniteSystemSolutionsException.cs" />
     <Compile Include="Exceptions\InvalidMatrixFileException.cs" />
     <Compile Include="Exceptions\NoSystemSolutionsException.cs" />
+    <Compile Include="MatrixMath\LocalizationManager.cs" />
     <Compile Include="MatrixMath\NumCore.cs" />
     <Compile Include="Utils\MatrixFileLoadingManager.cs" />
     <Compile Include="Utils\Utils.cs" />
@@ -127,6 +128,12 @@
     <None Include="Examples\ExampleFileCsvInf.csv" />
     <None Include="Examples\ExampleFileJson.json" />
     <None Include="Examples\ExampleFileCsv.csv" />
+    <None Include="Localization\en_GB.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Localization\pl_PL.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -142,6 +149,16 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Examples\ExampleFileXmlNoSol.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Localization\EN.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Localization\PL.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
