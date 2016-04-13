@@ -33,7 +33,7 @@ namespace NumMethods2
                     //check if matrix is NxN
                     if (len == null)
                         len = coeffs[0].Count;
-                    else if (len.Value != coeffs.Last().Count)
+                    else if (len.Value != coeffs.Last().Count || len < coeffs.Count)
                         throw new InvalidMatrixFileException();
 
                     results.Add(new List<double> {double.Parse(eq.Element("result").Value)});
@@ -60,7 +60,7 @@ namespace NumMethods2
                     //check if matrix is NxN
                     if (len == null)
                         len = coeffs[0].Count;
-                    else if(len.Value != coeffs.Last().Count)
+                    else if(len.Value != coeffs.Last().Count || len < coeffs.Count)
                         throw  new InvalidMatrixFileException();
 
                     results.Add(new List<double> {coeffs.Last().Last()});

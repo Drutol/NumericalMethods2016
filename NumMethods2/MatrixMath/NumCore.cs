@@ -6,12 +6,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using NumMethods2.Exceptions;
 
 namespace NumMethods2.MatrixMath
 {
     public class NumCore
     {
-        public static List<double> FindMatrixSolutions(double[,] matrix , double[,] results, ref List<Tuple<double[,],double[,]>> iterationLog )
+        public static List<double> FindMatrixSolutions(double[,] matrix , double[,] results, ref List<Tuple<double[,], double[,]>> iterationLog )
         {
             var output = new List<double>();
             var flatResults = results.Cast<double>().ToArray();
@@ -29,16 +30,16 @@ namespace NumMethods2.MatrixMath
                         if (diagonal == 0)
                         {
                             int rowToSwap;
-                            matrix = Utils.SwapMatrixRows(matrix, n, resLen,out rowToSwap);
+                            matrix = SwapMatrixRows(matrix, n, resLen,out rowToSwap);
                             diagonal = matrix[n, n];
                             rowFirst = matrix[i, n];
-                            flatResults = Utils.SwapResultsRows(flatResults, n,rowToSwap);
+                            flatResults = SwapResultsRows(flatResults, n,rowToSwap);
                         }
                         matrix[i, j] -= (matrix[n, j] * rowFirst) / diagonal;
                     }
                     flatResults[i] -= (flatResults[n]*rowFirst)/diagonal;
                 }
-                iterationLog?.Add(new Tuple<double[,], double[,]>(matrix,
+                iterationLog?.Add(new Tuple<double[,], double[,]>((double[,])matrix.Clone(),
                     Utils.To2DArray(flatResults.Select(flatResult => new List<double> {flatResult}).ToList())));
             }
             
@@ -47,9 +48,8 @@ namespace NumMethods2.MatrixMath
             if (matrix[resLen - 1, resLen - 1] == 0)
             {
                 if (X[resLen - 1] == 0)
-                    throw new Exception("unsigned");
-                else
-                    throw new Exception("sprzeczny");
+                    throw new InfiniteSystemSolutionsException();
+                throw new NoSystemSolutionsException();
             }
 
             output.Add(X[resLen-1]);
@@ -65,6 +65,40 @@ namespace NumMethods2.MatrixMath
             output.Reverse();
 
             return output;
+
+        }
+
+        public static double[] SwapResultsRows(double[] source, int rowFrom, int rowTo)
+        {
+            double elem = source[rowFrom];
+            source[rowFrom] = source[rowTo];
+            source[rowTo] = elem;
+            return source;
+        }
+
+        public static double[,] SwapMatrixRows(double[,] source, int row, int size, out int swaps)
+        {
+            List<List<double>> list = new List<List<double>>();
+            var flatMatrix = source.Cast<double>();
+            for (int i = 0; i < size; i++)
+            {
+                var matrixRow = flatMatrix.Skip(i * size).Take(size).ToList();
+                matrixRow.Add(0);
+                list.Add(matrixRow);
+            }
+
+            for (int i = 1; i < size - row; i++)
+                if (list[row + i][row + i] != 0)
+                {
+                    swaps = row + i;
+                    var listRow = list[row];
+                    list.RemoveAt(row);
+                    list.Insert(row + i, listRow);
+                    return Utils.To2DArray<double>(list);
+                }
+
+
+            throw new InfiniteSystemSolutionsException();
 
         }
     }

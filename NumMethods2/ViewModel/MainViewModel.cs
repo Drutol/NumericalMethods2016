@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
@@ -33,15 +35,7 @@ namespace NumMethods2.ViewModel
         private ICommand _submitDataCommand;
 
         public ICommand SubmitDataCommand =>
-            _submitDataCommand ?? (_submitDataCommand = new RelayCommand(() =>
-            {
-                _matrix = (double[,]) View.MatrixGrid.GetArray2D();
-                _resultsGrid = (double[,]) View.ResGrid.GetArray2D();
-                _iterationLog = EnableDebugLog ? new List<Tuple<double[,], double[,]>>() : null;
-                MatrixSolutions = new List<double>();
-                MatrixSolutions = NumCore.FindMatrixSolutions((double[,])_matrix.Clone(), (double[,])_resultsGrid.Clone(),ref _iterationLog);
-                RaisePropertyChanged(() => IterationLog);
-            }));
+            _submitDataCommand ?? (_submitDataCommand = new RelayCommand(DoMaths));
 
         private ICommand _loadFromFileCommand;
 
@@ -86,10 +80,11 @@ namespace NumMethods2.ViewModel
                 RaisePropertyChanged(() => EnableDebugLog);
             }
         }
+
         /// <summary>
         /// Item 1 is matrix napshot , Item 2 is results snapshot prepared for UI display.
         /// </summary>
-        private List<Tuple<double[,],double[,]>> _iterationLog = new List<Tuple<double[,], double[,]>>();
+        private List<Tuple<double[,], double[,]>> _iterationLog;
         /// <summary>
         /// Item 1 is matrix snapshot , 
         /// Item 2 is results snapshot , 
@@ -183,33 +178,19 @@ namespace NumMethods2.ViewModel
         {
             var fp = new OpenFileDialog();
             if(fp.ShowDialog() ?? false)
-            using (var writer = new StreamReader(fp.OpenFile()))
+            using (var reader = new StreamReader(fp.OpenFile()))
             {
-                try
-                {
-                    var data = MatrixFileLoadingManager.LoadData(writer.ReadToEnd());
-                    Matrix = data.Item1;
-                    ResultsGrid = data.Item2;
-                    Size = Matrix.GetLength(0);
-                }
-                catch (InvalidMatrixFileException)
-                {
-                    //
-                }
-
+               LoadMatrix(reader);
             }
         }
 
         public void LoadFromFile(string path)
         {
-            using (var writer = new StreamReader(path))
+            using (var reader = new StreamReader(path))
             {
                 try
                 {
-                    var data = MatrixFileLoadingManager.LoadData(writer.ReadToEnd());
-                    Matrix = data.Item1;
-                    ResultsGrid = data.Item2;
-                    Size = Matrix.GetLength(0);
+                    LoadMatrix(reader);
                 }
                 catch (InvalidMatrixFileException)
                 {
@@ -219,9 +200,59 @@ namespace NumMethods2.ViewModel
             }
         }
 
-        public MainViewModel()
+        private void LoadMatrix(StreamReader reader)
         {
+            try
+            {
+                var data = MatrixFileLoadingManager.LoadData(reader.ReadToEnd());
+                Matrix = data.Item1;
+                ResultsGrid = data.Item2;
+                Size = Matrix.GetLength(0);
+            }
+            catch (InvalidMatrixFileException)
+            {
+                MessageBox.Show("File cannot be parsed.", "Invalid file.",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
 
+        /// <summary>
+        /// Initializes matrix solution.
+        /// </summary>
+        private async void DoMaths()
+        {
+            _matrix = (double[,]) View.MatrixGrid.GetArray2D();
+            _resultsGrid = (double[,]) View.ResGrid.GetArray2D();
+            _iterationLog = EnableDebugLog ? new List<Tuple<double[,], double[,]>>() : null;
+            MatrixSolutions = new List<double>();
+            await Task.Run(() =>
+            {
+                try
+                {
+                    MatrixSolutions =
+                        NumCore.FindMatrixSolutions((double[,]) _matrix.Clone(), (double[,]) _resultsGrid.Clone(),
+                            ref _iterationLog);
+                }
+                catch (NoSystemSolutionsException)
+                {
+                    MessageBox.Show("There are no solutions in provided system.", "System unsolvable",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+                catch (InfiniteSystemSolutionsException)
+                {
+                    MessageBox.Show("System has infinite solutions.", "Infinite number of soltions.",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+                catch (Exception)
+                {
+                    //something unexpected.. sshh
+                }
+
+            });
+            RaisePropertyChanged(() => IterationLog);
         }
 
     }

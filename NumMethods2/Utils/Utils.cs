@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NumMethods2.Exceptions;
 using NumMethods2.MatrixMath;
 
 namespace NumMethods2
@@ -35,40 +36,6 @@ namespace NumMethods2
                 for (int j = 0; j < minCols; j++)
                     newArray[i, j] = original[i, j];
             return newArray;
-        }
-
-        public static double[] SwapResultsRows(double[] source, int rowFrom, int rowTo)
-        {
-            double elem = source[rowFrom];
-            source[rowFrom] = source[rowTo];
-            source[rowTo] = elem;
-            return source;
-        }
-
-        public static double[,] SwapMatrixRows(double[,] source,int row,int size,out int swaps)
-        {
-            List<List<double>> list = new List<List<double>>();
-            var flatMatrix = source.Cast<double>();
-            for (int i = 0; i < size; i++)
-            {
-                var matrixRow = flatMatrix.Skip(i*size).Take(size).ToList();
-                matrixRow.Add(0);
-                list.Add(matrixRow);
-            }
-
-            for(int i = 1; i < size - row;i++)
-                if (list[row + i][row + i] != 0)
-                {
-                    swaps = row + i;
-                    var listRow = list[row];
-                    list.RemoveAt(row);
-                    list.Insert(row + i, listRow);
-                    return To2DArray<double>(list);
-                }
-
-
-            throw new Exception("Nieoznaczon");
-
         }
     }
 }
