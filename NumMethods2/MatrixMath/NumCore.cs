@@ -42,7 +42,17 @@ namespace NumMethods2.MatrixMath
                     Utils.To2DArray(flatResults.Select(flatResult => new List<double> {flatResult}).ToList())));
             }
             
-            output.Add(X[resLen-1]=flatResults[resLen-1]/matrix[resLen-1,resLen-1]);
+            X[resLen-1]=flatResults[resLen-1]/matrix[resLen-1,resLen-1];
+            
+            if (matrix[resLen - 1, resLen - 1] == 0)
+            {
+                if (X[resLen - 1] == 0)
+                    throw new Exception("unsigned");
+                else
+                    throw new Exception("sprzeczny");
+            }
+
+            output.Add(X[resLen-1]);
 
             for (int i = resLen -2; i >= 0; i--)
             {
