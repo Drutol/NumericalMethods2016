@@ -24,15 +24,20 @@ namespace NumMethods2
                 var doc = XElement.Parse(data);
                 var coeffs = new List<List<double>>();
                 var results = new List<List<double>>();
+                int? len = null;
                 foreach (var eq in doc.Element("equations").Elements("equation"))
                 {
                     coeffs.Add(new List<double>());
                     foreach (var coeff in eq.Element("coefficients").Elements("coeff"))
                         coeffs[coeffs.Count-1].Add(double.Parse(coeff.Value));
+                    //check if matrix is NxN
+                    if (len == null)
+                        len = coeffs[0].Count;
+                    else if (len.Value != coeffs.Last().Count)
+                        throw new InvalidMatrixFileException();
+
                     results.Add(new List<double> {double.Parse(eq.Element("result").Value)});
                 }
-                if(coeffs.Any( eq => eq.Count != coeffs[0].Count) || results.Count != coeffs[0].Count)
-                    throw new InvalidMatrixFileException();
 
                 return new Tuple<double[,], double[,]>(Utils.To2DArray(coeffs),Utils.To2DArray(results));
             }
@@ -44,19 +49,23 @@ namespace NumMethods2
             {
                 var coeffs = new List<List<double>>();
                 var results = new List<List<double>>();
+                int? len = null;
                 foreach (var line in data.Split(new char[] {'\r','\n'},StringSplitOptions.RemoveEmptyEntries))
                 {
                     coeffs.Add(new List<double>());
                     foreach (var coeff in line.Split(','))
                     {
-                        coeffs[coeffs.Count-1].Add(double.Parse(coeff.Replace('.',',')));
+                        coeffs.Last().Add(double.Parse(coeff.Replace('.',',')));
                     }
-                    results.Add(new List<double> {coeffs[coeffs.Count-1].Last()});
-                    coeffs[coeffs.Count - 1].RemoveAt(coeffs.Count-1);
-                }
+                    //check if matrix is NxN
+                    if (len == null)
+                        len = coeffs[0].Count;
+                    else if(len.Value != coeffs.Last().Count)
+                        throw  new InvalidMatrixFileException();
 
-                if (coeffs.Any(eq => eq.Count != coeffs[0].Count) || results.Count != coeffs[0].Count)
-                    throw new InvalidMatrixFileException();
+                    results.Add(new List<double> {coeffs.Last().Last()});
+                    coeffs.Last().RemoveAt(coeffs.Last().Count-1);
+                }
 
                 return new Tuple<double[,], double[,]>(Utils.To2DArray(coeffs), Utils.To2DArray(results));
             }

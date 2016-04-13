@@ -14,6 +14,10 @@
     </Window.Resources>
     
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -35,7 +39,7 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
         </Grid>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
             <StackPanel.Resources>
                 <Style TargetType="DataGridCell">
                     <Setter Property="MinHeight" Value="20" />
@@ -56,10 +60,26 @@
                 </ListView.ItemTemplate>
             </ListView>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="2">
+        <StackPanel Grid.Column="0"  Orientation="Horizontal" Grid.Row="2">
             <Button Margin="5,0,0,5" Content="Extend matrix." Command="{Binding ExtendMatrixCommand}"/>
             <Button Margin="5,0,0,5" Content="Load from file." Command="{Binding LoadFromFileCommand}"/>
+            <ToggleButton Margin="5,0,0,5" Content="Enable debug log." IsChecked="{Binding EnableDebugLog,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
-        <Button Grid.Row="3" Margin="5,5" Height="30" VerticalAlignment="Bottom" Content="Do maths..." Command="{Binding SubmitDataCommand}"/>
+        <Button Grid.Column="0"  Grid.Row="3" Margin="5,5" Height="30" VerticalAlignment="Bottom" Content="Do maths..." Command="{Binding SubmitDataCommand}"/>
+        <TabControl Grid.Column="1" Grid.RowSpan="4" HorizontalAlignment="Stretch" ItemsSource="{Binding IterationLog}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Item3}"/>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <DataGrid dataGrid2D:ItemsSource.Array2D="{Binding Item1}" HeadersVisibility="None"  VerticalAlignment="Center"/>
+                        <DataGrid dataGrid2D:ItemsSource.Array2D="{Binding Item2}" HeadersVisibility="None"  VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
     </Grid>
 </Window>

@@ -5,15 +5,13 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace NumMethods2.MatrixMath
 {
-    class NumCore
+    public class NumCore
     {
-        private static int _rowNum;
-        public static int RowNum { get; set; }
-
-        public static List<double> FindMatrixSolutions(double[,] matrix , double[,] results)
+        public static List<double> FindMatrixSolutions(double[,] matrix , double[,] results, ref List<Tuple<double[,],double[,]>> iterationLog )
         {
             var output = new List<double>();
             var flatResults = results.Cast<double>().ToArray();
@@ -21,8 +19,7 @@ namespace NumMethods2.MatrixMath
             double[] X=new double[resLen];
             double sum = 0;
             for (int n = 0; n < resLen - 1; n++)
-            {
-                
+            {             
                 for (int i = n + 1; i < resLen; i++)
                 {
                     double diagonal = matrix[n, n];
@@ -31,15 +28,18 @@ namespace NumMethods2.MatrixMath
                     {
                         if (diagonal == 0)
                         {
-                            matrix = Utils.SwapMatrixRows(matrix, n, resLen);
+                            int rowToSwap;
+                            matrix = Utils.SwapMatrixRows(matrix, n, resLen,out rowToSwap);
                             diagonal = matrix[n, n];
                             rowFirst = matrix[i, n];
-                            flatResults = Utils.SwapResultsRows(flatResults, n,_rowNum);
+                            flatResults = Utils.SwapResultsRows(flatResults, n,rowToSwap);
                         }
                         matrix[i, j] -= (matrix[n, j] * rowFirst) / diagonal;
                     }
                     flatResults[i] -= (flatResults[n]*rowFirst)/diagonal;
                 }
+                iterationLog?.Add(new Tuple<double[,], double[,]>(matrix,
+                    Utils.To2DArray(flatResults.Select(flatResult => new List<double> {flatResult}).ToList())));
             }
             
             output.Add(X[resLen-1]=flatResults[resLen-1]/matrix[resLen-1,resLen-1]);

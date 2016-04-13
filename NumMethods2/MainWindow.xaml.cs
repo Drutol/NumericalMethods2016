@@ -29,6 +29,7 @@ namespace NumMethods2
         }
 
         public DataGrid MatrixGrid => Grid;
+        public DataGrid ResGrid => ResultsGrid;
 
         private void MainWindow_OnDrop(object sender, DragEventArgs e)
         {

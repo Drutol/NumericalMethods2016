@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
@@ -10,12 +11,14 @@ using Gu.Wpf.DataGrid2D;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using NumMethods2.Exceptions;
+using NumMethods2.MatrixMath;
 
 namespace NumMethods2.ViewModel
 {
     public interface IMainPageViewInteraction
     {
         DataGrid MatrixGrid { get; }
+        DataGrid ResGrid { get; }
     }
 
     public class MainViewModel : ViewModelBase
@@ -33,7 +36,11 @@ namespace NumMethods2.ViewModel
             _submitDataCommand ?? (_submitDataCommand = new RelayCommand(() =>
             {
                 _matrix = (double[,]) View.MatrixGrid.GetArray2D();
-                MatrixSolutions = MatrixMath.NumCore.FindMatrixSolutions(_matrix, _resultsGrid);
+                _resultsGrid = (double[,]) View.ResGrid.GetArray2D();
+                _iterationLog = EnableDebugLog ? new List<Tuple<double[,], double[,]>>() : null;
+                MatrixSolutions = new List<double>();
+                MatrixSolutions = NumCore.FindMatrixSolutions((double[,])_matrix.Clone(), (double[,])_resultsGrid.Clone(),ref _iterationLog);
+                RaisePropertyChanged(() => IterationLog);
             }));
 
         private ICommand _loadFromFileCommand;
@@ -69,13 +76,47 @@ namespace NumMethods2.ViewModel
             10
         };
 
+        private bool _enableDebugLog;
+        public bool EnableDebugLog
+        {
+            get { return _enableDebugLog; }
+            set
+            {
+                _enableDebugLog = value;
+                RaisePropertyChanged(() => EnableDebugLog);
+            }
+        }
+        /// <summary>
+        /// Item 1 is matrix napshot , Item 2 is results snapshot prepared for UI display.
+        /// </summary>
+        private List<Tuple<double[,],double[,]>> _iterationLog = new List<Tuple<double[,], double[,]>>();
+        /// <summary>
+        /// Item 1 is matrix snapshot , 
+        /// Item 2 is results snapshot , 
+        /// Item 3 is iteration counter
+        /// </summary>
+        public ObservableCollection<Tuple<double[,],double[,], string>> IterationLog
+        {
+            get
+            {
+                if(_iterationLog == null)
+                    return new ObservableCollection<Tuple<double[,], double[,], string>>();
+                var output = new ObservableCollection<Tuple<double[,],double[,],string>>();
+                for (int i = 0; i < _iterationLog.Count-1; i++)
+                {
+                    output.Add(new Tuple<double[,],double[,], string>(_iterationLog[i].Item1,_iterationLog[i].Item2,(i+1).ToString()));
+                }
+                return output;
+            }
+        } 
 
 
         public IMainPageViewInteraction View { get; set; }
 
         public int Size { get; set; } = 2;
 
-        public double[,] _matrix { get; set; } = new double[,] { { 0, 0 }, { 0, 0 } };
+        private double[,] _matrixBackup;
+        private double[,] _matrix { get; set; } = new double[,] { { 0, 0 }, { 0, 0 } };
 
         public double[,] Matrix
         {
@@ -87,7 +128,7 @@ namespace NumMethods2.ViewModel
             }
         }
 
-        private double[,] _resultsGrid = new double[,] { { 0}, { 0 } };
+        private double[,] _resultsGrid = new double[,] { { 0 }, { 0 } };
 
         public double[,] ResultsGrid
         {

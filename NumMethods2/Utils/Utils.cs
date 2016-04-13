@@ -45,7 +45,7 @@ namespace NumMethods2
             return source;
         }
 
-        public static double[,] SwapMatrixRows(double[,] source,int row,int size)
+        public static double[,] SwapMatrixRows(double[,] source,int row,int size,out int swaps)
         {
             List<List<double>> list = new List<List<double>>();
             var flatMatrix = source.Cast<double>();
@@ -59,11 +59,11 @@ namespace NumMethods2
             for(int i = 1; i < size - row;i++)
                 if (list[row + i][row + i] != 0)
                 {
-                    NumCore.RowNum = row + i;
+                    swaps = row + i;
                     var listRow = list[row];
                     list.RemoveAt(row);
                     list.Insert(row + i, listRow);
-                    return Utils.To2DArray<double>(list);
+                    return To2DArray<double>(list);
                 }
 
 
