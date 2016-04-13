@@ -82,7 +82,7 @@ namespace NumMethods2.ViewModel
         }
 
         /// <summary>
-        /// Item 1 is matrix napshot , Item 2 is results snapshot prepared for UI display.
+        /// Item 1 is matrix snapshot , Item 2 is results snapshot prepared for UI display.
         /// </summary>
         private List<Tuple<double[,], double[,]>> _iterationLog;
         /// <summary>
