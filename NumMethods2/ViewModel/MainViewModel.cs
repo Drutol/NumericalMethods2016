@@ -157,7 +157,7 @@ namespace NumMethods2.ViewModel
                 if(_iterationLog == null)
                     return new ObservableCollection<Tuple<double[,], double[,], string>>();
                 var output = new ObservableCollection<Tuple<double[,],double[,],string>>();
-                for (int i = 0; i < _iterationLog.Count-1; i++)
+                for (int i = 0; i < _iterationLog.Count; i++)
                 {
                     output.Add(new Tuple<double[,],double[,], string>(_iterationLog[i].Item1,_iterationLog[i].Item2,(i+1).ToString()));
                 }
@@ -179,6 +179,7 @@ namespace NumMethods2.ViewModel
             set
             {
                 _matrix = value;
+                MatrixSolutions = new List<double>();
                 RaisePropertyChanged(() => Matrix);
             }
         }
@@ -319,6 +320,5 @@ namespace NumMethods2.ViewModel
             });
             RaisePropertyChanged(() => IterationLog);
         }
-
     }
 }

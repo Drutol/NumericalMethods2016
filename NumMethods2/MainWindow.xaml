@@ -49,26 +49,26 @@
             </StackPanel.Resources>
             <DataGrid HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="Grid" CanUserAddRows="True"
                       dataGrid2D:ItemsSource.Array2D="{Binding Matrix}"/>
-            <DataGrid Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="ResultsGrid" dataGrid2D:ItemsSource.Array2D="{Binding ResultsGrid}" />
             <ListView Margin="10,0,0,0" BorderThickness="0" ItemsSource="{Binding MatrixSolutions}" VerticalAlignment="Center">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" MaxHeight="20">
-                            <TextBlock Text="x= "/>
-                            <TextBlock Text="{Binding}"/>
-                        </StackPanel>
+                                <TextBlock Text="x= "/>
+                                <TextBlock Text="{Binding}"/>
+                            </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <DataGrid Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="ResultsGrid" dataGrid2D:ItemsSource.Array2D="{Binding ResultsGrid}" />
         </StackPanel>
         <StackPanel Grid.Column="0"  Orientation="Horizontal" Grid.Row="2">
             <Button Margin="5,0,0,5" Content="{Binding Locale[#ExtendMatrix]}" Command="{Binding ExtendMatrixCommand}"/>
             <Button Margin="5,0,0,5" Content="{Binding Locale[#FileLoad]}" Command="{Binding LoadFromFileCommand}"/>
             <ToggleButton Margin="5,0,0,5" Content="{Binding Locale[#EnableLog]}" IsChecked="{Binding EnableDebugLog,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Margin="5,0,0,5" VerticalAlignment="Top" 
+            <Button Margin="5,0,0,5" VerticalAlignment="Center" MaxWidth="40" MaxHeight="30"
                         Command="{Binding ChangeLanguageCommand}"
                         ToolTip="{Binding Locale[#LangTooltip]}">
-                <Image Source="{Binding LangImgSourceBind}" />
+                <Image Margin="1" Source="{Binding LangImgSourceBind}" />
             </Button>
         </StackPanel>
         <Button Grid.Column="0"  Grid.Row="3" Margin="5,5" Height="30" VerticalAlignment="Bottom" Content="{Binding Locale[#DoMaths]}" Command="{Binding SubmitDataCommand}"/>
@@ -82,6 +82,11 @@
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <StackPanel.Resources>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="MaxWidth" Value="40"/>
+                            </Style>
+                        </StackPanel.Resources>
                         <DataGrid dataGrid2D:ItemsSource.Array2D="{Binding Item1}" HeadersVisibility="None"  VerticalAlignment="Center"/>
                         <DataGrid dataGrid2D:ItemsSource.Array2D="{Binding Item2}" HeadersVisibility="None"  VerticalAlignment="Center" Margin="10,0,0,0"/>
                     </StackPanel>

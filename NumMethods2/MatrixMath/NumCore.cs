@@ -82,7 +82,6 @@ namespace NumMethods2.MatrixMath
             for (int i = 0; i < size; i++)
             {
                 var matrixRow = flatMatrix.Skip(i * size).Take(size).ToList();
-                matrixRow.Add(0);
                 list.Add(matrixRow);
             }
 
