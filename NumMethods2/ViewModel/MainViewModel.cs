@@ -11,10 +11,9 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Gu.Wpf.DataGrid2D;
 using Microsoft.Win32;
-using Newtonsoft.Json;
+using NumMethods1.Utils;
 using NumMethods2.Exceptions;
 using NumMethods2.MatrixMath;
-using NumMethods1.Utils;
 
 namespace NumMethods2.ViewModel
 {
@@ -26,7 +25,40 @@ namespace NumMethods2.ViewModel
 
     public class MainViewModel : ViewModelBase
     {
+        private ICommand _addMatrixRowCommand;
+
+        private ICommand _changeLanguageCommand;
+
+        private AvailableLocale _currentLocale;
+
+        private int _currentlySelectedArraySizeIndex;
+
+        private bool _enableDebugLog;
+
+        private ICommand _extendMatrixCommand;
+
+        /// <summary>
+        ///     Item 1 is matrix snapshot , Item 2 is results snapshot prepared for UI display.
+        /// </summary>
+        private List<Tuple<double[,], double[,]>> _iterationLog;
+
+        private string _langImgSource;
+
+        private ICommand _loadFromFileCommand;
         private Dictionary<string, string> _locale;
+
+        private double[,] _matrixBackup;
+
+        private List<double> _matrixSolutions = new List<double>();
+
+        private double[,] _resultsGrid = {{0}, {0}};
+
+        private ICommand _submitDataCommand;
+
+        public MainViewModel()
+        {
+            CurrentLocale = AvailableLocale.EN;
+        }
 
         public Dictionary<string, string> Locale
         {
@@ -38,8 +70,6 @@ namespace NumMethods2.ViewModel
             }
         }
 
-        private string _langImgSource;
-
         public string LangImgSourceBind
         {
             get { return _langImgSource; }
@@ -49,8 +79,6 @@ namespace NumMethods2.ViewModel
                 RaisePropertyChanged(() => LangImgSourceBind);
             }
         }
-
-        private AvailableLocale _currentLocale;
 
         public AvailableLocale CurrentLocale
         {
@@ -74,35 +102,23 @@ namespace NumMethods2.ViewModel
             }
         }
 
-        private ICommand _changeLanguageCommand;
-
         public ICommand ChangeLanguageCommand =>
             _changeLanguageCommand ?? (_changeLanguageCommand = new RelayCommand(() =>
             {
-                if ((int)CurrentLocale == Enum.GetNames(typeof(AvailableLocale)).Length - 1)
+                if ((int) CurrentLocale == Enum.GetNames(typeof (AvailableLocale)).Length - 1)
                     CurrentLocale = 0;
                 else
                     CurrentLocale += 1;
             }));
 
-        private ICommand _extendMatrixCommand;
-
         public ICommand ExtendMatrixCommand =>
             _extendMatrixCommand ?? (_extendMatrixCommand = new RelayCommand(ExtendMatrix));
-
-        private ICommand _addMatrixRowCommand;
-
-        private ICommand _submitDataCommand;
 
         public ICommand SubmitDataCommand =>
             _submitDataCommand ?? (_submitDataCommand = new RelayCommand(DoMaths));
 
-        private ICommand _loadFromFileCommand;
-
         public object LoadFromFileCommand =>
             _loadFromFileCommand ?? (_loadFromFileCommand = new RelayCommand(LoadFromFile));
-
-        private int _currentlySelectedArraySizeIndex = 0;
 
         public int CurrentlySelectedArraySizeIndex
         {
@@ -110,8 +126,8 @@ namespace NumMethods2.ViewModel
             set
             {
                 _currentlySelectedArraySizeIndex = value;
-                Matrix = new double[PossibleArraySizes[value],PossibleArraySizes[value]];
-                ResultsGrid = new double[PossibleArraySizes[value],1];
+                Matrix = new double[PossibleArraySizes[value], PossibleArraySizes[value]];
+                ResultsGrid = new double[PossibleArraySizes[value], 1];
                 Size = PossibleArraySizes[value];
                 RaisePropertyChanged(() => CurrentlySelectedArraySizeIndex);
             }
@@ -130,7 +146,6 @@ namespace NumMethods2.ViewModel
             10
         };
 
-        private bool _enableDebugLog;
         public bool EnableDebugLog
         {
             get { return _enableDebugLog; }
@@ -142,36 +157,31 @@ namespace NumMethods2.ViewModel
         }
 
         /// <summary>
-        /// Item 1 is matrix snapshot , Item 2 is results snapshot prepared for UI display.
+        ///     Item 1 is matrix snapshot ,
+        ///     Item 2 is results snapshot ,
+        ///     Item 3 is iteration counter
         /// </summary>
-        private List<Tuple<double[,], double[,]>> _iterationLog;
-        /// <summary>
-        /// Item 1 is matrix snapshot , 
-        /// Item 2 is results snapshot , 
-        /// Item 3 is iteration counter
-        /// </summary>
-        public ObservableCollection<Tuple<double[,],double[,], string>> IterationLog
+        public ObservableCollection<Tuple<double[,], double[,], string>> IterationLog
         {
             get
             {
-                if(_iterationLog == null)
+                if (_iterationLog == null)
                     return new ObservableCollection<Tuple<double[,], double[,], string>>();
-                var output = new ObservableCollection<Tuple<double[,],double[,],string>>();
-                for (int i = 0; i < _iterationLog.Count; i++)
+                var output = new ObservableCollection<Tuple<double[,], double[,], string>>();
+                for (var i = 0; i < _iterationLog.Count; i++)
                 {
-                    output.Add(new Tuple<double[,],double[,], string>(_iterationLog[i].Item1,_iterationLog[i].Item2,(i+1).ToString()));
+                    output.Add(new Tuple<double[,], double[,], string>(_iterationLog[i].Item1, _iterationLog[i].Item2,
+                        (i + 1).ToString()));
                 }
                 return output;
             }
-        } 
+        }
 
 
         public IMainPageViewInteraction View { get; set; }
 
         public int Size { get; set; } = 2;
-
-        private double[,] _matrixBackup;
-        private double[,] _matrix { get; set; } = new double[,] { { 0, 0 }, { 0, 0 } };
+        private double[,] _matrix { get; set; } = {{0, 0}, {0, 0}};
 
         public double[,] Matrix
         {
@@ -184,14 +194,9 @@ namespace NumMethods2.ViewModel
             }
         }
 
-        private double[,] _resultsGrid = new double[,] { { 0 }, { 0 } };
-
         public double[,] ResultsGrid
         {
-            get
-            {
-                return _resultsGrid;
-            }
+            get { return _resultsGrid; }
             set
             {
                 _resultsGrid = value;
@@ -199,14 +204,9 @@ namespace NumMethods2.ViewModel
             }
         }
 
-        private List<double> _matrixSolutions = new List<double>();
-
         public List<double> MatrixSolutions
         {
-            get
-            {
-                return _matrixSolutions;
-            }
+            get { return _matrixSolutions; }
             set
             {
                 _matrixSolutions = value;
@@ -214,38 +214,33 @@ namespace NumMethods2.ViewModel
             }
         }
 
-        public MainViewModel()
-        {
-            CurrentLocale = AvailableLocale.EN;
-        }
-
         public void ExtendMatrix()
         {
-            List<List<double>> list = new List<List<double>>();
+            var list = new List<List<double>>();
             var flatMatrix = Matrix.Cast<double>();
-            for (int i = 0; i < Size; i++)
+            for (var i = 0; i < Size; i++)
             {
-                var row = flatMatrix.Skip(i * Size).Take(Size).ToList();
+                var row = flatMatrix.Skip(i*Size).Take(Size).ToList();
                 row.Add(0);
                 list.Add(row);
             }
             var newRow = new List<double>();
-            for (int i = 0; i < Size; i++)
+            for (var i = 0; i < Size; i++)
                 newRow.Add(0);
             list.Add(newRow);
             Size++;
             ResultsGrid = Utils.ResizeArray(ResultsGrid, Size, 1);
-            Matrix = Utils.To2DArray<double>(list);
+            Matrix = list.To2DArray();
         }
 
         private void LoadFromFile()
         {
             var fp = new OpenFileDialog();
-            if(fp.ShowDialog() ?? false)
-            using (var reader = new StreamReader(fp.OpenFile()))
-            {
-               LoadMatrix(reader);
-            }
+            if (fp.ShowDialog() ?? false)
+                using (var reader = new StreamReader(fp.OpenFile()))
+                {
+                    LoadMatrix(reader);
+                }
         }
 
         public void LoadFromFile(string path)
@@ -260,7 +255,6 @@ namespace NumMethods2.ViewModel
                 {
                     //
                 }
-
             }
         }
 
@@ -282,7 +276,7 @@ namespace NumMethods2.ViewModel
         }
 
         /// <summary>
-        /// Initializes matrix solution.
+        ///     Initializes matrix solution.
         /// </summary>
         private async void DoMaths()
         {
@@ -316,7 +310,6 @@ namespace NumMethods2.ViewModel
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
                 }
-
             });
             RaisePropertyChanged(() => IterationLog);
         }

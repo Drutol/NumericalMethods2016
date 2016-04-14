@@ -10,32 +10,32 @@
         DataContext="{Binding Source={StaticResource Locator} , Path=Main}"
         Title="MainWindow" Height="350" Width="525" Drop="MainWindow_OnDrop" AllowDrop="True">
     <Window.Resources>
-        <converters:ArraySizeTextConverter x:Key="ArraySizeTextConverter"/>
-        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <converters:ArraySizeTextConverter x:Key="ArraySizeTextConverter" />
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     </Window.Resources>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Locale[#SelMatrixSize]}"/>
-            <ComboBox Grid.Column="1" Margin="20,0,5,0" ItemsSource="{Binding PossibleArraySizes}" 
+            <TextBlock Text="{Binding Locale[#SelMatrixSize]}" />
+            <ComboBox Grid.Column="1" Margin="20,0,5,0" ItemsSource="{Binding PossibleArraySizes}"
                       SelectedIndex="{Binding CurrentlySelectedArraySizeIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Converter={StaticResource ArraySizeTextConverter}}"/>
+                        <TextBlock Text="{Binding Converter={StaticResource ArraySizeTextConverter}}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
@@ -47,36 +47,43 @@
                     <Setter Property="MinWidth" Value="20" />
                 </Style>
             </StackPanel.Resources>
-            <DataGrid HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="Grid" CanUserAddRows="True"
-                      dataGrid2D:ItemsSource.Array2D="{Binding Matrix}"/>
-            <ListView Margin="10,0,0,0" BorderThickness="0" ItemsSource="{Binding MatrixSolutions}" VerticalAlignment="Center">
+            <DataGrid HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="Grid"
+                      CanUserAddRows="True"
+                      dataGrid2D:ItemsSource.Array2D="{Binding Matrix}" />
+            <ListView Margin="10,0,0,0" BorderThickness="0" ItemsSource="{Binding MatrixSolutions}"
+                      VerticalAlignment="Center">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" MaxHeight="20">
-                                <TextBlock Text="x= "/>
-                                <TextBlock Text="{Binding}"/>
-                            </StackPanel>
+                            <TextBlock Text="x= " />
+                            <TextBlock Text="{Binding}" />
+                        </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <DataGrid Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" x:Name="ResultsGrid" dataGrid2D:ItemsSource.Array2D="{Binding ResultsGrid}" />
+            <DataGrid Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                      HeadersVisibility="None" x:Name="ResultsGrid"
+                      dataGrid2D:ItemsSource.Array2D="{Binding ResultsGrid}" />
         </StackPanel>
-        <StackPanel Grid.Column="0"  Orientation="Horizontal" Grid.Row="2">
-            <Button Margin="5,0,0,5" Content="{Binding Locale[#ExtendMatrix]}" Command="{Binding ExtendMatrixCommand}"/>
-            <Button Margin="5,0,0,5" Content="{Binding Locale[#FileLoad]}" Command="{Binding LoadFromFileCommand}"/>
-            <ToggleButton Margin="5,0,0,5" Content="{Binding Locale[#EnableLog]}" IsChecked="{Binding EnableDebugLog,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Grid.Row="2">
+            <Button Margin="5,0,0,5" Content="{Binding Locale[#ExtendMatrix]}" Command="{Binding ExtendMatrixCommand}" />
+            <Button Margin="5,0,0,5" Content="{Binding Locale[#FileLoad]}" Command="{Binding LoadFromFileCommand}" />
+            <ToggleButton Margin="5,0,0,5" Content="{Binding Locale[#EnableLog]}"
+                          IsChecked="{Binding EnableDebugLog,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
             <Button Margin="5,0,0,5" VerticalAlignment="Center" MaxWidth="40" MaxHeight="30"
-                        Command="{Binding ChangeLanguageCommand}"
-                        ToolTip="{Binding Locale[#LangTooltip]}">
+                    Command="{Binding ChangeLanguageCommand}"
+                    ToolTip="{Binding Locale[#LangTooltip]}">
                 <Image Margin="1" Source="{Binding LangImgSourceBind}" />
             </Button>
         </StackPanel>
-        <Button Grid.Column="0"  Grid.Row="3" Margin="5,5" Height="30" VerticalAlignment="Bottom" Content="{Binding Locale[#DoMaths]}" Command="{Binding SubmitDataCommand}"/>
-        <TabControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="4" HorizontalAlignment="Stretch" 
-                    ItemsSource="{Binding IterationLog}" Visibility="{Binding IterationLog,Converter={StaticResource NullToVisibilityConverter}}">
+        <Button Grid.Column="0" Grid.Row="3" Margin="5,5" Height="30" VerticalAlignment="Bottom"
+                Content="{Binding Locale[#DoMaths]}" Command="{Binding SubmitDataCommand}" />
+        <TabControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="4" HorizontalAlignment="Stretch"
+                    ItemsSource="{Binding IterationLog}"
+                    Visibility="{Binding IterationLog,Converter={StaticResource NullToVisibilityConverter}}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Item3}"/>
+                    <TextBlock Text="{Binding Item3}" />
                 </DataTemplate>
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
@@ -84,11 +91,13 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <StackPanel.Resources>
                             <Style TargetType="DataGridCell">
-                                <Setter Property="MaxWidth" Value="40"/>
+                                <Setter Property="MaxWidth" Value="40" />
                             </Style>
                         </StackPanel.Resources>
-                        <DataGrid dataGrid2D:ItemsSource.Array2D="{Binding Item1}" HeadersVisibility="None"  VerticalAlignment="Center"/>
-                        <DataGrid dataGrid2D:ItemsSource.Array2D="{Binding Item2}" HeadersVisibility="None"  VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        <DataGrid dataGrid2D:ItemsSource.Array2D="{Binding Item1}" HeadersVisibility="None"
+                                  VerticalAlignment="Center" />
+                        <DataGrid dataGrid2D:ItemsSource.Array2D="{Binding Item2}" HeadersVisibility="None"
+                                  VerticalAlignment="Center" Margin="10,0,0,0" />
                     </StackPanel>
                 </DataTemplate>
             </TabControl.ContentTemplate>

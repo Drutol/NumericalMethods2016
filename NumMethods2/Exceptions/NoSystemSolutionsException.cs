@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NumMethods2.Exceptions
 {
-    class NoSystemSolutionsException : Exception
+    internal class NoSystemSolutionsException : Exception
     {
     }
 }

@@ -1,29 +1,30 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <matrixData>
-    <equations>
-      <equation>
-        <coefficients>
-          <coeff>3</coeff>
-          <coeff>3</coeff>
-          <coeff>1</coeff>
-        </coefficients>
-        <result>1</result>
-      </equation>
-      <equation>
-        <coefficients>
-          <coeff>2</coeff>
-          <coeff>5</coeff>
-          <coeff>7</coeff>
-        </coefficients>
-        <result>20</result>
-      </equation>         
-      <equation>
-        <coefficients>
-          <coeff>-4</coeff>
-          <coeff>-10</coeff>
-          <coeff>-14</coeff>
-        </coefficients>
-        <result>-20</result>
-      </equation>      
-    </equations>
+  <equations>
+    <equation>
+      <coefficients>
+        <coeff>3</coeff>
+        <coeff>3</coeff>
+        <coeff>1</coeff>
+      </coefficients>
+      <result>1</result>
+    </equation>
+    <equation>
+      <coefficients>
+        <coeff>2</coeff>
+        <coeff>5</coeff>
+        <coeff>7</coeff>
+      </coefficients>
+      <result>20</result>
+    </equation>
+    <equation>
+      <coefficients>
+        <coeff>-4</coeff>
+        <coeff>-10</coeff>
+        <coeff>-14</coeff>
+      </coefficients>
+      <result>-20</result>
+    </equation>
+  </equations>
 </matrixData>
