@@ -39,31 +39,35 @@ namespace NumMethods2
 
                 return new Tuple<double[,], double[,]>(coeffs.To2DArray(), results.To2DArray());
             }
-            if ((data.StartsWith("{") && data.EndsWith("}")) || (data.StartsWith("[") && data.EndsWith("]")))
+            else if ((data.StartsWith("{") && data.EndsWith("}")) || (data.StartsWith("[") && data.EndsWith("]")))
             {
                 return JsonConvert.DeserializeObject<Tuple<double[,], double[,]>>(data);
             }
-            var coeffs = new List<List<double>>();
-            var results = new List<List<double>>();
-            int? len = null;
-            foreach (var line in data.Split(new[] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries))
+            else 
             {
-                coeffs.Add(new List<double>());
-                foreach (var coeff in line.Split(','))
+                var coeffs = new List<List<double>>();
+                var results = new List<List<double>>();
+                int? len = null;
+                foreach (var line in data.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    coeffs.Last().Add(double.Parse(coeff.Replace('.', ',')));
-                }
-                //check if matrix is NxN
-                if (len == null)
-                    len = coeffs[0].Count;
-                else if (len.Value != coeffs.Last().Count || len < coeffs.Count)
-                    throw new InvalidMatrixFileException();
+                    coeffs.Add(new List<double>());
+                    foreach (var coeff in line.Split(','))
+                    {
+                        coeffs.Last().Add(double.Parse(coeff.Replace('.', ',')));
+                    }
+                    //check if matrix is NxN
+                    if (len == null)
+                        len = coeffs[0].Count;
+                    else if (len.Value != coeffs.Last().Count || len < coeffs.Count)
+                        throw new InvalidMatrixFileException();
 
-                results.Add(new List<double> {coeffs.Last().Last()});
-                coeffs.Last().RemoveAt(coeffs.Last().Count - 1);
+                    results.Add(new List<double> { coeffs.Last().Last() });
+                    coeffs.Last().RemoveAt(coeffs.Last().Count - 1);
+                }
+
+                return new Tuple<double[,], double[,]>(coeffs.To2DArray(), results.To2DArray());
             }
 
-            return new Tuple<double[,], double[,]>(coeffs.To2DArray(), results.To2DArray());
         }
     }
 }
