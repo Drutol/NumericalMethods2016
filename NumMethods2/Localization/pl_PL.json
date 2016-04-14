@@ -3,7 +3,7 @@
   "#SelMatrixSize": "Wybierz rozmiar macierzy:",
   "#ExtendMatrix": "Powiększ macierz.",
   "#FileLoad": "Załaduj macierz z pliku.",
-  "#EnableLog": "Włącz \"debug log\".",
+  "#EnableLog": "Włącz dziennik odpluskwiania.",
   "#DoMaths": "Niech dzieje się matematyka...",
   "#FileParseExceptionMsg": "Plik nie może zostać przetworzony,\nspróbuj wybrać inny.",
   "#FileParseExceptionTitle": "Nieprawidłowy plik!",
