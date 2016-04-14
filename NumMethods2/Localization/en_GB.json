@@ -1,0 +1,16 @@
+﻿{
+  "#LangTooltip": "Zmień język.",
+  "#SelMatrixSize": "Select matrix size:",
+  "#ExtendMatrix": "Extend matrix.",
+  "#FileLoad": "Load from file.",
+  "#EnableLog": "Enable debug log.",
+  "#DoMaths": "Do maths...",
+  "#FileParseExceptionMsg": "File cannot be parsed,\ntry chosing other one.",
+  "#FileParseExceptionTitle": "Invalid file!",
+  "#NoSolutionExceptionMsg": "There are no solutions in provided system.",
+  "#NoSolutionExceptionTitle": "System unsolvable!",
+  "#InfSolutionExceptionMsg": "System has infinite solutions.",
+  "#InfSolutionExceptionTitle": "Infinite number of soltions!",
+  "#UnexpectedExceptionMsg": "Something unexpected has happened, try checking your data\nor type in diffrent values.",
+  "#UnexpectedExceptionTitle": "Something went wrong!"
+}

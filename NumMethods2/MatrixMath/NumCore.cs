@@ -43,16 +43,15 @@ namespace NumMethods2.MatrixMath
                     Utils.To2DArray(flatResults.Select(flatResult => new List<double> {flatResult}).ToList())));
             }
             
-            X[resLen-1]=flatResults[resLen-1]/matrix[resLen-1,resLen-1];
             
             if (matrix[resLen - 1, resLen - 1] == 0)
             {
-                if (X[resLen - 1] == 0)
+                if (flatResults[resLen - 1] == 0)
                     throw new InfiniteSystemSolutionsException();
                 throw new NoSystemSolutionsException();
             }
 
-            output.Add(X[resLen-1]);
+            output.Add(X[resLen - 1] = flatResults[resLen - 1] / matrix[resLen - 1, resLen - 1]);
 
             for (int i = resLen -2; i >= 0; i--)
             {

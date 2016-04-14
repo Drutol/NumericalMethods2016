@@ -1,0 +1,16 @@
+﻿{
+  "#LangTooltip": "Change language.",
+  "#SelMatrixSize": "Wybierz rozmiar macierzy:",
+  "#ExtendMatrix": "Powiększ macierz.",
+  "#FileLoad": "Załaduj macierz z pliku.",
+  "#EnableLog": "Włącz \"debug log\".",
+  "#DoMaths": "Niech dzieje się matematyka...",
+  "#FileParseExceptionMsg": "Plik nie może zostać przetworzony,\nspróbuj wybrać inny.",
+  "#FileParseExceptionTitle": "Nieprawidłowy plik!",
+  "#NoSolutionExceptionMsg": "Brak rozwiązań dla podanego układu.",
+  "#NoSolutionExceptionTitle": "Układ sprzeczny!",
+  "#InfSolutionExceptionMsg": "Układ ma nieskończenie wiele rozwiązań.",
+  "#InfSolutionExceptionTitle": "Układ nieoznaczony!",
+  "#UnexpectedExceptionMsg": "Wydarzyło się coś niespodziewanego, spróbuj sprawdzić swoje dane\nlub wprowadź inne wartości.",
+  "#UnexpectedExceptionTitle": "Coś poszło nie tak!"
+}
