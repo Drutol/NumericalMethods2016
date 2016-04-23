@@ -9,10 +9,10 @@ namespace NumMethods1.NumCore
 
         public double GetValue(double x)
         {
-            return 4*x*Math.Sin(x*x)-Math.Pow(2,x);
+            return Math.Abs(x);
         }
 
-        public string TextRepresentation => "4*x*sin(x^2)-2^(x)";
+        public string TextRepresentation => "|x|";
     }
 
     internal class Function2 : IFunction
@@ -22,10 +22,10 @@ namespace NumMethods1.NumCore
 
         public double GetValue(double x)
         {
-            return 15*Math.Sin(5*x) - 2*Math.Tan(x - 2);
+            return Math.Sin(x);
         }
 
-        public string TextRepresentation => "15*sin(5*x)-2*tan(x-2)";
+        public string TextRepresentation => "sin(x)";
     }
 
     internal class Function3 : IFunction

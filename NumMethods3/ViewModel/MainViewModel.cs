@@ -1,10 +1,13 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using NumMethods1.NumCore;
 using NumMethods3.MathCore;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
+using OxyPlot;
 
 namespace NumMethods3.ViewModel
 {
@@ -27,7 +30,7 @@ namespace NumMethods3.ViewModel
 
         public IFunction FunctionSelectorSelectedItem
         {
-            get { return _functionSelectorSelectedItem; }
+            get { return _functionSelectorSelectedItem ?? (_functionSelectorSelectedItem = AvailableFunctions[0]); }
             set
             {
                 _functionSelectorSelectedItem = value;
@@ -45,10 +48,50 @@ namespace NumMethods3.ViewModel
             }
         }
 
-        private ICommand _extendRowCommand;
+        private ICommand _doMathsCommand;
 
-        public ICommand ExtendRowCommand =>
-            _extendRowCommand ?? (_extendRowCommand = new RelayCommand(() => FunctionValues.Add(new FunctionValue())));
+        public ICommand DoMathsCommand =>
+            _doMathsCommand ?? (_doMathsCommand = new RelayCommand(() =>
+            {
+                int nodeCount = int.Parse(InterpolationNodesCount);
+                double toX = double.Parse(ToXValueBind), fromX = double.Parse(FromXValueBind);
+                double nodeDist = Math.Abs((fromX - toX)/(nodeCount - 1));
+                int precision = 1000;
+                var nodes = new List<FunctionValue>();
+                var interpolated = new List<FunctionValue>();
+                var interpolationResults = new List<FunctionValue>();
+                for (int i = 0; i < nodeCount; i++)
+                {
+                    nodes.Add(new FunctionValue
+                    {
+                        X = i == nodeCount - 1 ? toX : fromX + i*nodeDist,
+                    });
+                    nodes[i].Y = FunctionSelectorSelectedItem.GetValue(nodes[i].X);
+                }
+
+                var progressives = NumCore.ProgressiveSubs(nodeCount, nodes.Select(value => value.Y).ToList());
+
+                for (double i = 0; i < precision; i++)
+                {
+                    var current = new FunctionValue();
+                    current.X = fromX + i*(toX - fromX)/precision;
+                    double t = (current.X - nodes[0].X)/nodeDist;
+                    current.Y = NumCore.NewtonsInterpolation(t, progressives);
+                    interpolationResults.Add(current);
+                    interpolated.Add(new FunctionValue
+                    {
+                        X = current.X,
+                        Y = FunctionSelectorSelectedItem.GetValue(current.X)
+                    });
+                }
+                NodeChartData = nodes.Select(value => value.ToDataPoint).ToList();
+                ChartDataInterpolated = interpolated.Select(value => value.ToDataPoint).ToList();
+                ChartDataInterpolation = interpolationResults.Select(value => value.ToDataPoint).ToList();
+                RaisePropertyChanged(() => NodeChartData);
+                RaisePropertyChanged(() => ChartDataInterpolated);
+                RaisePropertyChanged(() => ChartDataInterpolation);
+
+            }));
 
         private string _fromXValue = "-10";
 
@@ -62,7 +105,7 @@ namespace NumMethods3.ViewModel
             }
         }
 
-        private string _toXValue = "";
+        private string _toXValue = "10";
 
         public string ToXValueBind
         {
@@ -74,8 +117,26 @@ namespace NumMethods3.ViewModel
             }
         }
 
-        public ObservableCollection<KeyValuePair<double, double>> ChartData { get; } =
-    new ObservableCollection<KeyValuePair<double, double>>();
+        private string _interpolationNodesCount = "10";
+
+        public string InterpolationNodesCount
+        {
+            get { return _interpolationNodesCount; }
+            set
+            {
+                _interpolationNodesCount = value;
+                RaisePropertyChanged(() => InterpolationNodesCount);
+            }
+        }
+
+        public List<DataPoint> ChartDataInterpolation { get; set; } =
+            new List<DataPoint>();
+
+        public List<DataPoint> ChartDataInterpolated { get; set; } =
+            new List<DataPoint>();
+
+        public List<DataPoint> NodeChartData { get; set; } =
+            new List<DataPoint>();
 
 
         public MainViewModel()

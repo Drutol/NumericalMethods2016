@@ -3,10 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:dataGrid2D="http://gu.se/DataGrid2D"
-        xmlns:charting="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
-        xmlns:visualizationToolkit="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
-        mc:Ignorable="d"
+        mc:Ignorable="d" xmlns:oxy="http://oxyplot.org/wpf"
         Title="MainWindow" Height="350" Width="525"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Grid>
@@ -36,18 +33,22 @@
                     <StackPanel>
                         <TextBlock Text="TOX" />
                         <TextBox Text="{Binding ToXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>                    
+                    <StackPanel>
+                        <TextBlock Text="Nodes" />
+                        <TextBox Text="{Binding InterpolationNodesCount,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </StackPanel>
-                <Button Content="Do Maths" MaxHeight="30"/>
+                <Button Content="Do Maths" MaxHeight="30" Command="{Binding DoMathsCommand}"/>
             </StackPanel>
         </StackPanel>
-        <charting:Chart Grid.Row="2">
-            <charting:LineSeries
-                Title="hghuyjhfgjh"
-                ItemsSource="{Binding ChartData}"
-                DependentValueBinding="{Binding Path=Value}"
-                IndependentValueBinding="{Binding Path=Key}"/>
-        </charting:Chart>
+        <oxy:Plot Title="?" Grid.Row="2" >
+            <oxy:Plot.Series>
+                <oxy:LineSeries ItemsSource="{Binding ChartDataInterpolated}" Smooth="True"/>
+                <oxy:LineSeries ItemsSource="{Binding ChartDataInterpolation}" Smooth="True"/>
+                <oxy:LineSeries ItemsSource="{Binding NodeChartData}" MarkerType="Circle" LineStyle="None"/>
+            </oxy:Plot.Series>
+        </oxy:Plot>
 
     </Grid>
 </Window>
