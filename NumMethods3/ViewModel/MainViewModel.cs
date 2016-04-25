@@ -22,11 +22,11 @@ namespace NumMethods3.ViewModel
         public ObservableCollection<ISelectable> AvailableFunctions { get; }
             = new ObservableCollection<ISelectable>
             {
-                        new Function1(),
-                        new Function2(),
-                        new Function3(),
-                        new Function4(),
-                        new RawInputSelection()
+                    new Function1(),
+                    new Function2(),
+                    new Function3(),
+                    new Function4(),
+                    new RawInputSelection()
             };
 
         /// <summary>
@@ -106,26 +106,90 @@ namespace NumMethods3.ViewModel
                     toX = nodes.Last().X;
                     fromX = nodes.First().X;
                     nodeDist = Math.Abs((fromX - toX) / (nodeCount - 1));
-                }
+
+                    /*
+                         *  doublenewton_interpolation(constXF *xf,unsigned intxf_size,doublex)
+                         *  {
+                         *  doubleresult = xf[0].f;
+                         *  double*a =new double[xf_size];
+                         *  for(int i = 0; i < xf_size; i++)
+                         *  a[i] = xf[i].f;
+                         *  for(inti = 1; i < xf_size; i++)
+                         *  for(intj = 0; j < i; j++)
+                         *  a[i] = (a[i] - a[j]) / (xf[i].x - xf[j].x);
+                         *  for(inti = 1; i < xf_size; i++)
+                         *  {
+                         *  double f = 1.0;
+                         *  for(int j = 0; j < i; j++)
+                         *  f *= x - xf[j].x;
+                         *  result += a[i] * f;
+                         *  } 
+                         *  return result;
+                         *  }
+                         * 
+                         * 
+                         * 
+                         */
+                          }
 
                 var progressives = NumCore.ProgressiveSubs(nodeCount, nodes.Select(value => value.Y).ToList());
-
-                for (double i = 0; i < precision; i++)
+                if (SelectedFunction != null)
+                    for (double i = 0; i < precision; i++)
+                    {
+                        var current = new FunctionValue();
+                        current.X = fromX + i*(toX - fromX)/precision;
+                        double t = (current.X - nodes[0].X)/nodeDist;
+                        current.Y = NumCore.NewtonsInterpolation(t, progressives);
+                        interpolationResults.Add(current);
+                        if (SelectedFunction != null)
+                            interpolated.Add(new FunctionValue
+                            {
+                                X = current.X,
+                                Y = SelectedFunction.GetValue(current.X)
+                            });
+                    }
+                else
                 {
-                    var current = new FunctionValue();
-                    current.X = fromX + i*(toX - fromX)/precision;
-                    double t = (current.X - nodes[0].X)/nodeDist;
-                    current.Y = NumCore.NewtonsInterpolation(t, progressives);
-                    interpolationResults.Add(current);
-                    if (SelectedFunction != null)
-                        interpolated.Add(new FunctionValue
+                    List<double> coeficientes = new List<double>();
+                    int k;
+                    int puntos = nodeCount;
+                    double valor;
+                    coeficientes.Add(nodes[0].Y);
+                    for (int j = 1; j < puntos; j++)
+                    {
+                        k = (nodes.Count - puntos + j);
+                        for (int i = 1; i < puntos - (j - 1); i++, k++)
                         {
-                            X = current.X,
-                            Y = SelectedFunction.GetValue(current.X)
-                        });
+                            valor = (nodes[k].Y - nodes[k - 1].Y)/(nodes[i + j - 1].X - nodes[i - 1].X);
+                            nodes.Add(new FunctionValue {X=0,Y=valor});
+                            if (i == 1)
+                            {
+                                coeficientes.Add(valor);
+                            }
+                        }
+                    }
+                    for (double x = 0; x < precision; x++)
+                    {
+                        List<double> dif = new List<double>();
+                        valor = coeficientes[0];
+                        var val = fromX + x * (toX - fromX) / precision;
+                        dif.Add(val - nodes[0].X);
+
+                        for (int i = 0; i < puntos - 1; i++)
+                        {
+                            dif.Add((val - nodes[i + 1].X) * (dif[i]));
+                        }
+                        for (int i = 0; i < coeficientes.Count - 1; i++)
+                        {
+                            valor = valor + (coeficientes[1 + i] * dif[i]);
+                        }
+                        interpolationResults.Add(new FunctionValue {X = val,Y=valor});
+                    }
+
                 }
 
-                NodeChartData = nodes.Select(value => value.ToDataPoint).ToList();
+
+                NodeChartData = nodes.Take(nodeCount).Select(value => value.ToDataPoint).ToList();
                 ChartDataInterpolated = interpolated.Select(value => value.ToDataPoint).ToList();
                 ChartDataInterpolation = interpolationResults.Select(value => value.ToDataPoint).ToList();
                 RaisePropertyChanged(() => NodeChartData);
