@@ -12,33 +12,50 @@ using OxyPlot;
 
 namespace NumMethods3.ViewModel
 {
+    public class RawInputSelection : ISelectable
+    {
+        public string TextRepresentation => "Input values manually.";
+    }
+
     public class MainViewModel : ViewModelBase
     {
-
-        public ObservableCollection<IFunction> AvailableFunctions { get; }
-            = new ObservableCollection<IFunction>
+        public ObservableCollection<ISelectable> AvailableFunctions { get; }
+            = new ObservableCollection<ISelectable>
             {
                         new Function1(),
                         new Function2(),
                         new Function3(),
-                        new Function4()
+                        new Function4(),
+                        new RawInputSelection()
             };
 
         /// <summary>
         ///     Curently selected function by user.
         /// </summary>
-        private IFunction _functionSelectorSelectedItem;
+        private IFunction SelectedFunction { get; set; } = new Function1();
 
-        public IFunction FunctionSelectorSelectedItem
+        private int _functionSelectorSelectedIndex;
+
+        public int FunctionSelectorSelectedIndex
         {
-            get { return _functionSelectorSelectedItem ?? (_functionSelectorSelectedItem = AvailableFunctions[0]); }
+            get { return _functionSelectorSelectedIndex; }
             set
             {
-                _functionSelectorSelectedItem = value;
+                _functionSelectorSelectedIndex = value;
+                SelectedFunction = AvailableFunctions[value] as IFunction;
+                FunctionModeVisibility = value < AvailableFunctions.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
+                
             }
         }
 
-        private ObservableCollection<FunctionValue> _functionValues = new ObservableCollection<FunctionValue>();
+        private ObservableCollection<FunctionValue> _functionValues = new ObservableCollection<FunctionValue>
+        {
+            new FunctionValue {X = -10,Y= 10},
+            new FunctionValue {X = -5,Y= 12},
+            new FunctionValue {X = -7,Y= 45},
+            new FunctionValue {X = -1,Y= 2},
+            new FunctionValue {X = 10,Y= 15},
+        };
         public ObservableCollection<FunctionValue> FunctionValues
         {
             get { return _functionValues; }
@@ -54,55 +71,60 @@ namespace NumMethods3.ViewModel
         public ICommand DoMathsCommand =>
             _doMathsCommand ?? (_doMathsCommand = new RelayCommand(() =>
             {
-                int nodeCount = int.Parse(InterpolationNodesCount);
-                double toX = double.Parse(ToXValueBind), fromX = double.Parse(FromXValueBind);
-                double nodeDist = Math.Abs((fromX - toX)/(nodeCount - 1));
-                int precision = (int)Math.Pow(10,(_precValue/2)+1);
+                int nodeCount;
+                double toX, fromX;
+                double nodeDist;
+                int precision = 20000;
                 var nodes = new List<FunctionValue>();
                 var interpolated = new List<FunctionValue>();
                 var interpolationResults = new List<FunctionValue>();
-                for (int i = 0; i < nodeCount; i++)
+                if (SelectedFunction != null)
                 {
-                    nodes.Add(new FunctionValue
+                    nodeCount = int.Parse(InterpolationNodesCount);
+                    toX = double.Parse(ToXValueBind);
+                    fromX = double.Parse(FromXValueBind);
+                    nodeDist = Math.Abs((fromX - toX) / (nodeCount - 1));
+
+                    for (int i = 0; i < nodeCount; i++)
                     {
-                        X = i == nodeCount - 1 ? toX : fromX + i*nodeDist,
-                    });
-                    nodes[i].Y = FunctionSelectorSelectedItem.GetValue(nodes[i].X);
+                        nodes.Add(new FunctionValue
+                        {
+                            X = i == nodeCount - 1 ? toX : fromX + i * nodeDist,
+                        });
+                        nodes[i].Y = SelectedFunction.GetValue(nodes[i].X);
+                    }
+                }
+
+                else
+                {
+                    var nodesInPreparation = FunctionValues.ToList();
+                    if(nodesInPreparation.Select(value => value.X).Distinct().ToList().Count != nodesInPreparation.Count)
+                        return; // doubled x value
+
+                    nodes = nodesInPreparation.OrderBy( value => value.X ).ToList();
+                    nodeCount = nodesInPreparation.Count;
+                    toX = nodes.Last().X;
+                    fromX = nodes.First().X;
+                    nodeDist = Math.Abs((fromX - toX) / (nodeCount - 1));
                 }
 
                 var progressives = NumCore.ProgressiveSubs(nodeCount, nodes.Select(value => value.Y).ToList());
 
-                if (!_isDataEntryEnabled)
+                for (double i = 0; i < precision; i++)
                 {
-                    for (double i = 0; i < precision; i++)
-                    {
-                        var current = new FunctionValue();
-                        current.X = fromX + i*(toX - fromX)/precision;
-                        double t = (current.X - nodes[0].X)/nodeDist;
-                        current.Y = NumCore.NewtonsInterpolation(t, progressives);
-                        interpolationResults.Add(current);
+                    var current = new FunctionValue();
+                    current.X = fromX + i*(toX - fromX)/precision;
+                    double t = (current.X - nodes[0].X)/nodeDist;
+                    current.Y = NumCore.NewtonsInterpolation(t, progressives);
+                    interpolationResults.Add(current);
+                    if (SelectedFunction != null)
                         interpolated.Add(new FunctionValue
                         {
                             X = current.X,
-                            Y = FunctionSelectorSelectedItem.GetValue(current.X)
+                            Y = SelectedFunction.GetValue(current.X)
                         });
-                    }
                 }
-                else
-                {
-                    var vals = new List<FunctionValue>(_functionValues.ToList());
-                    foreach (var x in vals)
-                    {
-                        interpolated.Add(new FunctionValue
-                        {
-                            X = x.X,
-                            Y = x.Y
-                        });
-                        double t = (x.X - nodes[0].X) / nodeDist;
-                        x.Y = NumCore.NewtonsInterpolation(t, progressives);
-                        interpolationResults.Add(x);
-                    }
-                }
+
                 NodeChartData = nodes.Select(value => value.ToDataPoint).ToList();
                 ChartDataInterpolated = interpolated.Select(value => value.ToDataPoint).ToList();
                 ChartDataInterpolation = interpolationResults.Select(value => value.ToDataPoint).ToList();
@@ -148,38 +170,18 @@ namespace NumMethods3.ViewModel
             }
         }
 
-        private int _precValue = 3;
+        private Visibility _functionModeVisibility;
 
-        public int PrecValueBind
+        public Visibility FunctionModeVisibility
         {
-            get { return _precValue; }
+            get { return _functionModeVisibility; }
             set
             {
-                _precValue = value;
-                RaisePropertyChanged(() => PrecValueBind);
+                _functionModeVisibility = value;
+                RaisePropertyChanged(() => FunctionModeVisibility);
             }
         }
-
-        private bool _isDataEntryEnabled= true;
-
-        public bool IsDataGridEnabled
-        {
-            get { return _isDataEntryEnabled; }
-            set
-            {
-                _isDataEntryEnabled = value;
-                RaisePropertyChanged(() => IsDataGridEnabled);
-                RaisePropertyChanged(() => IsComboBoxEnabled);
-            }
-        }
-
-        public bool IsComboBoxEnabled
-        {
-            get { return !_isDataEntryEnabled; }
-        }
-
-
-
+    
         public List<DataPoint> ChartDataInterpolation { get; set; } =
             new List<DataPoint>();
 
@@ -188,10 +190,5 @@ namespace NumMethods3.ViewModel
 
         public List<DataPoint> NodeChartData { get; set; } =
             new List<DataPoint>();
-
-        public MainViewModel()
-        {
-
-        }
     }
 }

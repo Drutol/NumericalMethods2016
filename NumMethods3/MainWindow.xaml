@@ -4,77 +4,67 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" xmlns:oxy="http://oxyplot.org/wpf"
+        xmlns:converters="clr-namespace:NumMethods3.XamlConverters"
         Title="MainWindow" Height="350" Width="525"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition x:Name="Row1" Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <ComboBox IsEnabled="{Binding IsComboBoxEnabled,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
-                    ItemsSource="{Binding AvailableFunctions}" Height="20" VerticalAlignment="Top" Grid.Row="0"
-                    SelectedItem="{Binding FunctionSelectorSelectedItem,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                    HorizontalAlignment="Stretch">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding TextRepresentation}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-        <StackPanel Grid.Row="1" HorizontalAlignment="Center">
-            <StackPanel Orientation="Horizontal">
-                <StackPanel Margin="10" VerticalAlignment="Center" Orientation="Horizontal">
-                    <TextBlock Text="Eneable data input: "/>
-                    <CheckBox IsChecked="{Binding IsDataGridEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-                <Grid MaxHeight="100" VerticalAlignment="Top" Margin="0,30,0,0" HorizontalAlignment="Center">
-                    <DataGrid IsEnabled="{Binding IsDataGridEnabled,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
-                              VerticalScrollBarVisibility="Visible"
-                              x:Name="Grid" IsReadOnly="False"
-                              ItemsSource="{Binding FunctionValues,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="True"/>
+    
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:VisibilityInverterConverter x:Key="VisibilityInverterConverter"/>
+    </Window.Resources>
+    <Grid Background="#E6E6E6">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="170"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ComboBox ItemsSource="{Binding AvailableFunctions}" Height="20" VerticalAlignment="Top" Grid.Row="0" Margin="10"
+                  SelectedIndex="{Binding FunctionSelectorSelectedIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                  HorizontalAlignment="Stretch">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding TextRepresentation}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <StackPanel Grid.Row="1" HorizontalAlignment="Center">
+                <Grid VerticalAlignment="Center" Margin="20" HorizontalAlignment="Center">
+                    <DataGrid Visibility="{Binding FunctionModeVisibility,Converter={StaticResource VisibilityInverterConverter}}" IsReadOnly="False" BorderThickness="0"
+                              ItemsSource="{Binding FunctionValues,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="X" Binding="{Binding X}"/>
+                            <DataGridTextColumn Header="Y" Binding="{Binding Y}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
-                <StackPanel Margin="10">
+                <StackPanel Margin="10" Visibility="{Binding FunctionModeVisibility}">
                     <StackPanel>
-                        <TextBlock Text="FROMX" />
-                        <TextBox Text="{Binding FromXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="From X:" />
+                        <TextBox TextAlignment="Center" Text="{Binding FromXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <StackPanel>
-                        <TextBlock Text="TOX" />
-                        <TextBox Text="{Binding ToXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="To X:" />
+                        <TextBox TextAlignment="Center" Text="{Binding ToXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <StackPanel>
-                        <TextBlock Text="Nodes" />
-                        <TextBox Text="{Binding InterpolationNodesCount,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="Node count:" />
+                        <TextBox TextAlignment="Center" Text="{Binding InterpolationNodesCount,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </StackPanel>
-                <Button Content="Do Maths" MaxHeight="30" Command="{Binding DoMathsCommand}"/>
+                <Button Content="Do Maths" HorizontalAlignment="Stretch" Margin="10" Command="{Binding DoMathsCommand}"/>
             </StackPanel>
-        </StackPanel>
-        <StackPanel Grid.Row="2">
-            <TextBlock Text="Set precision:" HorizontalAlignment="Center"/>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="Low" Grid.Column="0" />
-                <TextBlock Text="{Binding PrecValueBind,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
-                               HorizontalAlignment="Center" Grid.Column="1" />
-                <TextBlock Text="High" Grid.Column="2" />
-            </Grid>
-            <Slider Value="{Binding PrecValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                    Minimum="1" Maximum="6"/>
-        </StackPanel>
-        <oxy:Plot Title="?" Grid.Row="3" >
+        </Grid>
+        <oxy:Plot Title="Plot" Grid.Column="1" >
             <oxy:Plot.Series>
                 <oxy:LineSeries ItemsSource="{Binding ChartDataInterpolated}" Smooth="True"/>
                 <oxy:LineSeries ItemsSource="{Binding ChartDataInterpolation}" Smooth="True"/>
                 <oxy:LineSeries ItemsSource="{Binding NodeChartData}" MarkerType="Circle" LineStyle="None"/>
             </oxy:Plot.Series>
-            
         </oxy:Plot>
 
     </Grid>

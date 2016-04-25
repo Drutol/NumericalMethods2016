@@ -111,8 +111,11 @@
     <Compile Include="MathCore\FunctionValue.cs" />
     <Compile Include="MathCore\IFunction.cs" />
     <Compile Include="MathCore\NumCore.cs" />
+    <Compile Include="ViewModel\ISelectable.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="XamlConverters\BoolToVisibilityConverterInverted.cs" />
+    <Compile Include="XamlConverters\BoolToVisibilityConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

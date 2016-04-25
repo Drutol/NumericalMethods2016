@@ -1,8 +1,9 @@
 ﻿using System;
+using NumMethods3.ViewModel;
 
 namespace NumMethods1.NumCore
 {
-    internal class Function1 : IFunction
+    internal class Function1 : IFunction , ISelectable
     {
         private static readonly int _id = 1;
         public int Id => _id;
@@ -15,7 +16,7 @@ namespace NumMethods1.NumCore
         public string TextRepresentation => "|x|";
     }
 
-    internal class Function2 : IFunction
+    internal class Function2 : IFunction, ISelectable
     {
         private static readonly int _id = 2;
         public int Id => _id;
@@ -28,7 +29,7 @@ namespace NumMethods1.NumCore
         public string TextRepresentation => "sin(x)";
     }
 
-    internal class Function3 : IFunction
+    internal class Function3 : IFunction, ISelectable
     {
         private static readonly int _id = 3;
         public int Id => _id;
@@ -41,7 +42,7 @@ namespace NumMethods1.NumCore
         public string TextRepresentation => "4^(x+1)-5^(x/2)-10";
     }
 
-    internal class Function4 : IFunction
+    internal class Function4 : IFunction, ISelectable
     {
         private static readonly int _id = 4;
         public int Id => _id;
