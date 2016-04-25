@@ -9,12 +9,14 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition x:Name="Row1" Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <ComboBox ItemsSource="{Binding AvailableFunctions}" Height="20" VerticalAlignment="Top" Grid.Row="0"
-                      SelectedItem="{Binding FunctionSelectorSelectedItem,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                      HorizontalAlignment="Stretch">
+        <ComboBox IsEnabled="{Binding IsComboBoxEnabled,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
+                    ItemsSource="{Binding AvailableFunctions}" Height="20" VerticalAlignment="Top" Grid.Row="0"
+                    SelectedItem="{Binding FunctionSelectorSelectedItem,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                    HorizontalAlignment="Stretch">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding TextRepresentation}" />
@@ -23,8 +25,16 @@
         </ComboBox>
         <StackPanel Grid.Row="1" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal">
-                <DataGrid VerticalAlignment="Top" Margin="0,30,0,0" HorizontalAlignment="Center" x:Name="Grid" IsReadOnly="False"
-                      ItemsSource="{Binding FunctionValues,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="True"/>
+                <StackPanel Margin="10" VerticalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock Text="Eneable data input: "/>
+                    <CheckBox IsChecked="{Binding IsDataGridEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <Grid MaxHeight="100" VerticalAlignment="Top" Margin="0,30,0,0" HorizontalAlignment="Center">
+                    <DataGrid IsEnabled="{Binding IsDataGridEnabled,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
+                              VerticalScrollBarVisibility="Visible"
+                              x:Name="Grid" IsReadOnly="False"
+                              ItemsSource="{Binding FunctionValues,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="True"/>
+                </Grid>
                 <StackPanel Margin="10">
                     <StackPanel>
                         <TextBlock Text="FROMX" />
@@ -33,7 +43,7 @@
                     <StackPanel>
                         <TextBlock Text="TOX" />
                         <TextBox Text="{Binding ToXValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>                    
+                    </StackPanel>
                     <StackPanel>
                         <TextBlock Text="Nodes" />
                         <TextBox Text="{Binding InterpolationNodesCount,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
@@ -42,12 +52,29 @@
                 <Button Content="Do Maths" MaxHeight="30" Command="{Binding DoMathsCommand}"/>
             </StackPanel>
         </StackPanel>
-        <oxy:Plot Title="?" Grid.Row="2" >
+        <StackPanel Grid.Row="2">
+            <TextBlock Text="Set precision:" HorizontalAlignment="Center"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Low" Grid.Column="0" />
+                <TextBlock Text="{Binding PrecValueBind,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
+                               HorizontalAlignment="Center" Grid.Column="1" />
+                <TextBlock Text="High" Grid.Column="2" />
+            </Grid>
+            <Slider Value="{Binding PrecValueBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                    Minimum="1" Maximum="6"/>
+        </StackPanel>
+        <oxy:Plot Title="?" Grid.Row="3" >
             <oxy:Plot.Series>
                 <oxy:LineSeries ItemsSource="{Binding ChartDataInterpolated}" Smooth="True"/>
                 <oxy:LineSeries ItemsSource="{Binding ChartDataInterpolation}" Smooth="True"/>
                 <oxy:LineSeries ItemsSource="{Binding NodeChartData}" MarkerType="Circle" LineStyle="None"/>
             </oxy:Plot.Series>
+            
         </oxy:Plot>
 
     </Grid>
