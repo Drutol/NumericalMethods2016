@@ -8,5 +8,14 @@
   "#OriginalFunction": "Original function",
   "#Interpolation": "Interpolation",
   "#Nodes": "Nodes",
-  "#DoMaths": "Do maths."
+  "#DoMaths": "Do maths.",
+  "#DrawingIntervalChangeMsg": "Drawing interval was adjusted to interpolation interval in order to be displayed well.",
+  "#DrawingIntervalChangeTitle": "Adjusting drawing interval.",
+  "#CannotParseMsg": "The data you have entered cannot be parsed.",
+  "#CannotParseTitle": "Cannot parse!",
+  "#InputVals": "Input values manually.",
+  "#NodesAmmountExceptionMsg": "There were problems with the nodes entered manually.",
+  "#NodesAmmountExceptionTitle": "Manual data entry error!",
+  "#UnexpectedExceptionMsg": "Try entering different values or restarting the app.",
+  "#UnexpectedExceptionTitle": "Unexpected error encountered!"
 }

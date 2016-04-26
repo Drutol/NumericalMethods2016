@@ -20,9 +20,9 @@ namespace NumMethods3.ViewModel
 
     public class InterpolationDataPack
     {
-        public List<FunctionValue> nodes { get; set; }
-        public List<FunctionValue> interpolated { get; set; }
-        public List<FunctionValue> interpolationResults { get; set; }
+        public List<FunctionValue> Nodes { get; set; }
+        public List<FunctionValue> Interpolated { get; set; }
+        public List<FunctionValue> InterpolationResults { get; set; }
         public List<FunctionValue> FunctionValues { get; }
         public int InterpolationNodesCount { get; }
         public double InterpolateFromX { get; }
@@ -163,11 +163,25 @@ namespace NumMethods3.ViewModel
                 !double.TryParse(DrawFromXValueBind, out drawFrom) || !double.TryParse(DrawToXValueBind, out drawTo) ||
                 !int.TryParse(InterpolationNodesCount, out nCount))
                 {
-                    MessageBox.Show("The data you have entered cannot be parsed.","Cannot parse!", MessageBoxButton.OK,
+                    MessageBox.Show(Locale["#CannotParseMsg"], Locale["#CannotParseTitle"], MessageBoxButton.OK,
                         MessageBoxImage.Error);
                     return;
                 }
                 var data = new InterpolationDataPack(interFrom, _functionValues, nCount, interTo, drawFrom, drawTo, SelectedFunction);
+                bool from=false, to=false;
+                if (data.DrawFromX > data.InterpolateFromX)
+                {
+                    data.DrawFromX = data.InterpolateFromX;
+                    from = true;
+                }
+                if (data.DrawToX < data.InterpolateToX)
+                {
+                    data.DrawToX = data.InterpolateToX;
+                    to = true;
+                }
+                if (to || from)
+                    MessageBox.Show(Locale["#DrawingIntervalChangeMsg"], Locale["#DrawingIntervalChangeTitle"], MessageBoxButton.OK, MessageBoxImage.Information);
+
                 try
                 {
                     data = MathCore.NumCore.GetInterpolatedFunctionData(data);
@@ -175,15 +189,15 @@ namespace NumMethods3.ViewModel
                 catch (Exception e)
                 {
                     if(e is ArgumentException)
-                        MessageBox.Show("There were problems with the nodes entered manually.", "Manual data entry error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Locale["#NodesAmmountExceptionMsg"], Locale["#NodesAmmountExceptionTitle"], MessageBoxButton.OK, MessageBoxImage.Error);
                     else
-                        MessageBox.Show("Try entering different values or restarting the app.", "Unexpected error encountered!", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Locale["#UnexpectedExceptionMsg"], Locale["#UnexpectedExceptionTitle"], MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 finally
                 {
-                    NodeChartData = data.nodes.Take(data.nodes.Count).Select(value => value.ToDataPoint).ToList();
-                    ChartDataInterpolated = data.interpolated.Select(value => value.ToDataPoint).ToList();
-                    ChartDataInterpolation = data.interpolationResults.Select(value => value.ToDataPoint).ToList();
+                    NodeChartData = data.Nodes.Take(data.Nodes.Count).Select(value => value.ToDataPoint).ToList();
+                    ChartDataInterpolated = data.Interpolated.Select(value => value.ToDataPoint).ToList();
+                    ChartDataInterpolation = data.InterpolationResults.Select(value => value.ToDataPoint).ToList();
                     RaisePropertyChanged(() => NodeChartData);
                     RaisePropertyChanged(() => ChartDataInterpolated);
                     RaisePropertyChanged(() => ChartDataInterpolation);

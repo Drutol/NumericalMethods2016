@@ -17,13 +17,10 @@ namespace NumMethods3.MathCore
             double toX, fromX;
             double nodeDist;
             int precision = 20000;
-            data.nodes = new List<FunctionValue>();
-            data.interpolated = new List<FunctionValue>();
-            data.interpolationResults = new List<FunctionValue>();
-            if (data.DrawFromX > data.InterpolateFromX)
-                data.DrawFromX = data.InterpolateFromX;
-            if (data.DrawToX < data.InterpolateToX)
-                data.DrawToX = data.InterpolateToX;
+            data.Nodes = new List<FunctionValue>();
+            data.Interpolated = new List<FunctionValue>();
+            data.InterpolationResults = new List<FunctionValue>();
+            
             if (data.SelectedFunction != null)
             {
                 nodeCount = data.InterpolationNodesCount;
@@ -33,11 +30,11 @@ namespace NumMethods3.MathCore
 
                 for (int i = 0; i < nodeCount; i++)
                 {
-                    data.nodes.Add(new FunctionValue
+                    data.Nodes.Add(new FunctionValue
                     {
                         X = i == nodeCount - 1 ? toX : fromX + i * nodeDist,
                     });
-                    data.nodes[i].Y = data.SelectedFunction.GetValue(data.nodes[i].X);
+                    data.Nodes[i].Y = data.SelectedFunction.GetValue(data.Nodes[i].X);
                 }
             }
             else
@@ -46,14 +43,14 @@ namespace NumMethods3.MathCore
                 if (nodesInPreparation.Select(value => value.X).Distinct().ToList().Count != nodesInPreparation.Count)
                     throw new ArgumentException();
 
-                data.nodes = nodesInPreparation.OrderBy(value => value.X).ToList();
+                data.Nodes = nodesInPreparation.OrderBy(value => value.X).ToList();
                 nodeCount = nodesInPreparation.Count;
-                toX = data.nodes.Last().X;
-                fromX = data.nodes.First().X;
+                toX = data.Nodes.Last().X;
+                fromX = data.Nodes.First().X;
                 nodeDist = Math.Abs((fromX - toX) / (nodeCount - 1));
             }
 
-            var progressives = ProgressiveSubs(nodeCount, data.nodes.Select(value => value.Y).ToList());
+            var progressives = ProgressiveSubs(nodeCount, data.Nodes.Select(value => value.Y).ToList());
             double xDiff = data.DrawToX - data.DrawFromX;
             if (data.SelectedFunction != null)
                 for (double i = 0; i < precision; i++)
@@ -62,12 +59,12 @@ namespace NumMethods3.MathCore
                     current.X = data.DrawFromX + i * (xDiff) / precision;
                     if (current.X > data.InterpolateFromX && current.X < data.InterpolateToX)
                     {
-                        double t = (current.X - data.nodes[0].X)/nodeDist;
+                        double t = (current.X - data.Nodes[0].X)/nodeDist;
                         current.Y = NewtonsInterpolation(t, progressives);
-                        data.interpolationResults.Add(current);
+                        data.InterpolationResults.Add(current);
                     }
                     if (data.SelectedFunction != null)
-                        data.interpolated.Add(new FunctionValue
+                        data.Interpolated.Add(new FunctionValue
                         {
                             X = current.X,
                             Y = data.SelectedFunction.GetValue(current.X)
@@ -79,37 +76,37 @@ namespace NumMethods3.MathCore
                 int k;
                 int nodes = nodeCount;
                 double val2;
-                coeficients.Add(data.nodes[0].Y);
+                coeficients.Add(data.Nodes[0].Y);
                 for (int j = 1; j < nodes; j++)
                 {
-                    k = (data.nodes.Count - nodes + j);
+                    k = (data.Nodes.Count - nodes + j);
                     for (int i = 1; i < nodes - (j - 1); i++, k++)
                     {
-                        val2 = (data.nodes[k].Y - data.nodes[k - 1].Y) / (data.nodes[i + j - 1].X - data.nodes[i - 1].X);
-                        data.nodes.Add(new FunctionValue { X = 0, Y = val2 });
+                        val2 = (data.Nodes[k].Y - data.Nodes[k - 1].Y) / (data.Nodes[i + j - 1].X - data.Nodes[i - 1].X);
+                        data.Nodes.Add(new FunctionValue { X = 0, Y = val2 });
                         if (i == 1)
                         {
                             coeficients.Add(val2);
                         }
                     }
                 }
-                xDiff = data.InterpolateToX - data.InterpolateFromX;
+                //xDiff = data.InterpolateToX - data.InterpolateFromX;
                 for (double x = 0; x < precision; x++)
                 {
                     List<double> dif = new List<double>();
                     val2 = coeficients[0];
                     var val1 = fromX + x * (xDiff) / precision;
-                    dif.Add(val1 - data.nodes[0].X);
+                    dif.Add(val1 - data.Nodes[0].X);
 
                     for (int i = 0; i < nodes - 1; i++)
                     {
-                        dif.Add((val1 - data.nodes[i + 1].X) * (dif[i]));
+                        dif.Add((val1 - data.Nodes[i + 1].X) * (dif[i]));
                     }
                     for (int i = 0; i < coeficients.Count - 1; i++)
                     {
                         val2 = val2 + (coeficients[1 + i] * dif[i]);
                     }
-                    data.interpolationResults.Add(new FunctionValue { X = val1, Y = val2 });
+                    data.InterpolationResults.Add(new FunctionValue { X = val1, Y = val2 });
                 }
             }
             return data;

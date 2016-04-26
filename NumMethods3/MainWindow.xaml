@@ -32,11 +32,6 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Button Grid.Row="3" Margin="0,5" VerticalAlignment="Top" Width="45" Height="30"
-                        Command="{Binding ChangeLanguageCommand}"
-                        ToolTip="{Binding Locale[#LangTooltip]}">
-                <Image Source="{Binding LangImgSourceBind}" />
-            </Button>
             <StackPanel Grid.Row="1" HorizontalAlignment="Center">
                 <Grid VerticalAlignment="Center" Margin="20" HorizontalAlignment="Center">
                     <DataGrid Visibility="{Binding FunctionModeVisibility,Converter={StaticResource VisibilityInverterConverter}}" IsReadOnly="False" BorderThickness="0"
@@ -81,6 +76,11 @@
                 </StackPanel>
                 <Button Content="{Binding Locale[#DoMaths]}" HorizontalAlignment="Stretch" Margin="10" Command="{Binding DoMathsCommand}"/>
             </StackPanel>
+            <Button Grid.Row="3" Margin="0,5" VerticalAlignment="Top" Width="45" Height="30"
+                        Command="{Binding ChangeLanguageCommand}"
+                        ToolTip="{Binding Locale[#LangTooltip]}">
+                <Image Source="{Binding LangImgSourceBind}" />
+            </Button>
         </Grid>
         <oxy:Plot Title="Plot" Grid.Column="1" 
                   IsLegendVisible="True" LegendTitle="Legend" LegendOrientation="Horizontal" 
