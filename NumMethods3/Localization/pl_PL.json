@@ -1,0 +1,12 @@
+﻿{
+  "#FromX": "Lewy X",
+  "#ToX": "Prawy X",
+  "#LangTooltip": "Change language.",
+  "#PlotDrawingInterval": "Przedział rysowania:",
+  "#InterpolationInterval": "Przedział interpolacji:",
+  "#NodeCount": "Ilość węzłów:",
+  "#OriginalFunction": "Funkcja oryginalna",
+  "#Interpolation": "Funkcja interpolacyjna",
+  "#Nodes": "Węzły",
+  "#DoMaths": "Oblicz."
+}

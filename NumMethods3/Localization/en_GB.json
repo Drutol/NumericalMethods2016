@@ -1,0 +1,12 @@
+﻿{
+  "#FromX": "From X:",
+  "#ToX": "To X:",
+  "#LangTooltip": "Zmień język.",
+  "#PlotDrawingInterval": "Plot drawing interval:",
+  "#InterpolationInterval": "Interpolation interval:",
+  "#NodeCount": "Node count:",
+  "#OriginalFunction": "Original function",
+  "#Interpolation": "Interpolation",
+  "#Nodes": "Nodes",
+  "#DoMaths": "Do maths."
+}

@@ -1,4 +1,4 @@
-﻿namespace NumMethods1.NumCore
+﻿namespace NumMethods3.NumCore
 {
     /// <summary>
     ///     Interface which is accepted by methods in MathCore class. And represents function.
