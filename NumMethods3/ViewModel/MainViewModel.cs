@@ -1,7 +1,6 @@
 ﻿using System;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using NumMethods1.NumCore;
 using NumMethods3.MathCore;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,12 +8,40 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using OxyPlot;
+using NumMethods3.NumCore;
+using NumMethods3.Utils;
 
 namespace NumMethods3.ViewModel
 {
     public class RawInputSelection : ISelectable
     {
         public string TextRepresentation => "Input values manually.";
+    }
+
+    public class InterpolationDataPack
+    {
+        public List<FunctionValue> Nodes { get; set; }
+        public List<FunctionValue> Interpolated { get; set; }
+        public List<FunctionValue> InterpolationResults { get; set; }
+        public List<FunctionValue> FunctionValues { get; }
+        public int InterpolationNodesCount { get; }
+        public double InterpolateFromX { get; }
+        public double InterpolateToX { get; }
+        public double DrawFromX { get; set; }
+        public double DrawToX { get; set; }
+        public IFunction SelectedFunction { get; }
+
+        public InterpolationDataPack(double interpolateFromXVal, ObservableCollection<FunctionValue> funcVals, 
+            int interpolationNodesCount, double interpolateToXVal, double drawFromX, double drawToX, IFunction selFunc)
+        {
+            InterpolateFromX = interpolateFromXVal;
+            FunctionValues = funcVals.ToList();
+            InterpolationNodesCount = interpolationNodesCount;
+            InterpolateToX = interpolateToXVal;
+            SelectedFunction = selFunc;
+            DrawFromX =drawFromX;
+            DrawToX =drawToX;
+        }
     }
 
     public class MainViewModel : ViewModelBase
@@ -28,6 +55,65 @@ namespace NumMethods3.ViewModel
                     new Function4(),
                     new RawInputSelection()
             };
+
+        private Dictionary<string, string> _locale;
+
+        public Dictionary<string, string> Locale
+        {
+            get { return _locale; }
+            set
+            {
+                _locale = value;
+                RaisePropertyChanged(() => Locale);
+            }
+        }
+
+        private AvailableLocale _currentLocale;
+
+        public AvailableLocale CurrentLocale
+        {
+            get { return _currentLocale; }
+            set
+            {
+                _currentLocale = value;
+                switch (value)
+                {
+                    case AvailableLocale.PL:
+                        Locale = LocalizationManager.PlDictionary;
+                        break;
+                    case AvailableLocale.EN:
+                        Locale = LocalizationManager.EnDictionary;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(value), value, null);
+                }
+                //sets flag of next locale
+                LangImgSourceBind = LocalizationManager.GetNextLocale(value).ToString();
+            }
+        }
+
+        private string _langImgSource;
+
+        public string LangImgSourceBind
+        {
+            get { return _langImgSource; }
+            set
+            {
+                _langImgSource = $@"../Localization/{value}.png";
+                RaisePropertyChanged(() => LangImgSourceBind);
+            }
+        }
+
+        private ICommand _changeLanguageCommand;
+
+        public ICommand ChangeLanguageCommand =>
+            _changeLanguageCommand ?? (_changeLanguageCommand = new RelayCommand(() =>
+            {
+                if ((int)CurrentLocale == Enum.GetNames(typeof(AvailableLocale)).Length - 1)
+                    CurrentLocale = 0;
+                else
+                    CurrentLocale += 1;
+            }));
 
         /// <summary>
         ///     Curently selected function by user.
@@ -71,154 +157,109 @@ namespace NumMethods3.ViewModel
         public ICommand DoMathsCommand =>
             _doMathsCommand ?? (_doMathsCommand = new RelayCommand(() =>
             {
-                int nodeCount;
-                double toX, fromX;
-                double nodeDist;
-                int precision = 20000;
-                var nodes = new List<FunctionValue>();
-                var interpolated = new List<FunctionValue>();
-                var interpolationResults = new List<FunctionValue>();
-                if (SelectedFunction != null)
+                double interFrom, interTo, drawFrom, drawTo;
+                int nCount;
+                if (!double.TryParse(InterpolateFromXValueBind, out interFrom) || !double.TryParse(InterpolateToXValueBind, out interTo) || 
+                !double.TryParse(DrawFromXValueBind, out drawFrom) || !double.TryParse(DrawToXValueBind, out drawTo) ||
+                !int.TryParse(InterpolationNodesCount, out nCount))
                 {
-                    nodeCount = int.Parse(InterpolationNodesCount);
-                    toX = double.Parse(ToXValueBind);
-                    fromX = double.Parse(FromXValueBind);
-                    nodeDist = Math.Abs((fromX - toX) / (nodeCount - 1));
-
-                    for (int i = 0; i < nodeCount; i++)
-                    {
-                        nodes.Add(new FunctionValue
-                        {
-                            X = i == nodeCount - 1 ? toX : fromX + i * nodeDist,
-                        });
-                        nodes[i].Y = SelectedFunction.GetValue(nodes[i].X);
-                    }
+                    MessageBox.Show(Locale["#CannotParseMsg"], Locale["#CannotParseTitle"], MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
                 }
-
-                else
+                if (interFrom > interTo || drawFrom > drawTo)
                 {
-                    var nodesInPreparation = FunctionValues.ToList();
-                    if(nodesInPreparation.Select(value => value.X).Distinct().ToList().Count != nodesInPreparation.Count)
-                        return; // doubled x value
-
-                    nodes = nodesInPreparation.OrderBy( value => value.X ).ToList();
-                    nodeCount = nodesInPreparation.Count;
-                    toX = nodes.Last().X;
-                    fromX = nodes.First().X;
-                    nodeDist = Math.Abs((fromX - toX) / (nodeCount - 1));
-
-                    /*
-                         *  doublenewton_interpolation(constXF *xf,unsigned intxf_size,doublex)
-                         *  {
-                         *  doubleresult = xf[0].f;
-                         *  double*a =new double[xf_size];
-                         *  for(int i = 0; i < xf_size; i++)
-                         *  a[i] = xf[i].f;
-                         *  for(inti = 1; i < xf_size; i++)
-                         *  for(intj = 0; j < i; j++)
-                         *  a[i] = (a[i] - a[j]) / (xf[i].x - xf[j].x);
-                         *  for(inti = 1; i < xf_size; i++)
-                         *  {
-                         *  double f = 1.0;
-                         *  for(int j = 0; j < i; j++)
-                         *  f *= x - xf[j].x;
-                         *  result += a[i] * f;
-                         *  } 
-                         *  return result;
-                         *  }
-                         * 
-                         * 
-                         * 
-                         */
-                          }
-
-                var progressives = NumCore.ProgressiveSubs(nodeCount, nodes.Select(value => value.Y).ToList());
-                if (SelectedFunction != null)
-                    for (double i = 0; i < precision; i++)
-                    {
-                        var current = new FunctionValue();
-                        current.X = fromX + i*(toX - fromX)/precision;
-                        double t = (current.X - nodes[0].X)/nodeDist;
-                        current.Y = NumCore.NewtonsInterpolation(t, progressives);
-                        interpolationResults.Add(current);
-                        if (SelectedFunction != null)
-                            interpolated.Add(new FunctionValue
-                            {
-                                X = current.X,
-                                Y = SelectedFunction.GetValue(current.X)
-                            });
-                    }
-                else
-                {
-                    List<double> coeficientes = new List<double>();
-                    int k;
-                    int puntos = nodeCount;
-                    double valor;
-                    coeficientes.Add(nodes[0].Y);
-                    for (int j = 1; j < puntos; j++)
-                    {
-                        k = (nodes.Count - puntos + j);
-                        for (int i = 1; i < puntos - (j - 1); i++, k++)
-                        {
-                            valor = (nodes[k].Y - nodes[k - 1].Y)/(nodes[i + j - 1].X - nodes[i - 1].X);
-                            nodes.Add(new FunctionValue {X=0,Y=valor});
-                            if (i == 1)
-                            {
-                                coeficientes.Add(valor);
-                            }
-                        }
-                    }
-                    for (double x = 0; x < precision; x++)
-                    {
-                        List<double> dif = new List<double>();
-                        valor = coeficientes[0];
-                        var val = fromX + x * (toX - fromX) / precision;
-                        dif.Add(val - nodes[0].X);
-
-                        for (int i = 0; i < puntos - 1; i++)
-                        {
-                            dif.Add((val - nodes[i + 1].X) * (dif[i]));
-                        }
-                        for (int i = 0; i < coeficientes.Count - 1; i++)
-                        {
-                            valor = valor + (coeficientes[1 + i] * dif[i]);
-                        }
-                        interpolationResults.Add(new FunctionValue {X = val,Y=valor});
-                    }
-
+                    MessageBox.Show(Locale["#IntervalErrorMsg"],Locale["#IntervalErrorTitle"],MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
                 }
+                var data = new InterpolationDataPack(interFrom, _functionValues, nCount, interTo, drawFrom, drawTo, SelectedFunction);
+                bool from=false, to=false;
+                if (data.DrawFromX > data.InterpolateFromX)
+                {
+                    data.DrawFromX = data.InterpolateFromX;
+                    from = true;
+                }
+                if (data.DrawToX < data.InterpolateToX)
+                {
+                    data.DrawToX = data.InterpolateToX;
+                    to = true;
+                }
+                if (to || from)
+                    MessageBox.Show(Locale["#DrawingIntervalChangeMsg"], Locale["#DrawingIntervalChangeTitle"], MessageBoxButton.OK, MessageBoxImage.Information);
 
+                try
+                {
+                    data = MathCore.NumCore.GetInterpolatedFunctionData(data);
+                }
+                catch (Exception e)
+                {
+                    if(e is ArgumentException)
+                        MessageBox.Show(Locale["#NodesAmmountExceptionMsg"], Locale["#NodesAmmountExceptionTitle"], MessageBoxButton.OK, MessageBoxImage.Error);
+                    else
+                        MessageBox.Show(Locale["#UnexpectedExceptionMsg"], Locale["#UnexpectedExceptionTitle"], MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    NodeChartData = data.Nodes.Take(data.Nodes.Count).Select(value => value.ToDataPoint).ToList();
+                    ChartDataInterpolated = data.Interpolated.Select(value => value.ToDataPoint).ToList();
+                    ChartDataInterpolation = data.InterpolationResults.Select(value => value.ToDataPoint).ToList();
+                    RaisePropertyChanged(() => NodeChartData);
+                    RaisePropertyChanged(() => ChartDataInterpolated);
+                    RaisePropertyChanged(() => ChartDataInterpolation);
+                }
+             }));
 
-                NodeChartData = nodes.Take(nodeCount).Select(value => value.ToDataPoint).ToList();
-                ChartDataInterpolated = interpolated.Select(value => value.ToDataPoint).ToList();
-                ChartDataInterpolation = interpolationResults.Select(value => value.ToDataPoint).ToList();
-                RaisePropertyChanged(() => NodeChartData);
-                RaisePropertyChanged(() => ChartDataInterpolated);
-                RaisePropertyChanged(() => ChartDataInterpolation);
-
-            }));
-
-        private string _fromXValue = "-10";
-
-        public string FromXValueBind
+        public MainViewModel()
         {
-            get { return _fromXValue; }
+            CurrentLocale = AvailableLocale.EN;
+        }
+
+        private string _drawFromXValue = "-10";
+
+        public string DrawFromXValueBind
+        {
+            get { return _drawFromXValue; }
             set
             {
-                _fromXValue = value.Replace('.', ',');
-                RaisePropertyChanged(() => FromXValueBind);
+                _drawFromXValue = value.Replace('.', ',');
+                RaisePropertyChanged(() => DrawFromXValueBind);
             }
         }
 
-        private string _toXValue = "10";
+        private string _drawToXValue = "10";
 
-        public string ToXValueBind
+        public string DrawToXValueBind
         {
-            get { return _toXValue; }
+            get { return _drawToXValue; }
             set
             {
-                _toXValue = value.Replace('.', ',');
-                RaisePropertyChanged(() => ToXValueBind);
+                _drawToXValue = value.Replace('.', ',');
+                RaisePropertyChanged(() => DrawToXValueBind);
+            }
+        }
+
+        private string _interpolateFromXValue = "-10";
+
+        public string InterpolateFromXValueBind
+        {
+            get { return _interpolateFromXValue; }
+            set
+            {
+                _interpolateFromXValue = value.Replace('.', ',');
+                RaisePropertyChanged(() => InterpolateFromXValueBind);
+            }
+        }
+
+        private string _interpolateToXValue = "10";
+
+        public string InterpolateToXValueBind
+        {
+            get { return _interpolateToXValue; }
+            set
+            {
+                _interpolateToXValue = value.Replace('.', ',');
+                RaisePropertyChanged(() => InterpolateToXValueBind);
             }
         }
 

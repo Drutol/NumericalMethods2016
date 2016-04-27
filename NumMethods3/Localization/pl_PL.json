@@ -1,0 +1,23 @@
+﻿{
+  "#FromX": "Lewy X",
+  "#ToX": "Prawy X",
+  "#LangTooltip": "Change language.",
+  "#PlotDrawingInterval": "Zakres rysowania:",
+  "#InterpolationInterval": "Przedział interpolacji:",
+  "#NodeCount": "Ilość węzłów:",
+  "#OriginalFunction": "Funkcja oryginalna",
+  "#Interpolation": "Funkcja interpolacyjna",
+  "#Nodes": "Węzły",
+  "#DoMaths": "Oblicz.",
+  "#DrawingIntervalChangeMsg": "Zakres rysowanie został zmieniony do przedziału interpolacji, aby zapobiedz niepoprawnemu wyświetlaniu wykresów.",
+  "#DrawingIntervalChangeTitle": "Zmiana zakresu rysowania.",
+  "#CannotParseMsg": "Niepoprawnie wprowadzone dane.",
+  "#CannotParseTitle": "Złe dane!",
+  "#InputVals": "Wprowadź dane ręcznie.",
+  "#NodesAmmountExceptionMsg": "Wystąpił błąd z węzłami wprowadzonymi ręcznie.",
+  "#NodesAmmountExceptionTitle": "Błąd wprowadzenia węzłów!",
+  "#UnexpectedExceptionMsg": "Spróbuj wprowadzić inne dane lub zrestartować aplikację.",
+  "#UnexpectedExceptionTitle": "Wystąpił niespodziewany błąd!",
+  "#IntervalErrorMsg": "Lewy kraniec przedziału jest większy od prawego, spróbuj wprowadzić inne dane.",
+  "#IntervalErrorTitle": "Błędne krańce przedziału!"
+}

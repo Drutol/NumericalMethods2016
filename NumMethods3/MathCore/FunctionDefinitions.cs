@@ -1,7 +1,7 @@
 ﻿using System;
 using NumMethods3.ViewModel;
 
-namespace NumMethods1.NumCore
+namespace NumMethods3.NumCore
 {
     internal class Function1 : IFunction , ISelectable
     {
