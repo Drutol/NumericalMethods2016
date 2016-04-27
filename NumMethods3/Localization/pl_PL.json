@@ -17,5 +17,7 @@
   "#NodesAmmountExceptionMsg": "Wystąpił błąd z węzłami wprowadzonymi ręcznie.",
   "#NodesAmmountExceptionTitle": "Błąd wprowadzenia węzłów!",
   "#UnexpectedExceptionMsg": "Spróbuj wprowadzić inne dane lub zrestartować aplikację.",
-  "#UnexpectedExceptionTitle": "Wystąpił niespodziewany błąd!"
+  "#UnexpectedExceptionTitle": "Wystąpił niespodziewany błąd!",
+  "#IntervalErrorMsg": "Lewy kraniec przedziału jest większy od prawego, spróbuj wprowadzić inne dane.",
+  "#IntervalErrorTitle": "Błędne krańce przedziału!"
 }

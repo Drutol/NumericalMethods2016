@@ -17,5 +17,7 @@
   "#NodesAmmountExceptionMsg": "There were problems with the nodes entered manually.",
   "#NodesAmmountExceptionTitle": "Manual data entry error!",
   "#UnexpectedExceptionMsg": "Try entering different values or restarting the app.",
-  "#UnexpectedExceptionTitle": "Unexpected error encountered!"
+  "#UnexpectedExceptionTitle": "Unexpected error encountered!",
+  "#IntervalErrorMsg": "The left interval endpoint is bigger then the right one, try changing interval values.",
+  "#IntervalErrorTitle": "Invalid interval endpoints!"
 }

@@ -167,6 +167,12 @@ namespace NumMethods3.ViewModel
                         MessageBoxImage.Error);
                     return;
                 }
+                if (interFrom > interTo || drawFrom > drawTo)
+                {
+                    MessageBox.Show(Locale["#IntervalErrorMsg"],Locale["#IntervalErrorTitle"],MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
                 var data = new InterpolationDataPack(interFrom, _functionValues, nCount, interTo, drawFrom, drawTo, SelectedFunction);
                 bool from=false, to=false;
                 if (data.DrawFromX > data.InterpolateFromX)
