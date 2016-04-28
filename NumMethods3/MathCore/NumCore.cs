@@ -11,12 +11,12 @@ namespace NumMethods3.MathCore
     {
         private static readonly Dictionary<int,int> FactorialCache = new Dictionary<int, int>();
 
-        public static InterpolationDataPack GetInterpolatedFunctionData(InterpolationDataPack data)
+        public static void GetInterpolatedFunctionData(ref InterpolationDataPack data)
         {
             int nodeCount;
             double toX, fromX;
-            double nodeDist;
-            int precision = 20000;
+            double nodeDist = 0;
+            int precision = 15000;
             data.Nodes = new List<FunctionValue>();
             data.Interpolated = new List<FunctionValue>();
             data.InterpolationResults = new List<FunctionValue>();
@@ -44,10 +44,9 @@ namespace NumMethods3.MathCore
                     throw new ArgumentException();
 
                 data.Nodes = nodesInPreparation.OrderBy(value => value.X).ToList();
+                data.DrawToX = data.Nodes.Last().X;
                 nodeCount = nodesInPreparation.Count;
-                toX = data.Nodes.Last().X;
-                fromX = data.Nodes.First().X;
-                nodeDist = Math.Abs((fromX - toX) / (nodeCount - 1));
+                data.DrawFromX = data.Nodes.First().X;
             }
 
             var progressives = ProgressiveSubs(nodeCount, data.Nodes.Select(value => value.Y).ToList());
@@ -79,37 +78,31 @@ namespace NumMethods3.MathCore
                 coeficients.Add(data.Nodes[0].Y);
                 for (int j = 1; j < nodes; j++)
                 {
-                    k = (data.Nodes.Count - nodes + j);
+                    k = data.Nodes.Count - nodes + j;
                     for (int i = 1; i < nodes - (j - 1); i++, k++)
                     {
                         val2 = (data.Nodes[k].Y - data.Nodes[k - 1].Y) / (data.Nodes[i + j - 1].X - data.Nodes[i - 1].X);
                         data.Nodes.Add(new FunctionValue { X = 0, Y = val2 });
                         if (i == 1)
-                        {
                             coeficients.Add(val2);
-                        }
                     }
                 }
-                //xDiff = data.InterpolateToX - data.InterpolateFromX;
+
+                
                 for (double x = 0; x < precision; x++)
                 {
                     List<double> dif = new List<double>();
                     val2 = coeficients[0];
-                    var val1 = fromX + x * (xDiff) / precision;
+                    var val1 = data.DrawFromX + x * (xDiff) / precision;
                     dif.Add(val1 - data.Nodes[0].X);
 
                     for (int i = 0; i < nodes - 1; i++)
-                    {
-                        dif.Add((val1 - data.Nodes[i + 1].X) * (dif[i]));
-                    }
+                        dif.Add((val1 - data.Nodes[i + 1].X) * dif[i]);
                     for (int i = 0; i < coeficients.Count - 1; i++)
-                    {
-                        val2 = val2 + (coeficients[1 + i] * dif[i]);
-                    }
+                        val2 = val2 + coeficients[1 + i] * dif[i];
                     data.InterpolationResults.Add(new FunctionValue { X = val1, Y = val2 });
                 }
             }
-            return data;
         }
 
         private static double NewtonsInterpolation(double t, List<double> diffSub)

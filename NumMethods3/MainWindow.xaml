@@ -21,7 +21,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <ComboBox ItemsSource="{Binding AvailableFunctions}" Height="20" VerticalAlignment="Top" Grid.Row="0" Margin="10"
                   SelectedIndex="{Binding FunctionSelectorSelectedIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
@@ -33,8 +32,9 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <StackPanel Grid.Row="1" HorizontalAlignment="Center">
-                <Grid VerticalAlignment="Center" Margin="20" HorizontalAlignment="Center">
-                    <DataGrid Visibility="{Binding FunctionModeVisibility,Converter={StaticResource VisibilityInverterConverter}}" IsReadOnly="False" BorderThickness="0"
+                <Grid Visibility="{Binding FunctionModeVisibility,Converter={StaticResource VisibilityInverterConverter}}" 
+                      VerticalAlignment="Center" Margin="20" HorizontalAlignment="Center" MaxHeight="250">
+                    <DataGrid  IsReadOnly="False" BorderThickness="0"
                               ItemsSource="{Binding FunctionValues,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="X" Binding="{Binding X}"/>
@@ -76,7 +76,7 @@
                 </StackPanel>
                 <Button Content="{Binding Locale[#DoMaths]}" HorizontalAlignment="Stretch" Margin="10" Command="{Binding DoMathsCommand}"/>
             </StackPanel>
-            <Button Grid.Row="3" Margin="0,5" VerticalAlignment="Top" Width="45" Height="30"
+            <Button Grid.Row="2" Margin="0,5" VerticalAlignment="Top" Width="45" Height="30"
                         Command="{Binding ChangeLanguageCommand}"
                         ToolTip="{Binding Locale[#LangTooltip]}">
                 <Image Source="{Binding LangImgSourceBind}" />
@@ -84,8 +84,8 @@
         </Grid>
         <oxy:Plot Title="Plot" Grid.Column="1" 
                   IsLegendVisible="True" LegendTitle="Legend" LegendOrientation="Horizontal" 
-                  LegendPlacement="Outside" LegendPosition="TopRight" LegendBackground="#F3F3F3"
-                  LegendBorder="Black">
+                  LegendPlacement="Inside" LegendPosition="TopRight" LegendBackground="Transparent"
+                  LegendBorder="Transparent" LegendMaxWidth="110" LegendMargin="10" LegendFontSize="12">
             <oxy:Plot.Series>
                 <oxy:LineSeries Title="{Binding Locale[#OriginalFunction]}" ItemsSource="{Binding ChartDataInterpolated}" Smooth="True"/>
                 <oxy:LineSeries Title="{Binding Locale[#Interpolation]}" ItemsSource="{Binding ChartDataInterpolation}" Smooth="True"/>
