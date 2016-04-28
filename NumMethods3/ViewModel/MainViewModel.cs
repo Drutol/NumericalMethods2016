@@ -201,7 +201,7 @@ namespace NumMethods3.ViewModel
                 }
                 finally
                 {
-                    NodeChartData = data.Nodes.Take(_functionValues.Count).Select(value => value.ToDataPoint).ToList();
+                    NodeChartData = data.Nodes.Take(SelectedFunction == null ? _functionValues.Count : data.Nodes.Count).Select(value => value.ToDataPoint).ToList();
                     ChartDataInterpolated = data.Interpolated.Select(value => value.ToDataPoint).ToList();
                     ChartDataInterpolation = data.InterpolationResults.Select(value => value.ToDataPoint).ToList();
                     RaisePropertyChanged(() => NodeChartData);
