@@ -5,7 +5,7 @@
   "#PlotDrawingInterval": "Plot drawing interval:",
   "#InterpolationInterval": "Interpolation interval:",
   "#NodeCount": "Node count:",
-  "#OriginalFunction": "Original function",
+  "#OriginalFunction": "Interpolated",
   "#Interpolation": "Interpolation",
   "#Nodes": "Nodes",
   "#DoMaths": "Do maths.",
