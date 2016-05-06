@@ -5,8 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NumMethods4"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
+        Title="MainWindow" Height="350" Width="525"
+        DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
         
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ComboBox ItemsSource="{Binding AvailableFunctions}" Height="20" VerticalAlignment="Top" Grid.Row="0" Margin="10"
+                  SelectedIndex="{Binding FunctionSelectorSelectedIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                  HorizontalAlignment="Stretch">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding TextRepresentation}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <StackPanel>
+                <TextBlock Text="Left X"/>
+                <TextBox/>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Right X"/>
+                <TextBox/>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>
