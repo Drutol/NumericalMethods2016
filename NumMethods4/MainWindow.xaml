@@ -13,23 +13,39 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <ComboBox ItemsSource="{Binding AvailableFunctions}" Height="20" VerticalAlignment="Top" Grid.Row="0" Margin="10"
-                  SelectedIndex="{Binding FunctionSelectorSelectedIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                  HorizontalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ComboBox SelectedIndex="{Binding FunctionSelectorSelectedIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding AvailableFunctions}"
+                  HorizontalAlignment="Stretch" Height="20" VerticalAlignment="Top" Grid.Row="0" Margin="10"
+                  Grid.ColumnSpan="2">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding TextRepresentation}" />
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <StackPanel>
-                <TextBlock Text="Left X"/>
-                <TextBox/>
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Right X"/>
-                <TextBox/>
+        <StackPanel Grid.Row="1" Grid.Column="0">
+            <TextBlock Text="Input integration data:"/>
+            <StackPanel Orientation="Vertical" >
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Left interval endpoint:"/>
+                    <TextBox Text="{Binding IntegrateFromX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Width="50"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Right interval endpoint:"/>
+                    <TextBox Text="{Binding IntegrateToX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Width="50"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Integration accuracy:"/>
+                    <TextBox Text="{Binding IntegrationAccuracy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Width="50"/>
+                </StackPanel>
+                <Button Content="Calculate." Command="{Binding CalculateCommand}"/>
             </StackPanel>
         </StackPanel>
     </Grid>

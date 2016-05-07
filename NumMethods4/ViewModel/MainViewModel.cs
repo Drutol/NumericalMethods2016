@@ -1,7 +1,11 @@
 using GalaSoft.MvvmLight;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
+using System.Windows;
 using NumMethods4.MathCore;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 
 namespace NumMethods4.ViewModel
 {
@@ -16,10 +20,82 @@ namespace NumMethods4.ViewModel
                     new Function3(),
                     new Function4(),
             };
+
+        private IFunction SelectedFunction { get; set; } = new Function1();
+
+        private int _functionSelectorSelectedIndex;
+
+        public int FunctionSelectorSelectedIndex
+        {
+            get { return _functionSelectorSelectedIndex; }
+            set
+            {
+                _functionSelectorSelectedIndex = value;
+                SelectedFunction = AvailableFunctions[value];
+            }
+        }
+
+        private ICommand _calculateCommand;
+
+        public ICommand CalculateCommand => _calculateCommand ?? (_calculateCommand = new RelayCommand(() =>
+            {
+                double integrateFrom, integrateTo, accuracy;
+                if (!double.TryParse(IntegrateFromX, out integrateFrom) || 
+                !double.TryParse(IntegrateToX, out integrateTo) ||
+                !double.TryParse(IntegrationAccuracy, out accuracy))
+                {
+                    MessageBox.Show(/*Locale["#CannotParseMsg"], Locale["#CannotParseTitle"]*/"","", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+                if (integrateFrom > integrateTo)
+                {
+                    MessageBox.Show(/*Locale["#IntervalErrorMsg"], Locale["#IntervalErrorTitle"]*/"","", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+            }));
+
         public MainViewModel()
         {
             
         
+        }
+
+        private string _integrateFromX = "-10";
+
+        public string IntegrateFromX
+        {
+            get { return _integrateFromX; }
+            set
+            {
+                _integrateFromX = value;
+                RaisePropertyChanged(() => IntegrateFromX);
+            }
+        }
+
+        private string _integrateToX = "10";
+
+        public string IntegrateToX
+        {
+            get { return _integrateToX; }
+            set
+            {
+                _integrateToX = value;
+                RaisePropertyChanged(() => IntegrateToX);
+            }
+        }
+
+        private string _integrationAccuracy = "10";
+
+        public string IntegrationAccuracy
+        {
+            get { return _integrationAccuracy; }
+            set
+            {
+                _integrationAccuracy = value;
+                RaisePropertyChanged(() => IntegrationAccuracy);
+            }
         }
     }
 }
