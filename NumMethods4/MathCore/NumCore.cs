@@ -8,7 +8,7 @@ namespace NumMethods4.MathCore
 {
     public class NumCore
     {
-        public static void SimpsonsMethod(double a, double b, int wybor, double e)
+        public static double SimpsonsMethod(double a, double b, IFunction selecetedFunction, double e)
         {
             int ilePrzedzialow = 1;
             double h;// = Math.abs(b-a)/2;
@@ -19,13 +19,13 @@ namespace NumMethods4.MathCore
             do
             {
                 int ilePunktow = 2 * ilePrzedzialow + 1;
-                h = Math.abs(b - a) / (2 * ilePrzedzialow);     //odleglosc miedzy punktami dla danej ilosci przedzialow
+                h = Math.Abs(b - a) / (2 * ilePrzedzialow);     //odleglosc miedzy punktami dla danej ilosci przedzialow
                 WypelnijTablicePunktow(punkty, a, b, h, ilePunktow);
                 suma2 = suma1;
                 suma1 = 0;
                 for (int i = 0; i < (ilePunktow); i++)
                 {
-                    wartosciPunktow[i] = funkcja(wybor, punkty[i]);
+                    wartosciPunktow[i] = selecetedFunction.GetValue(punkty[i]);
 
                     if (i == 0 || i == ilePunktow - 1)
                     {
@@ -48,8 +48,24 @@ namespace NumMethods4.MathCore
 
                 ilePrzedzialow *= 2;
                 //System.out.println(suma1 + " " + suma2 + " " + h);
-            } while (Math.abs(suma1 - suma2) > e);
-            System.out.println("Calka funkcji " + nazwyFunkcji(wybor) + " na przedziale od " + a + " do " + b + " wynosi: " + suma1);
+            } while (Math.Abs(suma1 - suma2) > e);
+            //System.out.println("Calka funkcji " + nazwyFunkcji(wybor) + " na przedziale od " + a + " do " + b + " wynosi: " + suma1);
+            return suma1;
+        }
+
+        public static void WypelnijTablicePunktow(double[] punkty, double przedzialOd, double przedzialDo, double odstep, int ilePunktow)
+        {
+            for (int i = 0; i < (ilePunktow); i++)
+            {
+                if (i == 0)
+                {
+                    punkty[0] = przedzialOd;
+                }
+                else
+                {
+                    punkty[i] = punkty[i - 1] + odstep;
+                }
+            }
         }
 
         //public static void SimpsonsMethodPt2(int wybor, double e)

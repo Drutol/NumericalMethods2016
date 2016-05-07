@@ -1,3 +1,4 @@
+using System;
 using GalaSoft.MvvmLight;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -79,8 +80,8 @@ namespace NumMethods4.ViewModel
                         MessageBoxImage.Error);
                     return;
                 }
-
-                ResultBind = "wynik ³a³";
+                ResultBind = Convert.ToString(NumCore.SimpsonsMethod(integrateFrom,integrateTo,SelectedFunction,accuracy));
+                
             }));
 
         public MainViewModel()
