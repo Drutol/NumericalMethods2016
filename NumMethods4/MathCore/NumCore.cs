@@ -8,49 +8,49 @@ namespace NumMethods4.MathCore
 {
     public class NumCore
     {
-        //public static void SimpsonsMethod(double a, double b, int wybor, double e)
-        //{
-        //    int ilePrzedzialow = 1;
-        //    double h;// = Math.abs(b-a)/2;
-        //    double[] punkty = new double[1000000];
-        //    double[] wartosciPunktow = new double[1000000];
-        //    double suma1 = 0, suma2 = 0;
+        public static void SimpsonsMethod(double a, double b, int wybor, double e)
+        {
+            int ilePrzedzialow = 1;
+            double h;// = Math.abs(b-a)/2;
+            double[] punkty = new double[1000000];
+            double[] wartosciPunktow = new double[1000000];
+            double suma1 = 0, suma2 = 0;
 
-        //    do
-        //    {
-        //        int ilePunktow = 2 * ilePrzedzialow + 1;
-        //        h = Math.abs(b - a) / (2 * ilePrzedzialow);     //odleglosc miedzy punktami dla danej ilosci przedzialow
-        //        WypelnijTablicePunktow(punkty, a, b, h, ilePunktow);
-        //        suma2 = suma1;
-        //        suma1 = 0;
-        //        for (int i = 0; i < (ilePunktow); i++)
-        //        {
-        //            wartosciPunktow[i] = funkcja(wybor, punkty[i]);
+            do
+            {
+                int ilePunktow = 2 * ilePrzedzialow + 1;
+                h = Math.abs(b - a) / (2 * ilePrzedzialow);     //odleglosc miedzy punktami dla danej ilosci przedzialow
+                WypelnijTablicePunktow(punkty, a, b, h, ilePunktow);
+                suma2 = suma1;
+                suma1 = 0;
+                for (int i = 0; i < (ilePunktow); i++)
+                {
+                    wartosciPunktow[i] = funkcja(wybor, punkty[i]);
 
-        //            if (i == 0 || i == ilePunktow - 1)
-        //            {
-        //                suma1 += wartosciPunktow[i];
-        //            }
-        //            else
-        //            {
-        //                if (i % 2 == 1)
-        //                {
-        //                    suma1 += 4 * wartosciPunktow[i];
-        //                }
-        //                else
-        //                {
-        //                    suma1 += 2 * wartosciPunktow[i];
-        //                }
-        //            }
-        //        }
+                    if (i == 0 || i == ilePunktow - 1)
+                    {
+                        suma1 += wartosciPunktow[i];
+                    }
+                    else
+                    {
+                        if (i % 2 == 1)
+                        {
+                            suma1 += 4 * wartosciPunktow[i];
+                        }
+                        else
+                        {
+                            suma1 += 2 * wartosciPunktow[i];
+                        }
+                    }
+                }
 
-        //        suma1 *= (h / 3);       //wynik
+                suma1 *= (h / 3);       //wynik
 
-        //        ilePrzedzialow *= 2;
-        //        //System.out.println(suma1 + " " + suma2 + " " + h);
-        //    } while (Math.abs(suma1 - suma2) > e);
-        //    System.out.println("Calka funkcji " + nazwyFunkcji(wybor) + " na przedziale od " + a + " do " + b + " wynosi: " + suma1);
-        //}
+                ilePrzedzialow *= 2;
+                //System.out.println(suma1 + " " + suma2 + " " + h);
+            } while (Math.abs(suma1 - suma2) > e);
+            System.out.println("Calka funkcji " + nazwyFunkcji(wybor) + " na przedziale od " + a + " do " + b + " wynosi: " + suma1);
+        }
 
         //public static void SimpsonsMethodPt2(int wybor, double e)
         //{
