@@ -23,6 +23,30 @@ namespace NumMethods4.ViewModel
 
         private IFunction SelectedFunction { get; set; } = new Function1();
 
+        private string _resultBind = "";
+
+        public string ResultBind
+        {
+            get { return _resultBind; }
+            set
+            {
+                _resultBind = $" {value} + C";
+                RaisePropertyChanged(() => ResultBind);
+            }
+        }
+
+        private string _selectedFunctionText=" |x| dx =";
+
+        public string SelectedFunctionText
+        {
+            get { return _selectedFunctionText; }
+            set
+            {
+                _selectedFunctionText = $" {value} dx =";
+                RaisePropertyChanged(() => SelectedFunctionText);
+            }
+        }
+
         private int _functionSelectorSelectedIndex;
 
         public int FunctionSelectorSelectedIndex
@@ -31,6 +55,7 @@ namespace NumMethods4.ViewModel
             set
             {
                 _functionSelectorSelectedIndex = value;
+                SelectedFunctionText = AvailableFunctions[value].TextRepresentation;
                 SelectedFunction = AvailableFunctions[value];
             }
         }
@@ -54,6 +79,8 @@ namespace NumMethods4.ViewModel
                         MessageBoxImage.Error);
                     return;
                 }
+
+                ResultBind = "wynik ³a³";
             }));
 
         public MainViewModel()
