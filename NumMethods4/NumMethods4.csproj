@@ -75,11 +75,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="MathCore\FunctionDefinitions.cs" />
-    <Compile Include="MathCore\IFunction.cs" />
-    <Compile Include="MathCore\NumCore.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="XamlConverters\IntervalSymbolsConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -121,7 +119,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\NumMethods4Lib\NumMethods4Lib.csproj">
+      <Project>{d4705a3f-6fce-4342-8224-4e35c9315cfd}</Project>
+      <Name>NumMethods4Lib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Integral.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

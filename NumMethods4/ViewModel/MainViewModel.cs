@@ -8,12 +8,20 @@ using System.Windows;
 using NumMethods4.MathCore;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using NumMethods4Lib.MathCore;
 
 namespace NumMethods4.ViewModel
 {
 
     public class MainViewModel : ViewModelBase
     {
+        public enum IntervalSymbols
+        {
+            Parenthesis,
+            Bracket,
+            Inf,
+        }
+
         public ObservableCollection<IFunction> AvailableFunctions { get; }
             = new ObservableCollection<IFunction>
             {
@@ -25,63 +33,41 @@ namespace NumMethods4.ViewModel
 
         private IFunction SelectedFunction { get; set; } = new Function1();
 
-        public ObservableCollection<string> LeftEndpointSigns { get; }
-            = new ObservableCollection<string>
+        public List<string> LeftEndpointSigns { get; }
+            = new List<string>
             {
                 "(",
                 "[",
                 "\u221E"
             };
 
-        private string _selectedLeftSign = "[ ";
-
-        public string SelectedLeftSign
-        {
-            get { return _selectedLeftSign; }
-            set
-            {
-                if (value != "\u221E")
-                {
-                    _selectedLeftSign = value + " ";
-                    RaisePropertyChanged(() => SelectedLeftSign);
-                }
-                else
-                {
-                    _selectedLeftSign = "( ";
-                    _integrateFromX = "\u221E";
-                    RaisePropertyChanged(() => IntegrateFromX);
-                    RaisePropertyChanged(() => SelectedLeftSign);
-                }
-            }
-        }
-
-        public ObservableCollection<string> RightEndpointSigns { get; }
-            = new ObservableCollection<string>
+        public List<string> RightEndpointSigns { get; }
+            = new List<string>
             {
                 ")",
                 "]",
                 "\u221E"
             };
 
-        private string _selectedRightSign = " ]";
-
-        public string SelectedRightSign
+        private IntervalSymbols _selectedLeftSignType = IntervalSymbols.Bracket;
+        public int SelectedLeftSignIndex
         {
-            get { return _selectedRightSign; }
+            get { return (int)_selectedLeftSignType; }
             set
             {
-                if (value != "\u221E")
-                {
-                    _selectedRightSign = " " + value;
-                    RaisePropertyChanged(() => SelectedRightSign);
-                }
-                else
-                {
-                    _selectedRightSign = " )";
-                    _integrateToX = "\u221E";
-                    RaisePropertyChanged(() => IntegrateToX);
-                    RaisePropertyChanged(() => SelectedRightSign);
-                }
+                _selectedLeftSignType = (IntervalSymbols)value;
+                RaisePropertyChanged(() => SelectedLeftSignIndex);
+            }
+        }
+
+        private IntervalSymbols _selectedRightSignType = IntervalSymbols.Bracket;
+        public int SelectedRightSignType
+        {
+            get { return (int)_selectedRightSignType; }
+            set
+            {
+                _selectedRightSignType = (IntervalSymbols)value;
+                RaisePropertyChanged(() => SelectedRightSignType);
             }
         }
 
@@ -127,8 +113,6 @@ namespace NumMethods4.ViewModel
 
         public ICommand CalculateCommand => _calculateCommand ?? (_calculateCommand = new RelayCommand(() =>
         {
-            if (IntegrateFromX != "\u221E" && IntegrateToX != "\u221E")
-            {
                 double integrateFrom, integrateTo, accuracy;
                 if (!double.TryParse(IntegrateFromX, out integrateFrom) ||
                     !double.TryParse(IntegrateToX, out integrateTo) ||
@@ -146,32 +130,68 @@ namespace NumMethods4.ViewModel
                         MessageBoxImage.Error);
                     return;
                 }
-                double includingEndpointsResult = integrateFrom < integrateTo
-                    ? NumCore.SimpsonsMethod(integrateFrom, integrateTo, SelectedFunction, accuracy)
-                    : SelectedFunction.GetValue(integrateFrom);
-                bool excludeLeft = false, excludeRight = false;
-                if (SelectedLeftSign == "( ")
-                    excludeLeft = true;
-                if (SelectedRightSign == " )")
-                    excludeRight = true;
-                if (excludeLeft || excludeRight)
+                IntervalTypes intervalType;
+                switch (_selectedLeftSignType)
                 {
-                    ResultBind = NumCore.ExcludingEndpointsIntegration(integrateFrom, integrateTo, excludeLeft,
-                            excludeRight, SelectedFunction, includingEndpointsResult).ToString();
+                    case IntervalSymbols.Parenthesis:
+                        switch (_selectedRightSignType)
+                        {
+                            case IntervalSymbols.Parenthesis:
+                                intervalType = IntervalTypes.BothOpen;
+                                break;
+                            case IntervalSymbols.Bracket:
+                                intervalType = IntervalTypes.LeftOpen;
+                                break;
+                            case IntervalSymbols.Inf:
+                                intervalType = IntervalTypes.InfRightLeftOpen;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                        break;
+                    case IntervalSymbols.Bracket:
+                        switch (_selectedRightSignType)
+                        {
+                            case IntervalSymbols.Parenthesis:
+                                intervalType = IntervalTypes.RightOpen;
+                                break;
+                            case IntervalSymbols.Bracket:
+                                intervalType = IntervalTypes.BothClosed;
+                                break;
+                            case IntervalSymbols.Inf:
+                                intervalType = IntervalTypes.InfRightLeftClosed;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                        break;
+                    case IntervalSymbols.Inf:
+                        switch (_selectedRightSignType)
+                        {
+                            case IntervalSymbols.Parenthesis:
+                                intervalType = IntervalTypes.InfLeftRightOpen;
+                                break;
+                            case IntervalSymbols.Bracket:
+                                intervalType = IntervalTypes.InfLeftRightClosed;
+                                break;
+                            case IntervalSymbols.Inf:
+                                intervalType = IntervalTypes.InfBoth;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
-                else
-                    ResultBind = includingEndpointsResult.ToString();
-            }
-            else
-            {
+            if (intervalType == IntervalTypes.InfBoth)
                 ResultBind = "\u221E";
-            }
+            else
+                ResultBind = NumCore.SimpsonsMethod(integrateFrom, integrateTo, SelectedFunction, accuracy,intervalType).ToString();
         }));
 
         public MainViewModel()
         {
-
-
         }
 
         private string _integrateFromX = "-10";

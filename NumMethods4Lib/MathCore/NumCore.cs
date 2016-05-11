@@ -6,59 +6,79 @@ using System.Threading.Tasks;
 
 namespace NumMethods4.MathCore
 {
-    public class NumCore
+    public enum IntervalTypes
     {
-        public static double SimpsonsMethod(double fromX, double toX,
-            IFunction selecetedFunction, double acc)
+        BothOpen,
+        BothClosed,
+        LeftOpen, //right closed
+        RightOpen,
+        InfLeftRightOpen,
+        InfLeftRightClosed,
+        InfRightLeftOpen,
+        InfRightLeftClosed,
+        InfBoth,
+    }
+
+    public static class NumCore
+    {
+        public static double SimpsonsMethod(double fromX, double toX,IFunction selecetedFunction, double acc,IntervalTypes type = IntervalTypes.BothClosed)
         {
             int intervals = 1;
-            double[] nodes = new double[1000000];
-            double[] nodesVals = new double[1000000];
+            var nodes = new List<double> {fromX};
+            var nodesVals = new Dictionary<double,double>();
             double sum1=0, sum2;
             do
             {
                 var nodeCount = 2 * intervals + 1;
-                var xDiff = Math.Abs(toX - fromX) / (2 * intervals);
-                WypelnijTablicePunktow(nodes, fromX, xDiff, nodeCount);
-                sum2 = sum1;
-                sum1 = 0;
-                for (int i = 0; i < (nodeCount); i++)
+                switch (type)
                 {
-                    nodesVals[i] = selecetedFunction.GetValue(nodes[i]);
-                    if (i == 0 || i == nodeCount - 1)
-                        sum1 += nodesVals[i];
-                    else
-                    {
-                        if (i % 2 == 1)
-                            sum1 += 4 * nodesVals[i];
-                        else
-                            sum1 += 2 * nodesVals[i];
-                    }
+                    case IntervalTypes.BothOpen:
+                        var dif = (toX - fromX) / (2 * intervals);
+                        fromX += dif;
+                        toX -= dif;
+                        break;
+                    case IntervalTypes.BothClosed:
+                        break;
+                    case IntervalTypes.LeftOpen:
+                        fromX += (toX - fromX) / (2 * intervals);
+                        break;
+                    case IntervalTypes.RightOpen:
+                        toX -= (toX - fromX) / (2 * intervals);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(type), type, null);
                 }
-                sum1 *= (xDiff / 3);
+                var xDiff = Math.Abs(toX - fromX) / (2 * intervals);
+                nodes.DoNodes(xDiff, nodeCount);
+                sum2 = sum1;
+                sum1 = selecetedFunction.GetValue(nodes[0]);               
+                for (int i = 1; i < nodeCount-1; i++)
+                {
+                    double val;
+                    if (!nodesVals.TryGetValue(nodes[i],out val))
+                    {
+                        val = selecetedFunction.GetValue(nodes[i]);
+                        nodesVals.Add(nodes[i], val);
+                    }                   
+                    sum1 += (i%2 == 1 ? 4 : 2)*val;
+                }
+                sum1 += selecetedFunction.GetValue(nodes.Last());
+                sum1 *= xDiff / 3;
                 intervals *= 2;
             } while (Math.Abs(sum1 - sum2) > acc);
             return sum1;
         }
 
-        private static void WypelnijTablicePunktow(double[] nodes, double fromX,
-            double xDiff, int nodeCount)
+        private static void DoNodes(this List<double> list, double xDiff, int target)
         {
-            for (int i = 0; i < nodeCount; i++)
-            {
-                if (i == 0)
-                {
-                    nodes[0] = fromX;
-                }
-                else
-                {
-                    nodes[i] = nodes[i - 1] + xDiff;
-                }
-            }
+            for (int i=1;i<target;i+=2)
+                list.Insert(i,list[i-1]+xDiff);
+            if (target == 3) //init whatnot
+                list.Add(list.Last() + xDiff);
         }
 
-        public static double ExcludingEndpointsIntegration(double fromX, double toX,
-            bool isLeftEx, bool isRightEx, IFunction selectedFunction, double includedEndpointsValue)
+
+        public static double ExcludingEndpointsIntegration(double fromX, double toX, bool isLeftEx, bool isRightEx, IFunction selectedFunction, double includedEndpointsValue)
         {
             if (isLeftEx)
                 includedEndpointsValue -= selectedFunction.GetValue(fromX);
