@@ -156,11 +156,11 @@ namespace NumMethods4.ViewModel
                     excludeRight = true;
                 if (excludeLeft || excludeRight)
                 {
-                    ResultBind = Convert.ToString(NumCore.ExcludingEndpointsIntegration(integrateFrom, integrateTo, excludeLeft,
-                            excludeRight, SelectedFunction, includingEndpointsResult));
+                    ResultBind = NumCore.ExcludingEndpointsIntegration(integrateFrom, integrateTo, excludeLeft,
+                            excludeRight, SelectedFunction, includingEndpointsResult).ToString();
                 }
                 else
-                    ResultBind = Convert.ToString(includingEndpointsResult);
+                    ResultBind = includingEndpointsResult.ToString();
             }
             else
             {
