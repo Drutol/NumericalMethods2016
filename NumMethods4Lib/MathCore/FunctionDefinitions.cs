@@ -1,4 +1,5 @@
 ﻿using System;
+using NumMethods4Lib.MathCore;
 
 namespace NumMethods4Lib.MathCore
 {
@@ -36,10 +37,10 @@ namespace NumMethods4Lib.MathCore
 
         public double GetValue(double x)
         {
-            return x*x*x*Math.Sin(3*x - 15) + x*x*x*4 + x*(x + 4)*4 + Math.Abs(x*x*3 + 2) - 100;
+            return 1/x*x;
         }
 
-        public string TextRepresentation => "x^3*sin(3x - 15) + 4x^3 + 4x^2 + 16x + |3x^2 + 2| - 100";
+        public string TextRepresentation => "1/x^2";
     }
 
     public class Function4 : IFunction
