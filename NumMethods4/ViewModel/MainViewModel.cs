@@ -262,8 +262,8 @@ namespace NumMethods4.ViewModel
                         ResultBind = NumCore.LaguerreIntegration(SelectedFunction, 5).ToString();
                         break;
                     case CalculationMethod.Comparison:
-                        ResultBind = NumCore.NewtonikCortesik(integrateFrom, integrateTo, SelectedFunction, accuracy, maxIter, intervalType).ToString();
-                        SecondResult = NumCore.LaguerreIntegration(SelectedFunction, 1).ToString();
+                        ResultBind = NumCore.NewtonCortesik2(accuracy, SelectedFunction).ToString();
+                        SecondResult = NumCore.LaguerreIntegration(SelectedFunction, 5).ToString();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
