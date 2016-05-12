@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NumMethods4.MathCore
+namespace NumMethods4Lib.MathCore
 {
     public enum IntervalTypes
     {
@@ -19,13 +19,18 @@ namespace NumMethods4.MathCore
         InfBoth,
     }
 
+    public struct Point
+    {
+        public double X;
+        public double Y;
+    }
+
     public static class NumCore
     {
-        public static double SimpsonsMethod(double fromX, double toX,IFunction selecetedFunction, double acc,IntervalTypes type = IntervalTypes.BothClosed)
+        public static double NewtonikCortesik(double fromX, double toX,IFunction selecetedFunction, double acc,int maxIter,IntervalTypes type = IntervalTypes.BothClosed)
         {
-            int intervals = 1;
-            var nodes = new List<double> {fromX};
-            var nodesVals = new Dictionary<double,double>();
+            int intervals = 1,iter = 0;
+            var nodes = new List<Point> {new Point {X = fromX,Y=selecetedFunction.GetValue(fromX)} };
             double sum1=0, sum2;
             do
             {
@@ -46,90 +51,84 @@ namespace NumMethods4.MathCore
                         toX -= (toX - fromX) / (2 * intervals);
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                        return InfiniteNewtonikCortesik(fromX, toX, selecetedFunction, maxIter, type);
                 }
-                var xDiff = Math.Abs(toX - fromX) / (2 * intervals);
-                nodes.DoNodes(xDiff, nodeCount);
+                var xDiff = (toX - fromX)/(2 * intervals);
+                nodes.DoNodes(xDiff,nodeCount,selecetedFunction);
                 sum2 = sum1;
-                sum1 = selecetedFunction.GetValue(nodes[0]);               
-                for (int i = 1; i < nodeCount-1; i++)
-                {
-                    double val;
-                    if (!nodesVals.TryGetValue(nodes[i],out val))
-                    {
-                        val = selecetedFunction.GetValue(nodes[i]);
-                        nodesVals.Add(nodes[i], val);
-                    }                   
-                    sum1 += (i%2 == 1 ? 4 : 2)*val;
-                }
-                sum1 += selecetedFunction.GetValue(nodes.Last());
-                sum1 *= xDiff / 3;
+                sum1 = nodes.Skip(1).Take(nodeCount - 1).Select((point, i) => ((i + 1)%2 == 1 ? 4 : 2)*point.Y).Sum() * xDiff / 3;
                 intervals *= 2;
-            } while (Math.Abs(sum1 - sum2) > acc);
+                iter++;
+            } while (Math.Abs(sum1 - sum2) > acc && iter++ < maxIter);
+            if(iter == maxIter)
+                throw new IndexOutOfRangeException("Trolorlo za dużo itercajów");
             return sum1;
         }
 
-        private static void DoNodes(this List<double> list, double xDiff, int target)
+        private static double InfiniteNewtonikCortesik(double fromX, double toX, IFunction selecetedFunction, int maxIter, IntervalTypes type)
         {
-            for (int i=1;i<target;i+=2)
-                list.Insert(i,list[i-1]+xDiff);
+            int intervals = 1, iter = 0;
+            double node = fromX;
+            switch (type)
+            {
+                case IntervalTypes.InfLeftRightClosed:
+                case IntervalTypes.InfRightLeftClosed:
+                    break;
+                case IntervalTypes.InfRightLeftOpen:
+                    fromX += (toX - fromX) / (2 * intervals);
+                    node = fromX;
+                    break;
+                case IntervalTypes.InfLeftRightOpen:
+                    toX -= (toX - fromX) / (2 * intervals);
+                    node = toX;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, "Muri!　無 ");
+            }
+            double sum1 = 0;
+            double delta = .5f;
+
+            
+            while (iter++ < maxIter)
+            {
+                sum1 += selecetedFunction.GetValue(node)*delta/3;
+                if (type == IntervalTypes.InfLeftRightOpen || type == IntervalTypes.InfLeftRightClosed)
+                    node -= delta;
+                else
+                    node += delta;
+            }
+            if (iter == maxIter)
+                throw new IndexOutOfRangeException("Trolorlo za dużo itercajów");
+            return sum1;
+        }
+        /// <summary>
+        /// Source: http://mathworld.wolfram.com/Laguerre-GaussQuadrature.html
+        /// </summary>
+        private static readonly List<Tuple<double, double>> LaguerreNodes = new List<Tuple<double, double>>
+        {
+            new Tuple<double, double>(0.26356, 0.521756), //root , weight
+            new Tuple<double, double>(1.4134, 0.398667),
+            new Tuple<double, double>(3.59643, 0.0759424),
+            new Tuple<double, double>(7.08581, 0.00361176),
+            new Tuple<double, double>(12.6408, 0.00002337),
+        };
+
+        public static double LaguerreIntegration(IFunction fun,int n)
+        {
+            return LaguerreNodes.Take(n).Sum(node => node.Item2*fun.GetValue(node.Item1));
+        }
+
+        private static void DoNodes(this List<Point> list, double xDiff, int target, IFunction fun)
+        {
+            for (int i = 1; i < target; i += 2)
+            {
+                var curr = list[i - 1].X + xDiff;
+                list.Insert(i, new Point {X = curr, Y = fun.GetValue(curr)});
+            }
+
             if (target == 3) //init whatnot
-                list.Add(list.Last() + xDiff);
+                list.Add(new Point {X = list.Last().X + xDiff, Y = fun.GetValue(list.Last().X + xDiff)});
         }
-
-
-        public static double ExcludingEndpointsIntegration(double fromX, double toX, bool isLeftEx, bool isRightEx, IFunction selectedFunction, double includedEndpointsValue)
-        {
-            if (isLeftEx)
-                includedEndpointsValue -= selectedFunction.GetValue(fromX);
-            if (isRightEx)
-                includedEndpointsValue -= selectedFunction.GetValue(toX);
-
-            return includedEndpointsValue;
-        }
-
-        //public static void SimpsonsMethodPt2(int wybor, double acc)
-        //{
-        //    double fromX = 0;
-        //    double toX = -1;
-        //    double c = -1;
-        //    int iterator = 1;
-        //    double h;// = Math.abs(toX-fromX)/2;
-        //    double sumad1 = 0, sumad2 = 0;
-        //    double sumau1 = 0, sumau2 = 0;
-        //    do
-        //    {
-        //        if (iterator != 1)
-        //        {
-        //            fromX = toX;
-        //            toX = toX + c;
-        //        }
-        //        sumad1 = 0;
-        //        sumau1 = 0;
-        //        h = (fromX + toX) / 2;        //odleglosc miedzy punktami dla danej ilosci przedzialow
-        //        sumad1 = (Math.abs(toX - fromX) / 3) * (waga(Math.abs(fromX)) * funkcja(wybor, Math.abs(fromX)) + 4 * waga(Math.abs(h)) * funkcja(wybor, Math.abs(h)) + waga(Math.abs(toX)) * funkcja(wybor, Math.abs(toX)));
-        //        sumau1 = (Math.abs(toX - fromX) / 3) * (waga(fromX) * funkcja(wybor, fromX) + 4 * waga(h) * funkcja(wybor, h) + waga(toX) * funkcja(wybor, toX));
-        //        if (sumad1 > acc)
-        //        {
-        //            sumad2 += sumad1;
-        //        }
-        //        if (sumau1 > acc)
-        //        {
-        //            sumau2 += sumau1;
-        //        }
-
-        //        iterator += 1;
-        //        //System.out.println(iterator-1 + " " + sumau1 + " " + sumau2 + " " + sumad1 + " " + sumad2 + " " + h + " " + fromX + " " + toX);
-        //    } while (Math.abs(sumad1) > acc && Math.abs(sumau1) > acc);
-        //    System.out.println("Ta sama calka obliczona metoda Simpsona: ");
-        //    if (sumad1 < acc)
-        //    {
-        //        System.out.println(sumau2);
-        //    }
-        //    else
-        //    {
-        //        System.out.println(sumad2);
-        //    }
-        //}
+        
     }
 }

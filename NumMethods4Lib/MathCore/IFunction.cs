@@ -1,4 +1,4 @@
-﻿namespace NumMethods4.MathCore
+﻿namespace NumMethods4Lib.MathCore
 {
     public interface IFunction
     {

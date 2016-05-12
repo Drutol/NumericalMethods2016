@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Globalization;
 using System.Windows;
-using NumMethods4.MathCore;
+using NumMethods4Lib.MathCore;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using NumMethods4Lib.MathCore;
@@ -187,7 +187,7 @@ namespace NumMethods4.ViewModel
             if (intervalType == IntervalTypes.InfBoth)
                 ResultBind = "\u221E";
             else
-                ResultBind = NumCore.SimpsonsMethod(integrateFrom, integrateTo, SelectedFunction, accuracy,intervalType).ToString();
+                ResultBind = NumCore.NewtonikCortesik(integrateFrom, integrateTo, SelectedFunction, accuracy,100,intervalType).ToString();
         }));
 
         public MainViewModel()
@@ -218,7 +218,7 @@ namespace NumMethods4.ViewModel
             }
         }
 
-        private string _integrationAccuracy = "10";
+        private string _integrationAccuracy = "0,01";
 
 
         public string IntegrationAccuracy
@@ -226,7 +226,7 @@ namespace NumMethods4.ViewModel
             get { return _integrationAccuracy; }
             set
             {
-                _integrationAccuracy = value;
+                _integrationAccuracy = value.Replace(".",",");
                 RaisePropertyChanged(() => IntegrationAccuracy);
             }
         }
