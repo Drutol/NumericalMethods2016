@@ -30,23 +30,24 @@ namespace NumMethods4Lib.MathCore
             int intervals = 1,iter = 0;
             var nodes = new List<Point> {new Point {X = fromX,Y=selecetedFunction.GetValue(fromX)} };
             double sum1=0, sum2;
+            double xFrom = fromX, xTo = toX;
             do
             {
                 var nodeCount = 2 * intervals + 1;
                 switch (type)
                 {
                     case IntervalTypes.BothOpen:
-                        var dif = (toX - fromX) / (2 * intervals);
-                        fromX += dif;
-                        toX -= dif;
+                        var dif = (xTo - xFrom) / (2 * intervals);
+                        fromX = xFrom + dif;
+                        toX = xTo - dif;
                         break;
                     case IntervalTypes.BothClosed:
                         break;
                     case IntervalTypes.LeftOpen:
-                        fromX += (toX - fromX) / (2 * intervals);
+                        fromX = xFrom + (xTo - xFrom) / (2 * intervals);
                         break;
                     case IntervalTypes.RightOpen:
-                        toX -= (toX - fromX) / (2 * intervals);
+                        toX = xTo - (xTo - xFrom) / (2 * intervals);
                         break;
                     default:
                         return InfiniteNewtonikCortesik(fromX, toX, selecetedFunction, maxIter, type);

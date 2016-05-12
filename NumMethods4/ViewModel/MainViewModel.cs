@@ -65,12 +65,16 @@ namespace NumMethods4.ViewModel
 
         public List<string> LeftEndpointSigns { get; } = new List<string>
         {
-            "(", "[", "-\u221E"
+            "(",
+            "[",
+            "-\u221E"
         };
 
         public List<string> RightEndpointSigns { get; } = new List<string>
         {
-            ")", "]", "\u221E"
+            ")",
+            "]",
+            "\u221E"
         };
 
         private IntervalSymbols _selectedLeftSignType = IntervalSymbols.Bracket;
