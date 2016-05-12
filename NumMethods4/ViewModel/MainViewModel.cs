@@ -59,8 +59,11 @@ namespace NumMethods4.ViewModel
 
         public ICommand SelectCalculationMethodCommand => new RelayCommand<string>(s =>
         {
-            _result = null;
-            _secondResult = null;
+            if (int.Parse(s) == 2)
+                _secondResult = "";
+            else
+                _secondResult = null;
+            _result = "";
             _selectedCalculationMethod = (CalculationMethod) int.Parse(s);
             RaisePropertyChanged(() => SelectedCalculationMethod);
             RaisePropertyChanged(() => ResultBind);
