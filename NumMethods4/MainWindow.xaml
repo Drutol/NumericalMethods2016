@@ -46,9 +46,17 @@
                 <TextBlock Text="{Binding IntegrateFromX}"/>
             </StackPanel>
         </StackPanel>
-        <StackPanel HorizontalAlignment="Center" Grid.Row="2" Margin="10">
-            <TextBlock HorizontalAlignment="Center" Text="Input integration data:"/>
+        <!--<Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+        </Grid>-->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2" Margin="10">
+            <Border Padding="5,0,5,0" BorderThickness="0,0,2,0" BorderBrush="Black">
             <StackPanel Orientation="Vertical">
+                <TextBlock HorizontalAlignment="Center" Text="Input integration data:"/>
                 <TextBlock HorizontalAlignment="Center" Text="Interval:"/>
                 <StackPanel Orientation="Horizontal">
                     <ComboBox x:Name="CmbLeftBox" Margin="0,0,5,0" Height="30" VerticalAlignment="Center"
@@ -75,6 +83,13 @@
                              HorizontalAlignment="Center" Width="40"/>
                 </StackPanel>
                 <Button Margin="0,5,0,0" Content="Calculate." Command="{Binding CalculateCommand}"/>
+            </StackPanel>
+            </Border>
+            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                <TextBlock Text="Choose calculation method:"/>
+                <RadioButton Command="{Binding ChooseCalculationMetodCommand}" CommandParameter="0" GroupName="Method" Content="NewtonCortes"></RadioButton>
+                <RadioButton Command="{Binding ChooseCalculationMetodCommand}" CommandParameter="1" GroupName="Method" Content="Gauss"></RadioButton>
+                <RadioButton Command="{Binding ChooseCalculationMetodCommand}" CommandParameter="2" GroupName="Method" Content="Compare"></RadioButton>
             </StackPanel>
         </StackPanel>
     </Grid>

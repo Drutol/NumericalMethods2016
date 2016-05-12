@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Globalization;
 using System.Windows;
-using NumMethods4.MathCore;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using NumMethods4Lib.MathCore;
@@ -22,6 +21,13 @@ namespace NumMethods4.ViewModel
             Inf,
         }
 
+        public enum CalculationMethods
+        {
+            NewtonCortes,
+            Gauss,
+            Compare,
+        }
+
         public ObservableCollection<IFunction> AvailableFunctions { get; }
             = new ObservableCollection<IFunction>
             {
@@ -33,12 +39,16 @@ namespace NumMethods4.ViewModel
 
         private IFunction SelectedFunction { get; set; } = new Function1();
 
+        private CalculationMethods _chosenCalculationMethod;
+
+        public ICommand ChooseCalculationMetodCommand => new GalaSoft.MvvmLight.CommandWpf.RelayCommand<string>(s => _chosenCalculationMethod = (CalculationMethods)int.Parse(s));
+
         public List<string> LeftEndpointSigns { get; }
             = new List<string>
             {
                 "(",
                 "[",
-                "\u221E"
+                "-\u221E"
             };
 
         public List<string> RightEndpointSigns { get; }

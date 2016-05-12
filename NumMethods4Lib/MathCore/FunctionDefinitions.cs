@@ -1,5 +1,4 @@
 ﻿using System;
-using NumMethods4.MathCore;
 
 namespace NumMethods4Lib.MathCore
 {
@@ -24,10 +23,10 @@ namespace NumMethods4Lib.MathCore
 
         public double GetValue(double x)
         {
-            return Math.Sin(x);
+            return Math.Cos(x);
         }
 
-        public string TextRepresentation => "sin(x)";
+        public string TextRepresentation => "cos(x)";
     }
 
     public class Function3 : IFunction
