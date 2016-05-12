@@ -1,5 +1,4 @@
 ﻿using System;
-using NumMethods4Lib.MathCore;
 
 namespace NumMethods4Lib.MathCore
 {

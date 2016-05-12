@@ -4,17 +4,16 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 
 namespace NumMethods4.XamlConverters
 {
-    class IntervalSymbolsConverter : IValueConverter
+    class VisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value as string == "\u221E" || value as string == "-\u221E")
-                return (parameter as string) == "left" ? "(" : ")";
-            return value;
+            return value == null ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
