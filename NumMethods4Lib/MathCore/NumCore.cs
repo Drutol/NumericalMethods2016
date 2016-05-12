@@ -129,14 +129,14 @@ namespace NumMethods4Lib.MathCore
                 list.Add(new Point {X = list.Last().X + xDiff, Y = fun.GetValue(list.Last().X + xDiff)});
         }
 
-        private static double waga(double x)
+        private static double Waga(double x)
         {
             return Math.Pow(Math.E, -1*x);
         }
 
         public static double NewtonCortesik2(double acc,IFunction fun)
         {
-            double a = 0, b = -1, c = -1; ;
+            double a = 0, b = -1, c = -1;
             int iterator = 1;
             double sumad1, sumad2 = 0;
             double sumau1, sumau2 = 0;
@@ -148,8 +148,8 @@ namespace NumMethods4Lib.MathCore
                     b += c;
                 }
                 var delta = (a + b) / 2;
-                sumad1 = Math.Abs(b - a) / 3 * (waga(Math.Abs(a)) * fun.GetValue(Math.Abs(a))) + 4 * waga(Math.Abs(delta)) * fun.GetValue(Math.Abs(delta)) + waga(Math.Abs(b)) * fun.GetValue(Math.Abs(b));
-                sumau1 = Math.Abs(b - a) / 3 * (waga(a) * fun.GetValue(a)) + 4 * waga(delta) * fun.GetValue(delta) + waga(b) * fun.GetValue(b);
+                sumad1 = Math.Abs(b - a) / 3 * (Waga(Math.Abs(a)) * fun.GetValue(Math.Abs(a))) + 4 * Waga(Math.Abs(delta)) * fun.GetValue(Math.Abs(delta)) + Waga(Math.Abs(b)) * fun.GetValue(Math.Abs(b));
+                sumau1 = Math.Abs(b - a) / 3 * (Waga(a) * fun.GetValue(a)) + 4 * Waga(delta) * fun.GetValue(delta) + Waga(b) * fun.GetValue(b);
                 if (sumad1 > acc)
                     sumad2 += sumad1;
                 if (sumau1 > acc)
@@ -160,6 +160,5 @@ namespace NumMethods4Lib.MathCore
             } while (Math.Abs(sumad1) > acc && Math.Abs(sumau1) > acc);
             return sumad1 < acc ? sumau2 : sumad2;
         }
-
     }
 }
