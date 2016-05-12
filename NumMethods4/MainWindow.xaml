@@ -59,7 +59,7 @@
                     <TextBlock VerticalAlignment="Center"
                                    Text="{Binding SelectedFunctionText}"/>
                     <TextBlock VerticalAlignment="Center"
-                                   Text="{Binding ResultBind}"/>
+                                   Text="{Binding SecondResult}"/>
                 </StackPanel>
                 <TextBlock Text="{Binding IntegrateFromX}"/>
             </StackPanel>

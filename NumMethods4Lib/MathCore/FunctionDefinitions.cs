@@ -36,10 +36,10 @@ namespace NumMethods4Lib.MathCore
 
         public double GetValue(double x)
         {
-            return 1/x*x;
+            return x*(x + 4) + 10;
         }
 
-        public string TextRepresentation => "1/x^2";
+        public string TextRepresentation => "x^2+4x+10";
     }
 
     public class Function4 : IFunction
