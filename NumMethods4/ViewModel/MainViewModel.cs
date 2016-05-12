@@ -59,8 +59,12 @@ namespace NumMethods4.ViewModel
 
         public ICommand SelectCalculationMethodCommand => new RelayCommand<string>(s =>
         {
+            _result = null;
+            _secondResult = null;
             _selectedCalculationMethod = (CalculationMethod) int.Parse(s);
             RaisePropertyChanged(() => SelectedCalculationMethod);
+            RaisePropertyChanged(() => ResultBind);
+            RaisePropertyChanged(() => SecondResult);
         });
 
         public List<string> LeftEndpointSigns { get; } = new List<string>
@@ -133,7 +137,7 @@ namespace NumMethods4.ViewModel
             }
         }
 
-        private string _result;
+        private string _result="";
 
         public string ResultBind
         {
