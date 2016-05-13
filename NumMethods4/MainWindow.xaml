@@ -71,9 +71,11 @@
             </Grid.ColumnDefinitions>
             <StackPanel HorizontalAlignment="Right" Grid.Column="0" Orientation="Vertical">
                 <TextBlock HorizontalAlignment="Center" Text="Input integration data:"/>
-                <TextBlock HorizontalAlignment="Center" Text="Interval:"/>
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                    <ComboBox x:Name="CmbLeftBox" Margin="0,0,5,0" Height="30" VerticalAlignment="Center"
+                <TextBlock HorizontalAlignment="Center" Text="Interval:"
+                           Visibility="{Binding NewtonVisibility,Converter={StaticResource VisibilityConverter}}"/>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal"
+                            Visibility="{Binding NewtonVisibility,Converter={StaticResource VisibilityConverter}}">
+                <ComboBox x:Name="CmbLeftBox" Margin="0,0,5,0" Height="30" VerticalAlignment="Center"
                               ItemsSource="{Binding LeftEndpointSigns}" 
                               SelectedIndex="{Binding SelectedLeftSignIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Height="35" FontSize="25" Margin="0,0,5,5"

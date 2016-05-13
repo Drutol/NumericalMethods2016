@@ -42,17 +42,17 @@ namespace NumMethods4Lib.MathCore
         public string TextRepresentation => "x^2+4x+10";
     }
 
-    public class Function4 : IFunction
-    {
-        private static readonly int _id = 4;
-        public int Id => _id;
+    //public class Function4 : IFunction
+    //{
+    //    private static readonly int _id = 4;
+    //    public int Id => _id;
 
-        public double GetValue(double x)
-        {
-            return x*x*(0.5 - 10*x*x) + 18;
-        }
+    //    public double GetValue(double x)
+    //    {
+    //        return x*x*(0.5 - 10*x*x) + 18;
+    //    }
 
-        public string TextRepresentation => "(x^2)/2 - (x^4)*10 + 18";
-    }
+    //    public string TextRepresentation => "(x^2)/2 - (x^4)*10 + 18";
+    //}
 
 }

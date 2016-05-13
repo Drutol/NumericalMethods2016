@@ -59,8 +59,8 @@ namespace NumMethods4Lib.MathCore
                 intervals *= 2;
                 iter++;
             } while (Math.Abs(sum1 - sum2) > acc && iter++ < maxIter);
-            if(iter == maxIter)
-                throw new IndexOutOfRangeException("Trolorlo za dużo itercajów");
+            if(iter >= maxIter)
+                throw new IndexOutOfRangeException("Iteration limit exceeded.");
             return sum1;
         }
 
@@ -96,8 +96,8 @@ namespace NumMethods4Lib.MathCore
                 else
                     node += delta;
             }
-            if (iter == maxIter)
-                throw new IndexOutOfRangeException("Trolorlo za dużo itercajów");
+            if (iter >= maxIter)
+                throw new IndexOutOfRangeException("Iteration limit exceeded.");
             return sum1;
         }
         /// <summary>
