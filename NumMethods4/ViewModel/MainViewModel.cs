@@ -304,14 +304,16 @@ namespace NumMethods4.ViewModel
                     switch (_selectedCalculationMethod)
                     {
                         case CalculationMethod.NewtonCortes:
-                            ResultBind = NumCore.NewtonikCortesik(integrateFrom, integrateTo, SelectedFunction, accuracy, maxIter, intervalType).ToString();
+                            SelectedFunction.EnableWeight = false;
+                            ResultBind = NumCore.NewtonikKotesik(integrateFrom, integrateTo, SelectedFunction, accuracy, maxIter, intervalType).ToString();
                             break;
                         case CalculationMethod.Laguerre:
+                            SelectedFunction.EnableWeight = false;
                             ResultBind = NumCore.LaguerreIntegration(SelectedFunction, lNodes).ToString();
                             break;
                         case CalculationMethod.Comparison:
-                            ResultBind = NumCore.NewtonikCortesik(integrateFrom, integrateTo, SelectedFunction, accuracy, maxIter, intervalType).ToString();
-                            //ResultBind = NumCore.NewtonCortesik2(accuracy, SelectedFunction).ToString();
+                            SelectedFunction.EnableWeight = true;
+                            ResultBind = NumCore.NewtonikKotesik(integrateFrom, double.PositiveInfinity, SelectedFunction, accuracy, maxIter, intervalType).ToString();
                             SecondResult = NumCore.LaguerreIntegration(SelectedFunction, lNodes).ToString();
                             break;
                         default:
