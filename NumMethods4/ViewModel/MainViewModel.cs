@@ -37,6 +37,22 @@ namespace NumMethods4.ViewModel
 
         private IFunction SelectedFunction { get; set; } = new Function1();
 
+        private bool? _laguerreVisiblity = null;
+
+        public bool? LaguerreVisibility => _laguerreVisiblity;
+
+        private string _laguerreNodes = "2";
+
+        public string LaguerreNodes
+        {
+            get { return _laguerreNodes;}
+            set
+            {
+                _laguerreNodes = value;
+                RaisePropertyChanged(() => LaguerreNodes);
+            }
+        }
+
         private CalculationMethod _selectedCalculationMethod= CalculationMethod.NewtonCortes;
 
         public string SelectedCalculationMethod
@@ -59,12 +75,27 @@ namespace NumMethods4.ViewModel
 
         public ICommand SelectCalculationMethodCommand => new RelayCommand<string>(s =>
         {
-            _result = null;
-            _secondResult = null;
+            switch (int.Parse(s))
+            {
+                case 1:
+                    _secondResult = null;
+                    _laguerreVisiblity = true;
+                    break;
+                case 2:
+                    _secondResult = "";
+                    _laguerreVisiblity = true;
+                    break;
+                default:
+                    _secondResult = null;
+                    _laguerreVisiblity = null;
+                    break;
+            }
+            _result = "";
             _selectedCalculationMethod = (CalculationMethod) int.Parse(s);
             RaisePropertyChanged(() => SelectedCalculationMethod);
             RaisePropertyChanged(() => ResultBind);
             RaisePropertyChanged(() => SecondResult);
+            RaisePropertyChanged(() => LaguerreVisibility);
         });
 
         public List<string> LeftEndpointSigns { get; } = new List<string>
@@ -180,8 +211,12 @@ namespace NumMethods4.ViewModel
         public ICommand CalculateCommand => _calculateCommand ?? (_calculateCommand = new RelayCommand(() =>
         {
             double integrateFrom, integrateTo, accuracy;
-            int maxIter;
-            if (!double.TryParse(IntegrateFromX, out integrateFrom) || !double.TryParse(IntegrateToX, out integrateTo) || !double.TryParse(IntegrationAccuracy, out accuracy) || !int.TryParse(_maxIter, out maxIter))
+            int maxIter, lNodes;
+            if (!double.TryParse(IntegrateFromX, out integrateFrom) || 
+            !double.TryParse(IntegrateToX, out integrateTo) || 
+            !double.TryParse(IntegrationAccuracy, out accuracy) || 
+            !int.TryParse(_maxIter, out maxIter) ||
+            !int.TryParse(LaguerreNodes, out lNodes))
             {
                 MessageBox.Show( /*Locale["#CannotParseMsg"], Locale["#CannotParseTitle"]*/
                     "parse", "", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -256,11 +291,12 @@ namespace NumMethods4.ViewModel
                         ResultBind = NumCore.NewtonikCortesik(integrateFrom, integrateTo, SelectedFunction, accuracy, maxIter, intervalType).ToString();
                         break;
                     case CalculationMethod.Laguerre:
-                        ResultBind = NumCore.LaguerreIntegration(SelectedFunction, 5).ToString();
+                        ResultBind = NumCore.LaguerreIntegration(SelectedFunction, lNodes).ToString();
                         break;
                     case CalculationMethod.Comparison:
-                        ResultBind = NumCore.NewtonCortesik2(accuracy, SelectedFunction).ToString();
-                        SecondResult = NumCore.LaguerreIntegration(SelectedFunction, 5).ToString();
+                        ResultBind = NumCore.NewtonikCortesik(integrateFrom, integrateTo, SelectedFunction, accuracy, maxIter, intervalType).ToString();
+                        //ResultBind = NumCore.NewtonCortesik2(accuracy, SelectedFunction).ToString();
+                        SecondResult = NumCore.LaguerreIntegration(SelectedFunction, lNodes).ToString();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
