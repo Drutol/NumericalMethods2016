@@ -25,11 +25,6 @@ namespace NumMethods4Lib.MathCore
         {
             set { SetFunc(value); }
         }
-
-        protected Function()
-        {
-            _currentFunc = GetNormalValue;
-        }
     }
 
     public class Function1 : Function, IFunction

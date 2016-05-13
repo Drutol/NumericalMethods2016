@@ -111,6 +111,22 @@ namespace NumMethods4Lib.MathCore
                 throw new IndexOutOfRangeException("Iteration ammount exceded its limit.");
             return sum1;
         }
+
+        public static double NewNewtonCotes(double fromX, double toX, double acc, IFunction fun)
+        {
+            double calka=0, s=0;
+            var dx = (toX - fromX)/acc;
+            for (int i = 1; i < acc; i++)
+            {
+                var x = fromX + i * dx;
+                s += fun.GetValue(x - dx / 2);
+                calka += fun.GetValue(x);
+            }
+            s += fun.GetValue(toX - dx / 2);
+            calka = (dx / 6) * (fun.GetValue(fromX) + fun.GetValue(toX) + 2 * calka + 4 * s);
+            return calka;
+        }
+
         /// <summary>
         /// Source: http://mathworld.wolfram.com/Laguerre-GaussQuadrature.html
         /// </summary>
