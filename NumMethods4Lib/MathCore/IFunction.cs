@@ -2,10 +2,7 @@
 {
     public interface IFunction
     {
-        /// <summary>
-        ///     Integer representation of function.
-        /// </summary>
-        int Id { get; }
+        bool EnableWeight { set; }
 
         /// <summary>
         ///     Function text representation for GUI.
