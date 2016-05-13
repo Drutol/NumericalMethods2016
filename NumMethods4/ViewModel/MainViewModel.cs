@@ -314,6 +314,7 @@ namespace NumMethods4.ViewModel
                         case CalculationMethod.Comparison:
                             SelectedFunction.EnableWeight = true;
                             ResultBind = NumCore.NewtonikKotesik(integrateFrom, double.PositiveInfinity, SelectedFunction, accuracy, maxIter, intervalType).ToString();
+                            SelectedFunction.EnableWeight = false;
                             SecondResult = NumCore.LaguerreIntegration(SelectedFunction, lNodes).ToString();
                             break;
                         default:
