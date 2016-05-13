@@ -37,7 +37,7 @@ namespace NumMethods4.ViewModel
 
         private IFunction SelectedFunction { get; set; } = new Function1();
 
-        private bool? _laguerreVisiblity = null;
+        private bool? _laguerreVisiblity;
 
         public bool? LaguerreVisibility => _laguerreVisiblity;
 
@@ -177,7 +177,7 @@ namespace NumMethods4.ViewModel
             get {return _secondResult;}
             set
             {
-                _secondResult = value;
+                _secondResult = value != null ? $" {value} + C" : "";
                 RaisePropertyChanged(() => SecondResult);
             }
         }
@@ -214,6 +214,7 @@ namespace NumMethods4.ViewModel
             set
             {
                 ResultBind = null;
+                SecondResult = null;
                 _functionSelectorSelectedIndex = value;
                 SelectedFunctionText = AvailableFunctions[value].TextRepresentation;
                 SelectedFunction = AvailableFunctions[value];
@@ -314,6 +315,7 @@ namespace NumMethods4.ViewModel
                         case CalculationMethod.Comparison:
                             SelectedFunction.EnableWeight = true;
                             ResultBind = NumCore.NewtonikKotesik(integrateFrom, double.PositiveInfinity, SelectedFunction, accuracy, maxIter, intervalType).ToString();
+                            SelectedFunction.EnableWeight = false;
                             SecondResult = NumCore.LaguerreIntegration(SelectedFunction, lNodes).ToString();
                             break;
                         default:

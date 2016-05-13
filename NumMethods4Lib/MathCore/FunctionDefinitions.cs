@@ -25,11 +25,6 @@ namespace NumMethods4Lib.MathCore
         {
             set { SetFunc(value); }
         }
-
-        protected Function()
-        {
-            _currentFunc = GetNormalValue;
-        }
     }
 
     public class Function1 : Function, IFunction
@@ -62,7 +57,7 @@ namespace NumMethods4Lib.MathCore
         public string TextRepresentation => "cos(x)";
     }
 
-    public class Function3 : Function,IFunction 
+    public class Function3 : Function, IFunction 
     {
         protected override double GetWeightValue(double x)
         {
