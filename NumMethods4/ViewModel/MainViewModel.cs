@@ -6,6 +6,7 @@ using System.Windows;
 using NumMethods4Lib.MathCore;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using NumMethods4.Utils;
 
 namespace NumMethods4.ViewModel
 {
@@ -72,7 +73,7 @@ namespace NumMethods4.ViewModel
 
         public bool? NewtonVisibility => _newtonVisiblity;
 
-        private string _laguerreNodes = "2";
+        private string _laguerreNodes = "5";
 
         public string LaguerreNodes
         {
@@ -93,11 +94,11 @@ namespace NumMethods4.ViewModel
                 switch (_selectedCalculationMethod)
                 {
                     case CalculationMethod.NewtonCortes:
-                        return "Newton-Cortes integration result:";
+                        return Locale["#NCResults"];
                     case CalculationMethod.Laguerre:
-                        return "Laguerre integration result:";
+                        return Locale["#LResults"];
                     case CalculationMethod.Comparison:
-                        return "Newton-Cortes and Laguerre integrations results:";
+                        return Locale["#NCLResults"];
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -321,7 +322,7 @@ namespace NumMethods4.ViewModel
                         case CalculationMethod.Comparison:
                             SelectedFunction.EnableWeight = true;
                             //ResultBind = NumCore.NewtonikKotesik(integrateFrom, double.PositiveInfinity, SelectedFunction, accuracy, maxIter, intervalType).ToString();
-                            ResultBind = NumCore.NewNewtonCotes(integrateFrom, double.PositiveInfinity, maxIter, SelectedFunction, intervalType).ToString();
+                            ResultBind = NumCore.NewNewtonCotes(integrateFrom, double.PositiveInfinity, maxIter, SelectedFunction, IntervalTypes.BothClosed).ToString();
                             SelectedFunction.EnableWeight = false;
                             //SecondResult = NumCore.NewtonikKotesik(integrateFrom, double.PositiveInfinity, SelectedFunction, accuracy, maxIter, intervalType).ToString();
                             SecondResult = NumCore.LaguerreIntegration(SelectedFunction, lNodes).ToString();
@@ -383,5 +384,74 @@ namespace NumMethods4.ViewModel
                 RaisePropertyChanged(() => MaxIterBind);
             }
         }
+
+        #region
+
+        private Dictionary<string, string> _locale;
+
+        public Dictionary<string, string> Locale
+        {
+            get { return _locale; }
+            set
+            {
+                _locale = value;
+                RaisePropertyChanged(() => Locale);
+            }
+        }
+
+        private AvailableLocale _currentLocale;
+
+        public AvailableLocale CurrentLocale
+        {
+            get { return _currentLocale; }
+            set
+            {
+                _currentLocale = value;
+                switch (value)
+                {
+                    case AvailableLocale.PL:
+                        Locale = LocalizationManager.PlDictionary;
+                        break;
+                    case AvailableLocale.EN:
+                        Locale = LocalizationManager.EnDictionary;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(value), value, null);
+                }
+                //sets flag of next locale
+                LangImgSourceBind = LocalizationManager.GetNextLocale(value).ToString();
+            }
+        }
+
+        public MainViewModel()
+        {
+            CurrentLocale = AvailableLocale.EN;
+        }
+
+        private string _langImgSource;
+
+        public string LangImgSourceBind
+        {
+            get { return _langImgSource; }
+            set
+            {
+                _langImgSource = $@"../Localization/{value}.png";
+                RaisePropertyChanged(() => LangImgSourceBind);
+            }
+        }
+
+        private ICommand _changeLanguageCommand;
+
+        public ICommand ChangeLanguageCommand =>
+            _changeLanguageCommand ?? (_changeLanguageCommand = new RelayCommand(() =>
+            {
+                if ((int)CurrentLocale == Enum.GetNames(typeof(AvailableLocale)).Length - 1)
+                    CurrentLocale = 0;
+                else
+                    CurrentLocale += 1;
+                RaisePropertyChanged(() => SelectedCalculationMethod);
+            }));
+
+        #endregion
     }
 }

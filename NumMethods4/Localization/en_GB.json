@@ -1,0 +1,21 @@
+﻿{
+  "#NewtonCotes": "Newton-Cotes:",
+  "#Laguerre": "Laguerre:",
+  "#IntegrationDataInputLabel": "Input integration data:",
+  "#Interval": "Interval",
+  "#MaxIter": "Maximum iterations:",
+  "#LaguerreNodes": "Laguerre nodes count: (2-5)",
+  "#DoMaths": "Calculate",
+  "#SelectMethod": "Choose calculation method:",
+  "#Compare": "Comparison",
+  "#NCResults": "Newton-Cotes integration result:",
+  "#LResults": "Laguerre integration result:",
+  "#NCLResults": "Newton-Cotes & Laguerre integration results:",
+  "#CannotParseMsg": "The data you have entered cannot be parsed.",
+  "#CannotParseTitle": "Cannot parse!",
+  "#UnexpectedExceptionMsg": "Try entering different values or restarting the app.",
+  "#UnexpectedExceptionTitle": "Unexpected error encountered!",
+  "#IntervalErrorMsg": "The left interval endpoint is bigger then the right one, try changing interval values.",
+  "#IntervalErrorTitle": "Invalid interval endpoints!",
+  "#LangTooltip":"Zmień język."
+}

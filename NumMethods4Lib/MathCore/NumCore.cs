@@ -26,76 +26,52 @@ namespace NumMethods4Lib.MathCore
 
     public static class NumCore
     {
-        //public static double NewtonikKotesik(double fromX, double toX,IFunction selecetedFunction, double acc,int maxIter,IntervalTypes type = IntervalTypes.BothClosed)
-        //{
-        //    bool infinite = double.IsPositiveInfinity(toX);
-        //    if (infinite)
-        //        fromX = 0;
-        //    int intervals = 1,iter = 0;
-        //    var nodes = new List<Point> {new Point {X = fromX,Y=selecetedFunction.GetValue(fromX)} };
-        //    double sum1=0, sum2;
-        //    double delta = 1;
-        //    double xFrom = fromX, xTo = toX;
-        //    do
-        //    {
-        //        var nodeCount = 2 * intervals + 1;
-        //        if (infinite)
-        //        {
-        //            var x = nodes.Last().X + delta;
-        //            nodes.Add(new Point {X = x, Y = selecetedFunction.GetValue(x)});
-        //        }
-        //        else
-        //        {
-        //            switch (type)
-        //            {
-        //                case IntervalTypes.BothOpen:
-        //                    var dif = (xTo - xFrom) / (2 * intervals);
-        //                    fromX = xFrom + dif;
-        //                    toX = xTo - dif;
-        //                    break;
-        //                case IntervalTypes.BothClosed:
-        //                    break;
-        //                case IntervalTypes.LeftOpen:
-        //                    fromX = xFrom + (xTo - xFrom) / (2 * intervals);
-        //                    break;
-        //                case IntervalTypes.RightOpen:
-        //                    toX = xTo - (xTo - xFrom) / (2 * intervals);
-        //                    break;
-        //                default:
-        //                    return InfiniteNewtonikCortesik(fromX, toX, selecetedFunction, maxIter, type);
-        //            }
-        //            delta = (toX - fromX) / (2 * intervals);
-        //            nodes.DoNodes(delta, nodeCount, selecetedFunction);
-        //        }
-        //        sum2 = sum1;
-        //        sum1 = nodes.Skip(1).Take(nodeCount - 1).Select((point, i) => ((i + 1)%2 == 1 ? 4 : 2)*point.Y).Sum() * delta / 3;
-        //        intervals *= 2;
-        //    } while (Math.Abs(sum1 - sum2) > acc && iter++ < maxIter);
-        //    if(iter >= maxIter && !infinite)
-        //        throw new IndexOutOfRangeException("Iteration ammount exceded its limit.");
-        //    return sum1;
-        //}
+        private static double NewtonikKotesik(double fromX, double toX, IFunction selecetedFunction, double acc, int maxIter, IntervalTypes type = IntervalTypes.BothClosed)
+        {
+            int intervals = 1, iter = 0;
+            var nodes = new List<Point> { new Point { X = fromX, Y = selecetedFunction.GetValue(fromX) } };
+            double sum1 = 0, sum2;
+            double xFrom = fromX, xTo = toX;
+            do
+            {
+                var nodeCount = 2 * intervals + 1;
+                double delta;
+                {
+                    switch (type)
+                    {
+                        case IntervalTypes.BothOpen:
+                            var dif = (xTo - xFrom) / (2 * intervals);
+                            fromX = xFrom + dif;
+                            toX = xTo - dif;
+                            break;
+                        case IntervalTypes.BothClosed:
+                            break;
+                        case IntervalTypes.LeftOpen:
+                            fromX = xFrom + (xTo - xFrom) / (2 * intervals);
+                            break;
+                        case IntervalTypes.RightOpen:
+                            toX = xTo - (xTo - xFrom) / (2 * intervals);
+                            break;
+                        default:
+                            return InfiniteNewtonikCortesik(fromX, toX, selecetedFunction, maxIter, type);
+                    }
+                    delta = (toX - fromX) / (2 * intervals);
+                    nodes.DoNodes(delta, nodeCount, selecetedFunction);
+                }
+                sum2 = sum1;
+                sum1 = nodes.Skip(1).Take(nodeCount - 1).Select((point, i) => ((i + 1) % 2 == 1 ? 4 : 2) * point.Y).Sum() * delta / 3;
+                intervals *= 2;
+            } while (Math.Abs(sum1 - sum2) > acc && iter++ < maxIter);
+            if (iter >= maxIter)
+                throw new IndexOutOfRangeException("Iteration ammount exceded its limit.");
+            return sum1;
+        }
 
         private static double InfiniteNewtonikCortesik(double fromX, double toX, IFunction selecetedFunction, int maxIter, IntervalTypes type)
         {
             int intervals = 1, iter = 0;
             double node = fromX;
-            switch (type)
-            {
-                case IntervalTypes.InfLeftRightClosed:
-                case IntervalTypes.InfRightLeftClosed:
-                    break;
-                case IntervalTypes.InfRightLeftOpen:
-                    fromX += (toX - fromX) / (2 * intervals);
-                    node = fromX;
-                    break;
-                case IntervalTypes.InfLeftRightOpen:
-                    toX -= (toX - fromX) / (2 * intervals);
-                    node = toX;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, "Muri!　無 ");
-            }
+           
             double sum1 = 0;
             double delta = .5f;
 
@@ -115,6 +91,9 @@ namespace NumMethods4Lib.MathCore
 
         public static double NewNewtonCotes(double from, double to, int maxIter, IFunction fun, IntervalTypes type )
         {
+            if (type != IntervalTypes.BothClosed)
+                return NewtonikKotesik(from, to, fun, 0.01, maxIter, type); //nie potrafimy przystosować zoptymalizowanego algoytmu do przedziałów otwartych więc korzystamy z poprzedniego
+            
             double delta, fromX=from, toX=to;
             bool inf=false;
             if (!double.IsPositiveInfinity(toX))
@@ -128,24 +107,6 @@ namespace NumMethods4Lib.MathCore
             double calka = 0, s = 0;
             for (int i = 1; i < maxIter; i++)
             {
-                switch (type)
-                {
-                    case IntervalTypes.BothOpen:
-                        var dif = (from - to)/2*i;
-                        fromX = from + dif;
-                        toX = to - dif;
-                        break;
-                    case IntervalTypes.BothClosed:
-                        break;
-                    case IntervalTypes.LeftOpen:
-                        fromX = from + (to - from) / 2 * i;
-                        break;
-                    case IntervalTypes.RightOpen:
-                        toX = to - (to - from) / 2 * i;
-                        break;
-                    default:
-                        return InfiniteNewtonikCortesik(fromX, toX, fun, maxIter, type);
-                }
                 var x = fromX + i*delta;
                 s += fun.GetValue(x - delta/2);
                 calka += fun.GetValue(x);

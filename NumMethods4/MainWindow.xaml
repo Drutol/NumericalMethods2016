@@ -20,7 +20,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <ComboBox SelectedIndex="{Binding FunctionSelectorSelectedIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                   ItemsSource="{Binding AvailableFunctions}"
@@ -32,9 +32,14 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
+        <Button Grid.Row="2" Margin="5" VerticalAlignment="Bottom" Width="45" Height="30" HorizontalAlignment="Left"
+                        Command="{Binding ChangeLanguageCommand}"
+                        ToolTip="{Binding Locale[#LangTooltip]}">
+            <Image Source="{Binding LangImgSourceBind}" />
+        </Button>
         <StackPanel HorizontalAlignment="Center" Grid.Row="1" Margin="10">
             <TextBlock Text="{Binding SelectedCalculationMethod}"/>
-            <TextBlock Text="Newton-Cortes:" VerticalAlignment="Top" HorizontalAlignment="Left"
+            <TextBlock Text="{Binding Locale[#NewtonCotes]}" VerticalAlignment="Top" HorizontalAlignment="Left"
                        Visibility="{Binding SecondResult,Converter={StaticResource VisibilityConverter}}"/>
             <StackPanel Orientation="Vertical" 
                         Visibility="{Binding ResultBind,Converter={StaticResource VisibilityConverter}}">
@@ -48,7 +53,7 @@
                 </StackPanel>
                 <TextBlock Text="{Binding IntegrateFromX}"/>
             </StackPanel>
-            <TextBlock Text="Laguerre:" VerticalAlignment="Top" HorizontalAlignment="Left"
+            <TextBlock Text="{Binding Locale[#Laguerre]}" VerticalAlignment="Top" HorizontalAlignment="Left"
                        Visibility="{Binding SecondResult,Converter={StaticResource VisibilityConverter}}"/>
             <StackPanel Orientation="Vertical" 
                         Visibility="{Binding SecondResult,Converter={StaticResource VisibilityConverter}}">
@@ -69,8 +74,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel HorizontalAlignment="Right" Grid.Column="0" Orientation="Vertical">
-                <TextBlock HorizontalAlignment="Center" Text="Input integration data:"/>
-                <TextBlock HorizontalAlignment="Center" Text="Interval:"
+                <TextBlock HorizontalAlignment="Center" Text="{Binding Locale[#IntegrationDataInputLabel]}"/>
+                <TextBlock HorizontalAlignment="Center" Text="{Binding Locale[#Interval]}"
                            Visibility="{Binding NewtonVisibility,Converter={StaticResource VisibilityConverter}}"/>
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal"
                             Visibility="{Binding NewtonVisibility,Converter={StaticResource VisibilityConverter}}">
@@ -98,29 +103,29 @@
                              HorizontalAlignment="Center" Width="40"/>
                 </StackPanel>-->
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                    <TextBlock HorizontalAlignment="Center" Text="Maximum iterations:" Margin="0,0,4,0"/>
+                    <TextBlock HorizontalAlignment="Center" Text="{Binding Locale[#MaxIter]}" Margin="0,0,4,0"/>
                     <TextBox Text="{Binding MaxIterBind, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              HorizontalAlignment="Center" Width="40"/>
                 </StackPanel>
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" 
                             Visibility="{Binding LaguerreVisibility, Converter={StaticResource VisibilityConverter}}">
-                    <TextBlock HorizontalAlignment="Center" Text="Laguerre nodes count:" Margin="0,0,4,0" ToolTip="From 2 ro 5"/>
+                    <TextBlock HorizontalAlignment="Center" Text="{Binding Locale[#LaguerreNodes]}" Margin="0,0,4,0" ToolTip="From 2 ro 5"/>
                     <TextBox Text="{Binding LaguerreNodes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              ToolTip="From 2 ro 5"
                              HorizontalAlignment="Center" Width="40"/>
                 </StackPanel>
-                <Button Width="100" Margin="0,5,0,0" Content="Calculate." Command="{Binding CalculateCommand}"/>
+                <Button Width="100" Margin="0,5,0,0" Content="{Binding Locale[#DoMaths]}" Command="{Binding CalculateCommand}"/>
             </StackPanel>
             <Border Grid.Column="1" VerticalAlignment="Top" Padding="4" Margin="10"
                     BorderBrush="LightGray" BorderThickness="3" >
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Choose calculation method:"/>
+                    <TextBlock Text="{Binding Locale[#SelectMethod]}"/>
                     <RadioButton Command="{Binding SelectCalculationMethodCommand}" IsChecked="True" CommandParameter="0" 
-                                 GroupName="Method" Content="Newton-Cortes"/>
+                                 GroupName="Method" Content="Newton-Cotes"/>
                     <RadioButton Command="{Binding SelectCalculationMethodCommand}" CommandParameter="1" 
                                  GroupName="Method" Content="Laguerre"/>
                     <RadioButton Command="{Binding SelectCalculationMethodCommand}" CommandParameter="2" 
-                                 GroupName="Method" Content="Comparison"/>
+                                 GroupName="Method" Content="{Binding Locale[#Compare]}"/>
                 </StackPanel>
             </Border>
         </Grid>

@@ -1,0 +1,21 @@
+﻿{
+  "#NewtonCotes": "Newton-Cotes:",
+  "#Laguerre": "Laguerre",
+  "#IntegrationDataInputLabel": "Dane całkowania:",
+  "#Interval": "Przedział:",
+  "#MaxIter": "Maksimum iteracji:",
+  "#LaguerreNodes": "Ilość węzłów Laguerre'a (2-5)",
+  "#DoMaths": "Oblicz",
+  "#SelectMethod": "Wybierz metodę:",
+  "#Compare": "Porównanie",
+  "#NCResults": "Newton-Cotes - wynik całkowania:",
+  "#LResults": "Laguerre - wynik całkowania:",
+  "#NCLResults": "Newton-Cotes & Laguerre - wyniki całkowania:",
+  "#CannotParseMsg": "Niepoprawnie wprowadzone dane.",
+  "#CannotParseTitle": "Złe dane!",
+  "#UnexpectedExceptionMsg": "Spróbuj wprowadzić inne dane lub zrestartować aplikację.",
+  "#UnexpectedExceptionTitle": "Wystąpił niespodziewany błąd!",
+  "#IntervalErrorMsg": "Lewy kraniec przedziału jest większy od prawego, spróbuj wprowadzić inne dane.",
+  "#IntervalErrorTitle": "Błędne krańce przedziału!",
+  "#LangTooltip":"Change language."
+}
