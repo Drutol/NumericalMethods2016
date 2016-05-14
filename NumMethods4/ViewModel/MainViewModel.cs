@@ -314,10 +314,11 @@ namespace NumMethods4.ViewModel
                             break;
                         case CalculationMethod.Comparison:
                             SelectedFunction.EnableWeight = true;
-                            ResultBind = NumCore.NewtonikKotesik(integrateFrom, double.PositiveInfinity, SelectedFunction, accuracy, maxIter, intervalType).ToString();
-                            //SecondResult = NumCore.NewNewtonCotes(integrateFrom, integrateTo, accuracy, SelectedFunction).ToString();
-                            SelectedFunction.EnableWeight = false;
-                            SecondResult = NumCore.LaguerreIntegration(SelectedFunction, lNodes).ToString();
+                            //ResultBind = NumCore.NewtonikKotesik(integrateFrom, double.PositiveInfinity, SelectedFunction, accuracy, maxIter, intervalType).ToString();
+                            ResultBind = NumCore.NewNewtonCotes(integrateFrom, double.PositiveInfinity, accuracy, SelectedFunction).ToString();
+                            //SelectedFunction.EnableWeight = false;
+                            SecondResult = NumCore.NewtonikKotesik(integrateFrom, double.PositiveInfinity, SelectedFunction, accuracy, maxIter, intervalType).ToString();
+                            //SecondResult = NumCore.LaguerreIntegration(SelectedFunction, lNodes).ToString();
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();

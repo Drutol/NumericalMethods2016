@@ -114,16 +114,25 @@ namespace NumMethods4Lib.MathCore
 
         public static double NewNewtonCotes(double fromX, double toX, double acc, IFunction fun)
         {
+            double delta;
+            if (!double.IsPositiveInfinity(toX))
+                delta = (toX - fromX)/acc;
+            else
+            {
+                fromX = 0;
+                delta = .5;
+            }
             double calka=0, s=0;
-            var dx = (toX - fromX)/acc;
+            acc = 1/acc;
             for (int i = 1; i < acc; i++)
             {
-                var x = fromX + i * dx;
-                s += fun.GetValue(x - dx / 2);
+                var x = fromX + i * delta;
+                s += fun.GetValue(x - delta / 2);
                 calka += fun.GetValue(x);
             }
-            s += fun.GetValue(toX - dx / 2);
-            calka = (dx / 6) * (fun.GetValue(fromX) + fun.GetValue(toX) + 2 * calka + 4 * s);
+            //s += fun.GetValue(toX - delta / 2);
+            //calka = (delta / 6) * (fun.GetValue(fromX) + fun.GetValue(toX) + 2 * calka + 4 * s);
+            calka = (delta / 6) * (fun.GetValue(fromX) + 2 * calka + 4 * s);
             return calka;
         }
 
