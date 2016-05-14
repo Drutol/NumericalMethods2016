@@ -70,7 +70,7 @@ namespace NumMethods4Lib.MathCore
         private static double InfiniteNewtonikCortesik(double fromX, double toX, IFunction selecetedFunction, int maxIter, IntervalTypes type)
         {
             int intervals = 1, iter = 0;
-            double node = fromX;
+            double node = !double.IsNegativeInfinity(fromX) ? fromX : toX;
            
             double sum1 = 0;
             double delta = .5f;

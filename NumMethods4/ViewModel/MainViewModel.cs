@@ -238,14 +238,12 @@ namespace NumMethods4.ViewModel
             !int.TryParse(_maxIter, out maxIter) ||
             !int.TryParse(LaguerreNodes, out lNodes))
             {
-                MessageBox.Show( /*Locale["#CannotParseMsg"], Locale["#CannotParseTitle"]*/
-                    "Can't parse, change intput values.", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Locale["#CannotParseMsg"], Locale["#CannotParseTitle"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (integrateFrom > integrateTo)
             {
-                MessageBox.Show( /*Locale["#IntervalErrorMsg"], Locale["#IntervalErrorTitle"]*/
-                    "Interval data was input incorrectly, \nappartently left endpioint is bigger than right endpoint.", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Locale["#IntervalErrorMsg"], Locale["#IntervalErrorTitle"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             IntervalTypes intervalType;
