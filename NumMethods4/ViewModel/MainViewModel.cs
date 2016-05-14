@@ -238,13 +238,13 @@ namespace NumMethods4.ViewModel
             !int.TryParse(LaguerreNodes, out lNodes))
             {
                 MessageBox.Show( /*Locale["#CannotParseMsg"], Locale["#CannotParseTitle"]*/
-                    "parse", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                    "Can't parse, change intput values.", "", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (integrateFrom > integrateTo)
             {
                 MessageBox.Show( /*Locale["#IntervalErrorMsg"], Locale["#IntervalErrorTitle"]*/
-                    "from>to", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                    "Interval data was input incorrectly, \nappartently left endpioint is bigger than right endpoint.", "", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             IntervalTypes intervalType;
@@ -301,7 +301,7 @@ namespace NumMethods4.ViewModel
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            maxIter = maxIter%2 != 1 ? maxIter - 1 : maxIter ;
+            maxIter = maxIter%2 != 1 ? maxIter-1 : maxIter ;
             if (intervalType == IntervalTypes.InfBoth)
                 ResultBind = "\u221E";
             else
