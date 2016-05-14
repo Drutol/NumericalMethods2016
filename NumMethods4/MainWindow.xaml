@@ -16,7 +16,6 @@
         <clr:String x:Key="Left">left</clr:String>
         <clr:String x:Key="Right">right</clr:String>
     </Window.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -93,11 +92,11 @@
                               ItemsSource="{Binding RightEndpointSigns}" 
                               SelectedIndex="{Binding SelectedRightSignType,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <!--<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                     <TextBlock HorizontalAlignment="Center" Text="Integration accuracy:" Margin="0,0,4,0"/>
                     <TextBox Text="{Binding IntegrationAccuracy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              HorizontalAlignment="Center" Width="40"/>
-                </StackPanel>
+                </StackPanel>-->
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                     <TextBlock HorizontalAlignment="Center" Text="Maximum iterations:" Margin="0,0,4,0"/>
                     <TextBox Text="{Binding MaxIterBind, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
