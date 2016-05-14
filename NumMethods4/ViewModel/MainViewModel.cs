@@ -37,6 +37,33 @@ namespace NumMethods4.ViewModel
 
         private IFunction SelectedFunction { get; set; } = new Function1();
 
+        private string _selectedFunctionText = " |x| dx =";
+
+        public string SelectedFunctionText
+        {
+            get { return _selectedFunctionText; }
+            private set
+            {
+                _selectedFunctionText = $" {value} dx =";
+                RaisePropertyChanged(() => SelectedFunctionText);
+            }
+        }
+
+        private int _functionSelectorSelectedIndex;
+
+        public int FunctionSelectorSelectedIndex
+        {
+            get { return _functionSelectorSelectedIndex; }
+            set
+            {
+                ResultBind = null;
+                SecondResult = null;
+                _functionSelectorSelectedIndex = value;
+                SelectedFunctionText = AvailableFunctions[value].TextRepresentation;
+                SelectedFunction = AvailableFunctions[value];
+            }
+        }
+
         private bool? _laguerreVisiblity;
 
         public bool? LaguerreVisibility => _laguerreVisiblity;
@@ -98,6 +125,8 @@ namespace NumMethods4.ViewModel
                 default:
                     IntegrateFromX = "-10";
                     IntegrateToX = "10";
+                    SelectedLeftSignIndex = 1;
+                    SelectedRightSignType = 1;
                     _secondResult = null;
                     _laguerreVisiblity = null;
                     _newtonVisiblity = true;
@@ -177,7 +206,7 @@ namespace NumMethods4.ViewModel
             get {return _secondResult;}
             set
             {
-                _secondResult = value != null ? $" {value} + C" : "";
+                _secondResult = _secondResult != null ? value!= null ? $" {value} + C" : "" : null;
                 RaisePropertyChanged(() => SecondResult);
             }
         }
@@ -194,32 +223,7 @@ namespace NumMethods4.ViewModel
             }
         }
 
-        private string _selectedFunctionText = " |x| dx =";
-
-        public string SelectedFunctionText
-        {
-            get { return _selectedFunctionText; }
-            private set
-            {
-                _selectedFunctionText = $" {value} dx =";
-                RaisePropertyChanged(() => SelectedFunctionText);
-            }
-        }
-
-        private int _functionSelectorSelectedIndex;
-
-        public int FunctionSelectorSelectedIndex
-        {
-            get { return _functionSelectorSelectedIndex; }
-            set
-            {
-                ResultBind = null;
-                SecondResult = null;
-                _functionSelectorSelectedIndex = value;
-                SelectedFunctionText = AvailableFunctions[value].TextRepresentation;
-                SelectedFunction = AvailableFunctions[value];
-            }
-        }
+        
 
         private ICommand _calculateCommand;
 
@@ -297,6 +301,7 @@ namespace NumMethods4.ViewModel
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            maxIter = maxIter%2 != 1 ? maxIter - 1 : maxIter ;
             if (intervalType == IntervalTypes.InfBoth)
                 ResultBind = "\u221E";
             else
@@ -306,7 +311,8 @@ namespace NumMethods4.ViewModel
                     {
                         case CalculationMethod.NewtonCortes:
                             SelectedFunction.EnableWeight = false;
-                            ResultBind = NumCore.NewtonikKotesik(integrateFrom, integrateTo, SelectedFunction, accuracy, maxIter, intervalType).ToString();
+                            //ResultBind = NumCore.NewtonikKotesik(integrateFrom, integrateTo, SelectedFunction, accuracy, maxIter, intervalType).ToString();
+                            ResultBind = NumCore.NewNewtonCotes(integrateFrom, integrateTo, maxIter, SelectedFunction, intervalType).ToString();
                             break;
                         case CalculationMethod.Laguerre:
                             SelectedFunction.EnableWeight = false;
@@ -315,10 +321,10 @@ namespace NumMethods4.ViewModel
                         case CalculationMethod.Comparison:
                             SelectedFunction.EnableWeight = true;
                             //ResultBind = NumCore.NewtonikKotesik(integrateFrom, double.PositiveInfinity, SelectedFunction, accuracy, maxIter, intervalType).ToString();
-                            ResultBind = NumCore.NewNewtonCotes(integrateFrom, double.PositiveInfinity, accuracy, SelectedFunction).ToString();
-                            //SelectedFunction.EnableWeight = false;
-                            SecondResult = NumCore.NewtonikKotesik(integrateFrom, double.PositiveInfinity, SelectedFunction, accuracy, maxIter, intervalType).ToString();
-                            //SecondResult = NumCore.LaguerreIntegration(SelectedFunction, lNodes).ToString();
+                            ResultBind = NumCore.NewNewtonCotes(integrateFrom, double.PositiveInfinity, maxIter, SelectedFunction, intervalType).ToString();
+                            SelectedFunction.EnableWeight = false;
+                            //SecondResult = NumCore.NewtonikKotesik(integrateFrom, double.PositiveInfinity, SelectedFunction, accuracy, maxIter, intervalType).ToString();
+                            SecondResult = NumCore.LaguerreIntegration(SelectedFunction, lNodes).ToString();
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
