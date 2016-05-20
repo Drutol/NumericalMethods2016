@@ -1,0 +1,85 @@
+﻿<Window x:Class="NumMethods5.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" xmlns:oxy="http://oxyplot.org/wpf"
+        Title="MainWindow" Height="360" Width="530"
+        DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
+    <Grid Background="#E6E6E6">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="175"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ComboBox ItemsSource="{Binding AvailableFunctions}" Height="20" VerticalAlignment="Top" Grid.Row="0" Margin="10"
+                  SelectedIndex="{Binding FunctionSelectorSelectedIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                  HorizontalAlignment="Stretch">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding TextRepresentation}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <StackPanel Grid.Row="1" HorizontalAlignment="Center">
+                <StackPanel Margin="10" >
+                    <StackPanel Orientation="Horizontal">
+                        <Border BorderBrush="DarkGray" BorderThickness="0,0,2,0" Margin="0,0,5,0" Padding="0,0,5,0">
+                            <StackPanel>
+                                <TextBlock TextWrapping="Wrap" Width="70" Text="Approximation interval:"/>
+                                <!--<TextBlock TextWrapping="Wrap" Width="70" Text="{Binding Locale[#InterpolationInterval]}"/>-->
+                                <StackPanel Margin="0,5,0,0">
+                                    <TextBlock Text="FromX" />
+                                    <!--<TextBlock Text="{Binding Locale[#FromX]}" />-->
+                                    <TextBox TextAlignment="Center" Text="{Binding FromXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Text="ToX" />
+                                    <!--<TextBlock Text="{Binding Locale[#ToX]}" />-->
+                                    <TextBox TextAlignment="Center" Text="{Binding ToXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <StackPanel>
+                            <TextBlock TextWrapping="Wrap" Width="70" Text="Method arguments:"/>
+                            <StackPanel Margin="0,5,0,0">
+                                <TextBlock Text="Nodes count" />
+                                <TextBox TextAlignment="Center" Text="{Binding NodesCountBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Max iter" />
+                                <TextBox TextAlignment="Center" Text="{Binding MaxIterBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock HorizontalAlignment="Center" Text="Precision" />
+                        <TextBox TextAlignment="Center" Text="{Binding PrecisionBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </StackPanel>
+                <Button Content="Calculate" HorizontalAlignment="Stretch" Margin="10" Command="{Binding DoMathsCommand}"/>
+            </StackPanel>
+            <Button Grid.Row="2" Margin="0,5" VerticalAlignment="Top" Width="45" Height="30"
+                        Command="{Binding ChangeLanguageCommand}"
+                        ToolTip="{Binding Locale[#LangTooltip]}">
+                <Image Source="{Binding LangImgSourceBind}"/>
+            </Button>
+        </Grid>
+        <oxy:Plot Title="Plot" Grid.Column="1" 
+                  IsLegendVisible="True" LegendTitle="Legend" LegendOrientation="Horizontal" 
+                  LegendPlacement="Inside" LegendPosition="TopRight" LegendBackground="Transparent"
+                  LegendBorder="Transparent" LegendMaxWidth="110" LegendMargin="10" LegendFontSize="12">
+            <oxy:Plot.Series>
+                <oxy:LineSeries Title="{Binding Locale[#OriginalFunction]}" ItemsSource="{Binding ChartDataInterpolated}" Smooth="True"/>
+                <oxy:LineSeries Title="{Binding Locale[#Interpolation]}" ItemsSource="{Binding ChartDataInterpolation}" Smooth="True"/>
+                <oxy:LineSeries Title="{Binding Locale[#Nodes]}" ItemsSource="{Binding NodeChartData}" MarkerType="Circle" LineStyle="None"/>
+            </oxy:Plot.Series>
+        </oxy:Plot>
+
+    </Grid>
+</Window>
