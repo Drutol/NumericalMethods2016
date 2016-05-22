@@ -130,9 +130,9 @@ namespace NumMethods4Lib.MathCore
             new Tuple<double, double>(1.4134, 0.398667), new Tuple<double, double>(3.59643, 0.0759424), new Tuple<double, double>(7.08581, 0.00361176), new Tuple<double, double>(12.6408, 0.00002337),
         };
 
-        public static double LaguerreIntegration(IFunction fun, int n)
+        public static double LaguerreIntegration(IFunction fun, int n, double modifier = 1)
         {
-            return LaguerreNodes.Take(n).Sum(node => node.Item2*fun.GetValue(node.Item1));
+            return LaguerreNodes.Take(n).Sum(node => node.Item2*fun.GetValue(node.Item1)*modifier);
         }
 
         private static void DoNodes(this List<Point> list, double xDiff, int target, IFunction fun)

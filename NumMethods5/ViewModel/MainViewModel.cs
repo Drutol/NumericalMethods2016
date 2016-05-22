@@ -1,7 +1,14 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
 using NumMethods4Lib.MathCore;
+using NumMethods5.NumCoreApprox;
+using OxyPlot;
 
 namespace NumMethods5.ViewModel
 {
@@ -13,7 +20,6 @@ namespace NumMethods5.ViewModel
                     new Function1(),
                     new Function2(),
                     new Function3(),
-                    //new Function4()
             };
 
         private IFunction SelectedFunction { get; set; } = new Function1();
@@ -30,7 +36,7 @@ namespace NumMethods5.ViewModel
             }
         }
 
-        private string _fromX = "-10";
+        private string _fromX = "1";
 
         public string FromXBind
         {
@@ -42,7 +48,7 @@ namespace NumMethods5.ViewModel
             }
         }
 
-        private string _toX = "10";
+        private string _toX = "3";
 
         public string ToXBind
         {
@@ -87,6 +93,76 @@ namespace NumMethods5.ViewModel
             {
                 _precision = value;
                 RaisePropertyChanged(() => PrecisionBind);
+            }
+        }
+
+        private List<DataPoint> _accuratePlot = new List<DataPoint>();
+
+        public List<DataPoint> AccuratePlot
+        {
+            get
+            {
+                return _accuratePlot;
+            }
+            set
+            {
+                _accuratePlot = value;
+                RaisePropertyChanged(() => AccuratePlot);
+            }
+        }
+
+        private List<DataPoint> _approxPlot = new List<DataPoint>();
+
+        public List<DataPoint> ApproxPlot
+        {
+            get
+            {
+                return _approxPlot;
+            }
+            set
+            {
+                _approxPlot = value;
+                RaisePropertyChanged(() => ApproxPlot);
+            }
+        }
+
+        public ICommand CalculateCommand => new RelayCommand(DoMaths);
+
+        private void DoMaths()
+        {
+            try
+            {
+                AccuratePlot =
+                    NumCoreApprox.NumCore.GetAccuratePlotDataPoints(SelectedFunction, CurrentInterval).ToList();
+
+                ApproxPlot =
+                    NumCoreApprox.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, CurrentInterval, 5,
+                        new ApproximationByPolymonialLevel(5)).Select(x => new DataPoint(x.X, x.Y)).ToList();
+            }          
+            catch (Exception)
+            {
+
+            }
+
+        }
+
+        private Interval CurrentInterval
+        {
+            get
+            {
+                try
+                {
+                    return new Interval
+                    {
+                        From = double.Parse(FromXBind),
+                        To = double.Parse(ToXBind)
+                    };
+                }
+                catch (Exception)
+                {
+                    throw new ArgumentException();
+                }
+
             }
         }
 

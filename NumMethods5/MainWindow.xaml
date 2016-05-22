@@ -62,7 +62,7 @@
                         <TextBox TextAlignment="Center" Text="{Binding PrecisionBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </StackPanel>
-                <Button Content="Calculate" HorizontalAlignment="Stretch" Margin="10" Command="{Binding DoMathsCommand}"/>
+                <Button Content="Calculate" HorizontalAlignment="Stretch" Margin="10" Command="{Binding CalculateCommand}"/>
             </StackPanel>
             <Button Grid.Row="2" Margin="0,5" VerticalAlignment="Top" Width="45" Height="30"
                         Command="{Binding ChangeLanguageCommand}"
@@ -75,9 +75,10 @@
                   LegendPlacement="Inside" LegendPosition="TopRight" LegendBackground="Transparent"
                   LegendBorder="Transparent" LegendMaxWidth="110" LegendMargin="10" LegendFontSize="12">
             <oxy:Plot.Series>
-                <oxy:LineSeries Title="{Binding Locale[#OriginalFunction]}" ItemsSource="{Binding ChartDataInterpolated}" Smooth="True"/>
-                <oxy:LineSeries Title="{Binding Locale[#Interpolation]}" ItemsSource="{Binding ChartDataInterpolation}" Smooth="True"/>
-                <oxy:LineSeries Title="{Binding Locale[#Nodes]}" ItemsSource="{Binding NodeChartData}" MarkerType="Circle" LineStyle="None"/>
+                <oxy:LineSeries Title="Accurate" ItemsSource="{Binding AccuratePlot}"  Smooth="True"/>
+                <oxy:LineSeries Title="Approx" ItemsSource="{Binding ApproxPlot}"  Smooth="True"/>
+                <!--<oxy:LineSeries Title="{Binding Locale[#Interpolation]}" ItemsSource="{Binding ChartDataInterpolation}" Smooth="True"/>
+                <oxy:LineSeries Title="{Binding Locale[#Nodes]}" ItemsSource="{Binding NodeChartData}" MarkerType="Circle" LineStyle="None"/>-->
             </oxy:Plot.Series>
         </oxy:Plot>
 
