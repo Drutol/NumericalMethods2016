@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
@@ -43,8 +44,20 @@ namespace NumMethods5.ViewModel
             get { return _fromX;}
             set
             {
-                _fromX = value;
+                _fromX = value.Replace(".",",");
                 RaisePropertyChanged(() => FromXBind);
+            }
+        }
+
+        private string _fromDrawX = "1";
+
+        public string FromXDrawBind
+        {
+            get { return _fromDrawX; }
+            set
+            {
+                _fromDrawX = value.Replace(".",",");
+                RaisePropertyChanged(() => FromXDrawBind);
             }
         }
 
@@ -55,12 +68,24 @@ namespace NumMethods5.ViewModel
             get { return _toX; }
             set
             {
-                _toX = value;
+                _toX = value.Replace(".", ",");
                 RaisePropertyChanged(() => ToXBind);
             }
         }
 
-        private string _nodesCount = "5";
+        private string _toDrawX = "3";
+
+        public string ToXDrawBind
+        {
+            get { return _toDrawX; }
+            set
+            {
+                _toDrawX = value.Replace(".", ",");
+                RaisePropertyChanged(() => ToXDrawBind);
+            }
+        }
+
+        private string _nodesCount = "10";
 
         public string NodesCountBind
         {
@@ -84,15 +109,51 @@ namespace NumMethods5.ViewModel
             }
         }
 
-        private string _precision;
+        private string _precision = "5";
 
         public string PrecisionBind
         {
             get { return _precision; }
             set
             {
-                _precision = value;
+                _precision = value.Replace(".", ",");
                 RaisePropertyChanged(() => PrecisionBind);
+            }
+        }
+
+        private string _approxTime = "--";
+
+        public string ApproxTime
+        {
+            get { return _approxTime; }
+            set
+            {
+                _approxTime = value;
+                RaisePropertyChanged(() => ApproxTime);
+            }
+        }
+
+        private string _error = "--";
+
+        public string Error
+        {
+            get { return _error; }
+            set
+            {
+                _error = value;
+                RaisePropertyChanged(() => Error);
+            }
+        }
+
+        private string _polynomial = "--";
+
+        public string Polynomial
+        {
+            get { return _polynomial; }
+            set
+            {
+                _polynomial = value;
+                RaisePropertyChanged(() => Polynomial);
             }
         }
 
@@ -133,11 +194,17 @@ namespace NumMethods5.ViewModel
             try
             {
                 AccuratePlot =
-                    NumCoreApprox.NumCore.GetAccuratePlotDataPoints(SelectedFunction, CurrentInterval).ToList();
-
+                    NumCoreApprox.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
+                double error;
+                var timer = new Stopwatch();
+                timer.Start();
                 ApproxPlot =
-                    NumCoreApprox.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, CurrentInterval, 5,
-                        new ApproximationByPolymonialLevel(5)).Select(x => new DataPoint(x.X, x.Y)).ToList();
+                    NumCoreApprox.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, int.Parse(NodesCountBind),
+                        new ApproximationByPolymonialLevel(int.Parse(PrecisionBind), UseCotes),out error).Select(x => new DataPoint(x.X, x.Y)).ToList();
+                timer.Stop();
+                ApproxTime = timer.ElapsedTicks.ToString();
+                Error = error.ToString();
+                Polynomial = string.Join("x^?+", NumCoreApprox.NumCore.GetPolynomialCoeffs(int.Parse(PrecisionBind)));
             }          
             catch (Exception)
             {
@@ -146,7 +213,7 @@ namespace NumMethods5.ViewModel
 
         }
 
-        private Interval CurrentInterval
+        private Interval ApproxInterval
         {
             get
             {
@@ -165,6 +232,28 @@ namespace NumMethods5.ViewModel
 
             }
         }
+
+        private Interval DrawInterval
+        {
+            get
+            {
+                try
+                {
+                    return new Interval
+                    {
+                        From = double.Parse(FromXDrawBind),
+                        To = double.Parse(ToXDrawBind)
+                    };
+                }
+                catch (Exception)
+                {
+                    throw new ArgumentException();
+                }
+
+            }
+        }
+
+        public bool UseCotes { get; set; }
 
         public MainViewModel()
         {

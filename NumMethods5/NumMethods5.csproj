@@ -133,7 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NumMethods4Lib\NumMethods4Lib.csproj">
-      <Project>{D4705A3F-6FCE-4342-8224-4E35C9315CFD}</Project>
+      <Project>{d4705a3f-6fce-4342-8224-4e35c9315cfd}</Project>
       <Name>NumMethods4Lib</Name>
     </ProjectReference>
   </ItemGroup>

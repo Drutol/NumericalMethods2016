@@ -7,10 +7,12 @@
         Title="MainWindow" Height="360" Width="530"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Grid Background="#E6E6E6">
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="175"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -28,6 +30,7 @@
             </ComboBox>
             <StackPanel Grid.Row="1" HorizontalAlignment="Center">
                 <StackPanel Margin="10" >
+                    <TextBlock Grid.Column="1" Text="{Binding Polynomial}" />
                     <StackPanel Orientation="Horizontal">
                         <Border BorderBrush="DarkGray" BorderThickness="0,0,2,0" Margin="0,0,5,0" Padding="0,0,5,0">
                             <StackPanel>
@@ -42,6 +45,18 @@
                                     <TextBlock Text="ToX" />
                                     <!--<TextBlock Text="{Binding Locale[#ToX]}" />-->
                                     <TextBox TextAlignment="Center" Text="{Binding ToXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>                                
+                                <TextBlock TextWrapping="Wrap" Width="70" Text="Origin interval:"/>
+                                <!--<TextBlock TextWrapping="Wrap" Width="70" Text="{Binding Locale[#InterpolationInterval]}"/>-->
+                                <StackPanel Margin="0,5,0,0">
+                                    <TextBlock Text="FromX" />
+                                    <!--<TextBlock Text="{Binding Locale[#FromX]}" />-->
+                                    <TextBox TextAlignment="Center" Text="{Binding FromXDrawBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Text="ToX" />
+                                    <!--<TextBlock Text="{Binding Locale[#ToX]}" />-->
+                                    <TextBox TextAlignment="Center" Text="{Binding ToXDrawBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>
                             </StackPanel>
                         </Border>
@@ -54,6 +69,16 @@
                             <StackPanel>
                                 <TextBlock Text="Max iter" />
                                 <TextBox TextAlignment="Center" Text="{Binding MaxIterBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <CheckBox IsChecked="{Binding UseCotes,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Content="Use Cotes" />
+                                <TextBlock Text="{Binding ApproxTime}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Error}" />
+                            </StackPanel>                            
+                            <StackPanel>
+                                
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
