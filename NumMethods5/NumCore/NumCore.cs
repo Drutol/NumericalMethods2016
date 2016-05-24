@@ -89,11 +89,11 @@ namespace NumMethods5.NumCoreApprox
         {
             return LaguerreNodes.Take(n).Sum(node => node.Item2 * fun.GetValue(node.Item1) * LaguerrePolymonial(k, node.Item1));
         }
+
         public static double NewNewtonCotes(IFunction fun,int maxIter,int k)
         {           
-            double delta;
+            double delta=.5;
             var fromX = 0;
-            delta = .5;
             double calka = 0, s = 0;
             for (int i = 1; i < maxIter; i++)
             {
@@ -126,7 +126,7 @@ namespace NumMethods5.NumCoreApprox
             return sum;
         }
 
-        private static double silnia(int n)
+        private static double Silnia(int n)
         {
             int s = 1;
             for (int i = 1; i <= n; i++) s *= i;
@@ -137,7 +137,7 @@ namespace NumMethods5.NumCoreApprox
         {
             double sum = 0;
             for (int i = 0; i <= n; i++)
-                sum += (silnia(n)/(silnia(i)*silnia(n - i)))*(Math.Pow(-1, i)/silnia(i))*Math.Pow(x, i);
+                sum += (Silnia(n)/(Silnia(i)*Silnia(n - i)))*(Math.Pow(-1, i)/Silnia(i))*Math.Pow(x, i);
             return sum;
             //if (n == 0) return 1;
             //if (n == 1) return 1 - x;
@@ -147,7 +147,10 @@ namespace NumMethods5.NumCoreApprox
         public static IEnumerable<string> GetPolynomialCoeffs(int n)
         {
             for (int i = 0; i <= n; i++)
-                yield return (silnia(n)/(silnia(i)*silnia(n - i))*(Math.Pow(-1, i)/silnia(i))).ToString();
+            {
+                var x = Silnia(n)/(Silnia(i)*Silnia(n - i))*(Math.Pow(-1, i)/Silnia(i));
+                yield return x>=0 ? $"+{x:N2}x^{n - i}" : $"{x:N2}x^{n - i}";
+            }
         }
 
         private static double GetError(IFunction fun, int level)
