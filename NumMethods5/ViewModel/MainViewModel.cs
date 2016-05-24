@@ -267,7 +267,7 @@ namespace NumMethods5.ViewModel
                     timer.Start();
                     ApproxPlot =
                         NumCoreApprox.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, nodesCount,
-                            new ApproximationByPolymonialLevel(prec, UseCotes),out error).Select(x => new DataPoint(x.X, x.Y)).ToList();
+                            new ApproximationByPolynomialLevel(prec, UseCotes),out error).Select(x => new DataPoint(x.X, x.Y)).ToList();
                     timer.Stop();
                     ApproxTime = timer.ElapsedTicks.ToString();
                     Error = error.ToString();
