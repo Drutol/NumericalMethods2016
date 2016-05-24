@@ -4,17 +4,82 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using NumMethods4Lib.MathCore;
 using NumMethods5.NumCoreApprox;
+using NumMethods5.Utils;
 using OxyPlot;
 
 namespace NumMethods5.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
+        #region Just locale things.
+
+        private Dictionary<string, string> _locale;
+
+        public Dictionary<string, string> Locale
+        {
+            get { return _locale; }
+            set
+            {
+                _locale = value;
+                RaisePropertyChanged(() => Locale);
+            }
+        }
+
+        private AvailableLocale _currentLocale;
+
+        public AvailableLocale CurrentLocale
+        {
+            get { return _currentLocale; }
+            set
+            {
+                _currentLocale = value;
+                switch (value)
+                {
+                    case AvailableLocale.PL:
+                        Locale = LocalizationManager.PlDictionary;
+                        break;
+                    case AvailableLocale.EN:
+                        Locale = LocalizationManager.EnDictionary;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(value), value, null);
+                }
+                //sets flag of next locale
+                LangImgSourceBind = LocalizationManager.GetNextLocale(value).ToString();
+            }
+        }
+
+        private string _langImgSource;
+
+        public string LangImgSourceBind
+        {
+            get { return _langImgSource; }
+            set
+            {
+                _langImgSource = $@"../Localization/{value}.png";
+                RaisePropertyChanged(() => LangImgSourceBind);
+            }
+        }
+
+        private ICommand _changeLanguageCommand;
+
+        public ICommand ChangeLanguageCommand =>
+            _changeLanguageCommand ?? (_changeLanguageCommand = new RelayCommand(() =>
+            {
+                if ((int)CurrentLocale == Enum.GetNames(typeof(AvailableLocale)).Length - 1)
+                    CurrentLocale = 0;
+                else
+                    CurrentLocale += 1;
+            }));
+
+        #endregion
+
         public ObservableCollection<IFunction> AvailableFunctions { get; }
             = new ObservableCollection<IFunction>
             {
@@ -37,51 +102,53 @@ namespace NumMethods5.ViewModel
             }
         }
 
-        private string _fromX = "1";
+        #region View properties.
 
-        public string FromXBind
+        private string _approximateFromX = "1";
+
+        public string ApproximateFromXBind
         {
-            get { return _fromX;}
+            get { return _approximateFromX;}
             set
             {
-                _fromX = value.Replace(".",",");
-                RaisePropertyChanged(() => FromXBind);
+                _approximateFromX = value.Replace(".",",");
+                RaisePropertyChanged(() => ApproximateFromXBind);
             }
         }
 
-        private string _fromDrawX = "1";
+        private string _drawFromX = "1";
 
-        public string FromXDrawBind
+        public string DrawFromXBind
         {
-            get { return _fromDrawX; }
+            get { return _drawFromX; }
             set
             {
-                _fromDrawX = value.Replace(".",",");
-                RaisePropertyChanged(() => FromXDrawBind);
+                _drawFromX = value.Replace(".",",");
+                RaisePropertyChanged(() => DrawFromXBind);
             }
         }
 
-        private string _toX = "3";
+        private string _approximateToX = "3";
 
-        public string ToXBind
+        public string ApproximateToXBind
         {
-            get { return _toX; }
+            get { return _approximateToX; }
             set
             {
-                _toX = value.Replace(".", ",");
-                RaisePropertyChanged(() => ToXBind);
+                _approximateToX = value.Replace(".", ",");
+                RaisePropertyChanged(() => ApproximateToXBind);
             }
         }
 
-        private string _toDrawX = "3";
+        private string _drawToX = "3";
 
-        public string ToXDrawBind
+        public string DrawToXBind
         {
-            get { return _toDrawX; }
+            get { return _drawToX; }
             set
             {
-                _toDrawX = value.Replace(".", ",");
-                RaisePropertyChanged(() => ToXDrawBind);
+                _drawToX = value.Replace(".", ",");
+                RaisePropertyChanged(() => DrawToXBind);
             }
         }
 
@@ -157,14 +224,13 @@ namespace NumMethods5.ViewModel
             }
         }
 
+#endregion
+
         private List<DataPoint> _accuratePlot = new List<DataPoint>();
 
         public List<DataPoint> AccuratePlot
         {
-            get
-            {
-                return _accuratePlot;
-            }
+            get{ return _accuratePlot; }
             set
             {
                 _accuratePlot = value;
@@ -176,10 +242,7 @@ namespace NumMethods5.ViewModel
 
         public List<DataPoint> ApproxPlot
         {
-            get
-            {
-                return _approxPlot;
-            }
+            get { return _approxPlot; }
             set
             {
                 _approxPlot = value;
@@ -191,25 +254,30 @@ namespace NumMethods5.ViewModel
 
         private void DoMaths()
         {
-            try
-            {
-                AccuratePlot =
-                    NumCoreApprox.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
-                double error;
-                var timer = new Stopwatch();
-                timer.Start();
-                ApproxPlot =
-                    NumCoreApprox.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, int.Parse(NodesCountBind),
-                        new ApproximationByPolymonialLevel(int.Parse(PrecisionBind), UseCotes),out error).Select(x => new DataPoint(x.X, x.Y)).ToList();
-                timer.Stop();
-                ApproxTime = timer.ElapsedTicks.ToString();
-                Error = error.ToString();
-                Polynomial = string.Join("x^?+", NumCoreApprox.NumCore.GetPolynomialCoeffs(int.Parse(PrecisionBind)));
-            }          
-            catch (Exception)
-            {
-
-            }
+            int nodesCount, prec;
+            if (!int.TryParse(NodesCountBind, out nodesCount) || !int.TryParse(PrecisionBind, out prec)) 
+                MessageBox.Show("Could not parese the data.", "Parsing error.", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            else try
+                {
+                    AccuratePlot =
+                        NumCoreApprox.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
+                    double error;
+                    var timer = new Stopwatch();
+                    timer.Start();
+                    ApproxPlot =
+                        NumCoreApprox.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, nodesCount,
+                            new ApproximationByPolymonialLevel(prec, UseCotes),out error).Select(x => new DataPoint(x.X, x.Y)).ToList();
+                    timer.Stop();
+                    ApproxTime = timer.ElapsedTicks.ToString();
+                    Error = error.ToString();
+                    Polynomial = string.Join("", NumCoreApprox.NumCore.GetPolynomialCoeffs(prec));
+                }          
+                catch (Exception)
+                {
+                        MessageBox.Show("Something went wrong!", "Calculation error!", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                }
 
         }
 
@@ -221,15 +289,14 @@ namespace NumMethods5.ViewModel
                 {
                     return new Interval
                     {
-                        From = double.Parse(FromXBind),
-                        To = double.Parse(ToXBind)
+                        From = double.Parse(ApproximateFromXBind),
+                        To = double.Parse(ApproximateToXBind)
                     };
                 }
                 catch (Exception)
                 {
                     throw new ArgumentException();
                 }
-
             }
         }
 
@@ -241,15 +308,14 @@ namespace NumMethods5.ViewModel
                 {
                     return new Interval
                     {
-                        From = double.Parse(FromXDrawBind),
-                        To = double.Parse(ToXDrawBind)
+                        From = double.Parse(DrawFromXBind),
+                        To = double.Parse(DrawToXBind)
                     };
                 }
                 catch (Exception)
                 {
                     throw new ArgumentException();
                 }
-
             }
         }
 
@@ -257,7 +323,7 @@ namespace NumMethods5.ViewModel
 
         public MainViewModel()
         {
-            
+            CurrentLocale = AvailableLocale.EN;
         }
     }
 }
