@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using NumMethods4Lib.MathCore;
 using OxyPlot;
 
@@ -82,11 +84,15 @@ namespace NumMethods5.NumCoreApprox
         private static readonly List<Tuple<double, double>> LaguerreNodes = new List<Tuple<double, double>>
         {
             new Tuple<double, double>(0.26356, 0.521756), //root , weight
-            new Tuple<double, double>(1.4134, 0.398667), new Tuple<double, double>(3.59643, 0.0759424), new Tuple<double, double>(7.08581, 0.00361176), new Tuple<double, double>(12.6408, 0.00002337),
+            new Tuple<double, double>(1.4134, 0.398667),
+            new Tuple<double, double>(3.59643, 0.0759424),
+            new Tuple<double, double>(7.08581, 0.00361176),
+            new Tuple<double, double>(12.6408, 0.00002337),
         };
 
         private static double LaguerreIntegration(IFunction fun, int n, int k)
         {
+            fun.EnableWeight = true;
             return LaguerreNodes.Take(n).Sum(node => node.Item2 * fun.GetValue(node.Item1) * LaguerrePolymonial(k, node.Item1));
         }
 
@@ -137,11 +143,20 @@ namespace NumMethods5.NumCoreApprox
         {
             double sum = 0;
             for (int i = 0; i <= n; i++)
-                sum += (Silnia(n)/(Silnia(i)*Silnia(n - i)))*(Math.Pow(-1, i)/Silnia(i))*Math.Pow(x, i);
+                sum += (Silnia(n) / (Silnia(i) * Silnia(n - i))) * (Math.Pow(-1, i) / Silnia(i)) * Math.Pow(x, i);
             return sum;
             //if (n == 0) return 1;
             //if (n == 1) return 1 - x;
-            //return ((2*n + 1 - x)*LaguerrePolymonial(n - 1, x) - n*LaguerrePolymonial(n - 2, x))/n + 1;
+            //return ((2 * n + 1 - x) * LaguerrePolymonial(n - 1, x) - n * LaguerrePolymonial(n - 2, x)) / n + 1;
+            //double L1 = 0;
+            //double LaguerreL = 1;
+            //for (int i = 1; i < n; i++)
+            //{
+            //    var L0 = L1;
+            //    L1 = LaguerreL;
+            //    LaguerreL = ((2*i - 1 - x)*L1 - (i - 1)*L0)/i;
+            //}
+            //return LaguerreL;
         }
 
         public static IEnumerable<string> GetPolynomialCoeffs(int n)
@@ -149,7 +164,7 @@ namespace NumMethods5.NumCoreApprox
             for (int i = 0; i <= n; i++)
             {
                 var x = Silnia(n)/(Silnia(i)*Silnia(n - i))*(Math.Pow(-1, i)/Silnia(i));
-                yield return x>=0 ? $"+{x:N2}x^{n - i}" : $"{x:N2}x^{n - i}";
+                yield return x>=0 ? $"+{x:N2}x^{i}" : $"{x:N2}x^{i}";
             }
         }
 
@@ -158,6 +173,7 @@ namespace NumMethods5.NumCoreApprox
             double sum = 0;
             foreach (var laguerreNode in LaguerreNodes)
             {
+
                 var approx = fun.GetValue(laguerreNode.Item1) - Approximation(fun, laguerreNode.Item1, level, false);
                 sum += laguerreNode.Item2*approx*approx;
             }

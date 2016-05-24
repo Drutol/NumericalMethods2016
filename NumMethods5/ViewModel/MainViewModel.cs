@@ -271,7 +271,7 @@ namespace NumMethods5.ViewModel
                     timer.Stop();
                     ApproxTime = timer.ElapsedTicks.ToString();
                     Error = error.ToString();
-                    Polynomial = string.Join("", NumCoreApprox.NumCore.GetPolynomialCoeffs(prec));
+                    Polynomial = string.Join("", NumCoreApprox.NumCore.GetPolynomialCoeffs(prec).Reverse());
                 }          
                 catch (Exception)
                 {
