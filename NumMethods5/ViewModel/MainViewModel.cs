@@ -86,6 +86,7 @@ namespace NumMethods5.ViewModel
                     new Function1(),
                     new Function2(),
                     new Function3(),
+                    new Function4()
             };
 
         private IFunction SelectedFunction { get; set; } = new Function1();
@@ -104,7 +105,7 @@ namespace NumMethods5.ViewModel
 
         #region View properties.
 
-        private string _approximateFromX = "1";
+        private string _approximateFromX = "-10";
 
         public string ApproximateFromXBind
         {
@@ -116,7 +117,7 @@ namespace NumMethods5.ViewModel
             }
         }
 
-        private string _drawFromX = "1";
+        private string _drawFromX = "-20";
 
         public string DrawFromXBind
         {
@@ -128,7 +129,7 @@ namespace NumMethods5.ViewModel
             }
         }
 
-        private string _approximateToX = "3";
+        private string _approximateToX = "10";
 
         public string ApproximateToXBind
         {
@@ -140,7 +141,7 @@ namespace NumMethods5.ViewModel
             }
         }
 
-        private string _drawToX = "3";
+        private string _drawToX = "20";
 
         public string DrawToXBind
         {
@@ -176,7 +177,7 @@ namespace NumMethods5.ViewModel
             }
         }
 
-        private string _precision = "5";
+        private string _precision = "7";
 
         public string PrecisionBind
         {
@@ -256,9 +257,10 @@ namespace NumMethods5.ViewModel
         {
             int nodesCount, prec;
             if (!int.TryParse(NodesCountBind, out nodesCount) || !int.TryParse(PrecisionBind, out prec)) 
-                MessageBox.Show("Could not parese the data.", "Parsing error.", MessageBoxButton.OK,
+                MessageBox.Show("Could not parse the data.", "Parsing error.", MessageBoxButton.OK,
                     MessageBoxImage.Error);
-            else try
+            else
+                try
                 {
                     AccuratePlot =
                         NumCoreApprox.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
@@ -267,16 +269,18 @@ namespace NumMethods5.ViewModel
                     timer.Start();
                     ApproxPlot =
                         NumCoreApprox.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, nodesCount,
-                            new ApproximationByPolynomialLevel(prec, UseCotes),out error).Select(x => new DataPoint(x.X, x.Y)).ToList();
+                            new ApproximationByPolynomialLevel(prec, UseCotes), out error)
+                            .Select(x => new DataPoint(x.X, x.Y))
+                            .ToList();
                     timer.Stop();
                     ApproxTime = timer.ElapsedTicks.ToString();
                     Error = error.ToString();
                     Polynomial = string.Join("", NumCoreApprox.NumCore.GetPolynomialCoeffs(prec).Reverse());
-                }          
+                }
                 catch (Exception)
                 {
-                        MessageBox.Show("Something went wrong!", "Calculation error!", MessageBoxButton.OK,
-                            MessageBoxImage.Error);
+                    MessageBox.Show("Something went wrong!", "Calculation error!", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
 
         }
@@ -287,10 +291,15 @@ namespace NumMethods5.ViewModel
             {
                 try
                 {
+
+                    var From = double.Parse(ApproximateFromXBind);
+                    var To = double.Parse(ApproximateToXBind);
+                    if (From >= To)
+                        throw new ArgumentException();
                     return new Interval
                     {
-                        From = double.Parse(ApproximateFromXBind),
-                        To = double.Parse(ApproximateToXBind)
+                     From = From,
+                     To = To,   
                     };
                 }
                 catch (Exception)
@@ -306,10 +315,14 @@ namespace NumMethods5.ViewModel
             {
                 try
                 {
+                    var From = double.Parse(DrawFromXBind);
+                    var To = double.Parse(DrawToXBind);
+                    if (From >= To)
+                        throw new ArgumentException();
                     return new Interval
                     {
-                        From = double.Parse(DrawFromXBind),
-                        To = double.Parse(DrawToXBind)
+                        From = From,
+                        To = To
                     };
                 }
                 catch (Exception)

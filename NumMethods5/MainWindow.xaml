@@ -68,12 +68,12 @@
                                              TextAlignment="Center" 
                                              Text="{Binding NodesCountBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal">
+                                <!--<StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Max iter" VerticalAlignment="Center"/>
                                     <TextBox Margin="62,5,5,0" Width="100" HorizontalAlignment="Right" 
                                              TextAlignment="Center" 
                                              Text="{Binding MaxIterBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-                                </StackPanel>
+                                </StackPanel>-->
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock VerticalAlignment="Center" Text="Precision" />
                                     <TextBox Margin="58,5,5,0" Width="100" 
