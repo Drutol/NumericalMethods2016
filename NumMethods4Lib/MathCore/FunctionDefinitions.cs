@@ -72,4 +72,19 @@ namespace NumMethods4Lib.MathCore
         public string TextRepresentation => "x^2+4x+10";
     }
 
+    public class Function4 : Function, IFunction
+    {
+        protected override double GetWeightValue(double x)
+        {
+            return Math.Exp(-1 * x) * 1 - x;
+        }
+
+        protected override double GetNormalValue(double x)
+        {
+            return 1 - x;
+        }
+
+        public string TextRepresentation => "1-x";
+    }
+
 }
