@@ -275,6 +275,8 @@ namespace NumMethods5.ViewModel
                 for (int j = prec%10; j >=0; j--)
                 {
                     var coef = coefs[10*i + j];
+                    if (i == 0 && j == 0)
+                        return result += coef > 0 ? $"+{coef:N2}" : $"-{Math.Abs(coef):N2}";
                     result += coef > 0 ? $"+{coef:N2}x" : $"-{Math.Abs(coef):N2}x";
                     if (i > 0)
                     {
