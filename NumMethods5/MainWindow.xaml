@@ -88,8 +88,8 @@
                     <CheckBox VerticalAlignment="Center" Margin="5"
                               IsChecked="{Binding UseCotes,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                               Content="Use Cotes"/>
-                    <Button Margin="5" Width="100" VerticalAlignment="Center"
-                            Content="Calculate" 
+                    <Button Margin="5" Width="150" VerticalAlignment="Center"
+                            Content="( ͡° ͜ʖ ͡°) Do it ( ͡° ͜ʖ ͡°)" 
                             Command="{Binding CalculateCommand}"/>
                 </StackPanel>
                 <TextBlock Text="Results:" Margin="2" HorizontalAlignment="Left"/>

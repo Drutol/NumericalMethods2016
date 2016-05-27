@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -251,13 +251,53 @@ namespace NumMethods5.ViewModel
             }
         }
 
+        #region The fancyness overload.
+        private List<string> PolynomCoefs { get; } = new List<string>
+        {
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2070",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u00B9",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u00B2",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u00B3",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2074",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2075",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2076",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2077",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2078",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2079",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+        };
+
+        private string GetPolynom(int prec)
+        {
+            string result="";
+            List<double> coefs = NumCoreApprox.NumCore.GetPolynomialCoeffs(prec).ToList();
+            for ( int i=prec/10;i>=0;i--)
+            {
+                for (int j = prec%10; j >=0; j--)
+                {
+                    var coef = coefs[10*i + j];
+                    result += coef > 0 ? $"+{coef:N2}x" : $"-{Math.Abs(coef):N2}x";
+                    if (i > 0)
+                    {
+                        for (int k = 1; k <= i; k++)
+                        {
+                            result += PolynomCoefs[k];
+                            prec--;
+                        }
+                    }
+                    result += PolynomCoefs[j];
+                }
+            }
+            return result;
+        }
+        #endregion
+
         public ICommand CalculateCommand => new RelayCommand(DoMaths);
 
         private void DoMaths()
         {
             int nodesCount, prec;
             if (!int.TryParse(NodesCountBind, out nodesCount) || !int.TryParse(PrecisionBind, out prec)) 
-                MessageBox.Show("Could not parse the data.", "Parsing error.", MessageBoxButton.OK,
+                MessageBox.Show("Method arguments could not be parsed.", "Parsing error!", MessageBoxButton.OK,
                     MessageBoxImage.Error);
             else
                 try
@@ -275,11 +315,13 @@ namespace NumMethods5.ViewModel
                     timer.Stop();
                     ApproxTime = timer.ElapsedTicks.ToString();
                     Error = error.ToString();
-                    Polynomial = string.Join("", NumCoreApprox.NumCore.GetPolynomialCoeffs(prec).Reverse());
+                    //Polynomial = string.Join("", NumCoreApprox.NumCore.GetPolynomialCoeffs(prec).Reverse());
+                    //var a = GetPolynom(prec);
+                    Polynomial = GetPolynom(prec);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    MessageBox.Show("Something went wrong!", "Calculation error!", MessageBoxButton.OK,
+                    MessageBox.Show(e.Message + "could not be parsed.\n (._.) ( l: ) ( .-. ) ( :l ) (._.)", "Parsing error!", MessageBoxButton.OK,
                         MessageBoxImage.Error);
                 }
 
@@ -295,7 +337,7 @@ namespace NumMethods5.ViewModel
                     var From = double.Parse(ApproximateFromXBind);
                     var To = double.Parse(ApproximateToXBind);
                     if (From >= To)
-                        throw new ArgumentException();
+                        throw new ArgumentException("Approximation interval data ");
                     return new Interval
                     {
                      From = From,
@@ -304,7 +346,7 @@ namespace NumMethods5.ViewModel
                 }
                 catch (Exception)
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException("Approximation interval data ");
                 }
             }
         }
@@ -318,7 +360,7 @@ namespace NumMethods5.ViewModel
                     var From = double.Parse(DrawFromXBind);
                     var To = double.Parse(DrawToXBind);
                     if (From >= To)
-                        throw new ArgumentException();
+                        throw new ArgumentException("Drawing interval data ");
                     return new Interval
                     {
                         From = From,
@@ -327,7 +369,7 @@ namespace NumMethods5.ViewModel
                 }
                 catch (Exception)
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException("Drawing interval data ");
                 }
             }
         }

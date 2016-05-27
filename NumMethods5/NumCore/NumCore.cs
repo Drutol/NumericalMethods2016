@@ -125,16 +125,12 @@ namespace NumMethods5.NumCoreApprox
             if (!cotes)
                 for (int i = 0; i <= level; i++)
                 {
-                    sum += LaguerreIntegration(fun, i) /
-                            Math.Pow(Silnia(i),2)
-                            * LaguerrePolynomial(i, x);
+                    sum += LaguerreIntegration(fun, i)*LaguerrePolynomial(i, x)/Math.Pow(Silnia(i), 2);
                 }
             else
                 for (int i = 0; i <= level; i++)
                 {
-                    sum += NewNewtonCotes(fun, 100, i) /
-                           Math.Pow(Silnia(i+1), 2)
-                            * LaguerrePolynomial(i, x);
+                    sum += NewNewtonCotes(fun, 100, i)*LaguerrePolynomial(i, x)/Math.Pow(Silnia(i + 1), 2);
                 }
 
             return sum;
@@ -149,21 +145,24 @@ namespace NumMethods5.NumCoreApprox
 
         public static double LaguerrePolynomial(int n, double x)
         {
-            double sum = 0;
-            for (int i = 0; i <= n; i++)
-                sum += (Silnia(n) / (Silnia(i) * Silnia(n - i))) * (Math.Pow(-1, i) / Silnia(i)) * Math.Pow(x, i);
-            return sum;
-            //if (n == 0) return 1;
-            //if (n == 1) return 1 - x;
+            //double sum = 0;
+            //for (int i = 0; i <= n; i++)
+            //    sum += (Silnia(n) / (Silnia(i) * Silnia(n - i))) * (Math.Pow(-1, i) / Silnia(i)) * Math.Pow(x, i);
+            //return sum;
+            if (n == 0) return 1;
+            if (n == 1) return 1 - x;
+            return (-1*LaguerrePolynomial(n - 1, x)*x - n*(n - 1)*LaguerrePolynomial(n - 2, x) +
+                   (2*n - 1)*LaguerrePolynomial(n - 1, x))/n;
+            //return ((2*n - 1 - x)*LaguerrePolynomial(n - 1, x) - (n - 1)*LaguerrePolynomial(n - 2, x))/n;
             //return ((2 * n + 1 - x) * LaguerrePolynomial(n - 1, x) - n * LaguerrePolynomial(n - 2, x)) / n + 1;
         }
 
-        public static IEnumerable<string> GetPolynomialCoeffs(int n)
+        public static IEnumerable<double> GetPolynomialCoeffs(int n)
         {
             for (int i = 0; i <= n; i++)
             {
-                var x = Silnia(n)/(Silnia(i)*Silnia(n - i))*(Math.Pow(-1, i)/Silnia(i));
-                yield return x >= 0 ? $"+{x:N2}x^{i}" : $"{x:N2}x^{i}";
+                var x = Silnia(n) / (Silnia(i) * Silnia(n - i)) * (Math.Pow(-1, i) / Silnia(i));
+                yield return x;
             }
         }
 
