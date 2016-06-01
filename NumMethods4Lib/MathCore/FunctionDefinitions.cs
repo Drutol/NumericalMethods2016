@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Serialization;
 
 namespace NumMethods4Lib.MathCore
 {
@@ -79,9 +82,11 @@ namespace NumMethods4Lib.MathCore
             return Math.Exp(-1 * x) * 1 - x;
         }
 
+        private List<double> _coeffs = new List<double> {-1, 25, -200, 600, -600, 120};
+        private double modifier = 1.0/120;
         protected override double GetNormalValue(double x)
         {
-            return 1 - x;
+            return 1.0/120*(-1*x*x*x*x*x + 25*x*x*x*x - 200*x*x*x + 600*x*x - 600*x + 120);
         }
 
         public string TextRepresentation => "1-x";

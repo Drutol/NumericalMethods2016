@@ -91,7 +91,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="NumCore\LaguerrePolynomialProvider.cs" />
     <Compile Include="NumCore\NumCore.cs" />
+    <Compile Include="NumCore\NumUtils.cs" />
+    <Compile Include="NumCore\Polynomial.cs" />
     <Compile Include="Utils\LocalizationManager.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />

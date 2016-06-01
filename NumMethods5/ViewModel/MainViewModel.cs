@@ -9,7 +9,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using NumMethods4Lib.MathCore;
-using NumMethods5.NumCoreApprox;
+using NumMethods5.NumCore;
 using NumMethods5.Utils;
 using OxyPlot;
 
@@ -269,7 +269,7 @@ namespace NumMethods5.ViewModel
         private string GetPolynom(int prec)
         {
             string result="";
-            List<double> coefs = NumCoreApprox.NumCore.GetPolynomialCoeffs(prec).ToList();
+            List<double> coefs = NumCore.NumCore.GetPolynomialCoeffs(prec).ToList();
             for ( int i=prec/10;i>=0;i--)
             {
                 for (int j = prec%10; j >=0; j--)
@@ -305,12 +305,12 @@ namespace NumMethods5.ViewModel
                 try
                 {
                     AccuratePlot =
-                        NumCoreApprox.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
+                        NumCore.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
                     double error;
                     var timer = new Stopwatch();
                     timer.Start();
                     ApproxPlot =
-                        NumCoreApprox.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, nodesCount,
+                        NumCore.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, nodesCount,
                             new ApproximationByPolynomialLevel(prec, UseCotes), out error)
                             .Select(x => new DataPoint(x.X, x.Y))
                             .ToList();

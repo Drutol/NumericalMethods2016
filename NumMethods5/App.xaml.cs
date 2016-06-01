@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using NumMethods5.NumCore;
 
 namespace NumMethods5
 {
@@ -13,5 +14,6 @@ namespace NumMethods5
     /// </summary>
     public partial class App : Application
     {
+
     }
 }
