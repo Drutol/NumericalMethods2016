@@ -7,59 +7,14 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using NumMethods4Lib.MathCore;
 using OxyPlot;
+using NumMethods5.NumCore;
 
-namespace NumMethods5.NumCoreApprox
+namespace NumMethods5.NumCore
 {
-    public class Interval
-    {
-        public double From { get; set; }
-        public double To { get; set; }
-    }
-
-    public enum ApproximationModes
-    {
-        PolynomialLevel,
-        Accuracy,
-    }
-
-    public class Node
-    {
-        public double X { get; set; }
-        public double Y { get; set; }
-    }
-
-    public abstract class ApproximationCriterium
-    {
-        public ApproximationModes ApproximationMode { get; set; }
-        public bool UseCotes;
-        protected ApproximationCriterium(bool cotes)
-        {
-            UseCotes = cotes;
-        }
-    }
-
-    public class ApproximationByPolynomialLevel : ApproximationCriterium
-    {
-        public ApproximationByPolynomialLevel(int level,bool useCotes) : base(useCotes)
-        {
-            ApproximationMode = ApproximationModes.PolynomialLevel;
-            Level = level;
-        }
-        public int Level { get; private set; }
-    }
-
-    public class ApproximationByAccuracy : ApproximationCriterium
-    {
-        public ApproximationByAccuracy(double acc,bool useCotes) : base(useCotes)
-        {
-            ApproximationMode = ApproximationModes.Accuracy;
-            Accuracy = acc;
-        }
-        public double Accuracy { get; private set; }
-    }
-
     public static class NumCore
     {
+        private static LaguerrePolynomialProvider PolynomialProvider { get; } = new LaguerrePolynomialProvider();
+
         public static IEnumerable<DataPoint> GetAccuratePlotDataPoints(IFunction fun, Interval interval)
         {
             fun.EnableWeight = false;
@@ -74,12 +29,29 @@ namespace NumMethods5.NumCoreApprox
             int level = 0;
             if (mode is ApproximationByPolynomialLevel)
                 level = (mode as ApproximationByPolynomialLevel).Level;
-            fun.EnableWeight = true;
+            fun.EnableWeight = false;
+            var approx = GetApproxPolynomial(fun, level);
             foreach (var t in nodes)
-                t.Y = Approximation(fun, t.X, level,mode.UseCotes);
+                t.Y = approx.GetValue(t.X);
             error = GetError(fun, level);
             return nodes;
         }
+
+        public static Polynomial GetApproxPolynomial(IFunction fun, int level)
+        {
+            Polynomial approx =
+                PolynomialProvider[0].Coefficients.Select(coeff => coeff*LaguerreIntegration(fun, 0)).ToPolynomial();
+            for (int i = 1; i < level + 1; i++)
+            {
+                var temp =
+                    PolynomialProvider[i].Coefficients.Select(baseCoeff => baseCoeff*LaguerreIntegration(fun, i-1))
+                        .ToPolynomial();
+                approx += temp;
+
+            }
+            return approx;
+        }
+
 
         private static readonly List<Tuple<double, double>> LaguerreNodes = new List<Tuple<double, double>>
         {
@@ -92,31 +64,35 @@ namespace NumMethods5.NumCoreApprox
 
         private static double LaguerreIntegration(IFunction fun, int k)
         {
-            fun.EnableWeight = false;
             double sum = 0;
-            for (int i = 0; i < 5; i++)
+            var poly = PolynomialProvider[k];         
+            //waga * funkcja * wartość wielomianu         
+            foreach (var laguerreNode in LaguerreNodes)
             {
-                //waga * funkcja * wartość wielomianu
-                sum += LaguerreNodes[i].Item2*fun.GetValue(LaguerreNodes[i].Item1)*
-                       LaguerrePolynomial(k, LaguerreNodes[i].Item1);
-            }
-            //var sum = LaguerreNodes.Sum(node => node.Item2 * fun.GetValue(node.Item1) * LaguerrePolynomial(k, node.Item1));
+                var temp = fun.GetValue(laguerreNode.Item1)*poly.GetValue(laguerreNode.Item1);
+                sum += laguerreNode.Item2*temp;
+            }   
+            //sum = LaguerreNodes.Sum(node => node.Item2 * fun.GetValue(node.Item1) * poly.GetValue(node.Item1));
             return sum;
         }
 
         public static double NewNewtonCotes(IFunction fun,int maxIter,int k)
         {           
-            double delta=.5;
-            var fromX = 0;
-            double calka = 0, s = 0;
-            for (int i = 1; i < maxIter; i++)
-            {
-                var x = fromX + i * delta;
-                s += fun.GetValue(x - delta / 2) * LaguerrePolynomial(k, x);
-                calka += fun.GetValue(x);
-            }
-            calka = (delta / 6) * (fun.GetValue(fromX) + 2 * calka + 4 * s);// * LaguerrePolynomial(k, fromX);
-            return calka;
+            //double delta=.5;
+            //var fromX = 0;
+            //double calka = 0, s = 0;
+            //fun.EnableWeight = true;
+            //for (int i = 1; i < maxIter; i++)
+            //{
+            //    var x = fromX + i * delta;
+            //    var poly = LaguerrePolynomial(k, x);
+            //    s += fun.GetValue(x - delta/2)*poly;
+            //    calka += fun.GetValue(x)*poly;
+            //}
+            
+            //calka = (delta / 6) * (fun.GetValue(fromX) + 2 * calka + 4 * s) * LaguerrePolynomial(k, fromX);
+            //fun.EnableWeight = false;
+            return 1;
         }
 
         private static double Approximation(IFunction fun,double x,int level,bool cotes)
@@ -125,36 +101,22 @@ namespace NumMethods5.NumCoreApprox
             if (!cotes)
                 for (int i = 0; i <= level; i++)
                 {
-                    sum += LaguerreIntegration(fun, i)*LaguerrePolynomial(i, x)/Math.Pow(Silnia(i), 2);
+                    sum += LaguerreIntegration(fun, i)*PolynomialProvider[i].GetValue(x);
                 }
             else
                 for (int i = 0; i <= level; i++)
                 {
-                    sum += NewNewtonCotes(fun, 100, i)*LaguerrePolynomial(i, x)/Math.Pow(Silnia(i + 1), 2);
+                    sum += NewNewtonCotes(fun, 100, i)*PolynomialProvider[i].GetValue(x);
                 }
 
             return sum;
         }
 
-        private static double Silnia(int n)
+        public static double Silnia(int n)
         {
             int s = 1;
             for (int i = 1; i <= n; i++) s *= i;
             return s;
-        }
-
-        public static double LaguerrePolynomial(int n, double x)
-        {
-            //double sum = 0;
-            //for (int i = 0; i <= n; i++)
-            //    sum += (Silnia(n) / (Silnia(i) * Silnia(n - i))) * (Math.Pow(-1, i) / Silnia(i)) * Math.Pow(x, i);
-            //return sum;
-            if (n == 0) return 1;
-            if (n == 1) return 1 - x;
-            return (-1*LaguerrePolynomial(n - 1, x)*x - n*(n - 1)*LaguerrePolynomial(n - 2, x) +
-                   (2*n - 1)*LaguerrePolynomial(n - 1, x))/n;
-            //return ((2*n - 1 - x)*LaguerrePolynomial(n - 1, x) - (n - 1)*LaguerrePolynomial(n - 2, x))/n;
-            //return ((2 * n + 1 - x) * LaguerrePolynomial(n - 1, x) - n * LaguerrePolynomial(n - 2, x)) / n + 1;
         }
 
         public static IEnumerable<double> GetPolynomialCoeffs(int n)
@@ -164,6 +126,11 @@ namespace NumMethods5.NumCoreApprox
                 var x = Silnia(n) / (Silnia(i) * Silnia(n - i)) * (Math.Pow(-1, i) / Silnia(i));
                 yield return x;
             }
+        }
+
+        public static Polynomial ToPolynomial(this IEnumerable<double> coeffs)
+        {
+            return new Polynomial {Coefficients = coeffs.ToList()};
         }
 
         private static double GetError(IFunction fun, int level)
