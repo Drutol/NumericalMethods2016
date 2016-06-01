@@ -33,7 +33,7 @@ namespace NumMethods5.NumCore
             var approx = GetApproxPolynomial(fun, level);
             foreach (var t in nodes)
                 t.Y = approx.GetValue(t.X);
-            error = GetError(fun, level);
+            error = GetError(fun, approx);
             return nodes;
         }
 
@@ -41,14 +41,22 @@ namespace NumMethods5.NumCore
         {
             Polynomial approx =
                 PolynomialProvider[0].Coefficients.Select(coeff => coeff*LaguerreIntegration(fun, 0)).ToPolynomial();
+
             for (int i = 1; i < level + 1; i++)
             {
-                var temp =
-                    PolynomialProvider[i].Coefficients.Select(baseCoeff => baseCoeff*LaguerreIntegration(fun, i-1))
-                        .ToPolynomial();
-                approx += temp;
-
+                var integral = LaguerreIntegration(fun, i);
+                var temp = PolynomialProvider[i].Coefficients.Select(coeff => integral*coeff).ToPolynomial();
+                for (int j = 0; approx.Coefficients.Count != temp.Coefficients.Count; j++)
+                    approx.Coefficients.Insert(0,0);
+                approx.Coefficients = approx.Coefficients.Zip(temp.Coefficients, (x, y) => x + y).ToList();
             }
+            //for (int i = 1; i < level + 1; i++)
+            //{
+            //    var temp =
+            //        PolynomialProvider[i].Coefficients.Select(baseCoeff => baseCoeff*LaguerreIntegration(fun, i-1))
+            //            .ToPolynomial();
+            //    approx += temp;
+            //}
             return approx;
         }
 
@@ -132,13 +140,12 @@ namespace NumMethods5.NumCore
             return new Polynomial {Coefficients = coeffs.ToList()};
         }
 
-        private static double GetError(IFunction fun, int level)
+        private static double GetError(IFunction fun, Polynomial poly)
         {
             double sum = 0;
             foreach (var laguerreNode in LaguerreNodes)
             {
-
-                var approx = fun.GetValue(laguerreNode.Item1) - Approximation(fun, laguerreNode.Item1, level, false);
+                var approx = fun.GetValue(laguerreNode.Item1) - poly.GetValue(laguerreNode.Item1);
                 sum += laguerreNode.Item2*approx*approx;
             }
             return Math.Sqrt(sum);

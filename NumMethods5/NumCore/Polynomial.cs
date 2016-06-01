@@ -42,5 +42,6 @@ namespace NumMethods5.NumCore
             }
             return nowy;
         }
+
     }
 }

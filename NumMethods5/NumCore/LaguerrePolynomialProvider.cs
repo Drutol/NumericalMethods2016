@@ -15,12 +15,19 @@ namespace NumMethods5.NumCore
         {
             get
             {
+                var newPoly = new Polynomial();
                 if (_laguerrePolynomials.ContainsKey(i))
-                    return _laguerrePolynomials[i];
+                {
+                    
+                    newPoly.Coefficients.AddRange(_laguerrePolynomials[i].Coefficients);
+                    return newPoly;
+                }
 
                 var poly = BuildLaguerrePolynomial(i);
                 _laguerrePolynomials.Add(i, poly);
-                return poly;
+
+                newPoly.Coefficients.AddRange(poly.Coefficients);
+                return newPoly;
             }
         }
 
