@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
 using NumMethods4Lib.MathCore;
 using OxyPlot;
-using NumMethods5.NumCore;
 
 namespace NumMethods5.NumCore
 {
@@ -75,39 +70,11 @@ namespace NumMethods5.NumCore
             return sum;
         }
 
-        public static double NewNewtonCotes(IFunction fun,int maxIter,int k)
-        {           
-            //double delta=.5;
-            //var fromX = 0;
-            //double calka = 0, s = 0;
-            //fun.EnableWeight = true;
-            //for (int i = 1; i < maxIter; i++)
-            //{
-            //    var x = fromX + i * delta;
-            //    var poly = LaguerrePolynomial(k, x);
-            //    s += fun.GetValue(x - delta/2)*poly;
-            //    calka += fun.GetValue(x)*poly;
-            //}
-            
-            //calka = (delta / 6) * (fun.GetValue(fromX) + 2 * calka + 4 * s) * LaguerrePolynomial(k, fromX);
-            //fun.EnableWeight = false;
-            return 1;
-        }
-
         private static double Approximation(IFunction fun,double x,int level,bool cotes)
         {
             double sum = 0;
-            if (!cotes)
-                for (int i = 0; i <= level; i++)
-                {
-                    sum += LaguerreIntegration(fun, i)*PolynomialProvider[i].GetValue(x);
-                }
-            else
-                for (int i = 0; i <= level; i++)
-                {
-                    sum += NewNewtonCotes(fun, 100, i)*PolynomialProvider[i].GetValue(x);
-                }
-
+            for (int i = 0; i <= level; i++)
+                sum += LaguerreIntegration(fun, i)*PolynomialProvider[i].GetValue(x);
             return sum;
         }
 

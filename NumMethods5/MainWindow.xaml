@@ -36,34 +36,34 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <StackPanel Grid.Row="2" HorizontalAlignment="Center">
-                <TextBlock Text="Input data:" Margin="2" HorizontalAlignment="Left"/>
+                <TextBlock Text="{Binding Locale[#InputData]}" Margin="2" HorizontalAlignment="Left"/>
                 <Border BorderBrush="DarkGray" BorderThickness="2" Margin="5" Padding="5">
                     <StackPanel Margin="10" >
                         <StackPanel Orientation="vertical">
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel Margin="0,5,2.5,0">
-                                    <TextBlock TextWrapping="Wrap" Width="100" Text="Approx interval:"/>
-                                    <TextBlock Text="FromX" />
+                                    <TextBlock TextWrapping="Wrap" Width="100" Text="{Binding Locale[#ApproxInterval]}"/>
+                                    <TextBlock Text="{Binding Locale[#FromX]}" />
                                     <TextBox TextAlignment="Center" 
                                              Text="{Binding ApproximateFromXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-                                    <TextBlock Text="ToX" />
+                                    <TextBlock Text="{Binding Locale[#ToX]}" />
                                     <TextBox TextAlignment="Center" 
                                              Text="{Binding ApproximateToXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>
                                 <StackPanel Margin="2.5,5,0,0">
-                                    <TextBlock TextWrapping="Wrap" Width="100" Text="Drawing interval:"/>
-                                    <TextBlock Text="FromX" />
+                                    <TextBlock TextWrapping="Wrap" Width="100" Text="{Binding Locale[#DrawingInterval]}"/>
+                                    <TextBlock Text="{Binding Locale[#FromX]}" />
                                     <TextBox TextAlignment="Center" 
                                              Text="{Binding DrawFromXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-                                    <TextBlock Text="ToX" />
+                                    <TextBlock Text="{Binding Locale[#ToX]}" />
                                     <TextBox TextAlignment="Center" 
                                              Text="{Binding DrawToXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="Method arguments:"/>
+                                <TextBlock Text="{Binding Locale[#MethArgs]}"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Nodes count" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Locale[#NodesCount]}" VerticalAlignment="Center"/>
                                     <TextBox Margin="37,5,5,0" Width="100" 
                                              TextAlignment="Center" 
                                              Text="{Binding NodesCountBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
@@ -75,7 +75,7 @@
                                              Text="{Binding MaxIterBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>-->
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock VerticalAlignment="Center" Text="Precision" />
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Locale[#Precision]}"/>
                                     <TextBox Margin="58,5,5,0" Width="100" 
                                              TextAlignment="Center" 
                                              Text="{Binding PrecisionBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
@@ -84,27 +84,22 @@
                         </StackPanel>
                     </StackPanel>
                 </Border>
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox VerticalAlignment="Center" Margin="5"
-                              IsChecked="{Binding UseCotes,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                              Content="Use Cotes"/>
-                    <Button Margin="5" Width="150" VerticalAlignment="Center"
-                            Content="( ͡° ͜ʖ ͡°) Do it ( ͡° ͜ʖ ͡°)" 
-                            Command="{Binding CalculateCommand}"/>
-                </StackPanel>
-                <TextBlock Text="Results:" Margin="2" HorizontalAlignment="Left"/>
+                <Button Margin="5" Width="150" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Content="{Binding Locale[#Meth]}" 
+                        Command="{Binding CalculateCommand}"/>
+                <TextBlock Text="{Binding Locale[#Results]}" Margin="2" HorizontalAlignment="Left"/>
                 <Border BorderBrush="DarkGray" BorderThickness="2" Margin="5" Padding="5">
                     <StackPanel>
                         <StackPanel>
-                            <TextBlock Text="Approximation time [ticks]:"/>
+                            <TextBlock Text="{Binding Locale[#ApproxTicks]}"/>
                             <TextBlock Text="{Binding ApproxTime}" />
                         </StackPanel>
                         <StackPanel>
-                            <TextBlock Text="Approximation error:"/>
+                            <TextBlock Text="{Binding Locale[#ApproxError]}"/>
                             <TextBlock Text="{Binding Error}" />
                         </StackPanel>
                         <StackPanel>
-                            <TextBlock Text="Calculated polynomial:"/>
+                            <TextBlock Text="{Binding Locale[#ApproxPolynom]}"/>
                             <TextBlock Text="{Binding Polynomial}" TextWrapping="Wrap"/>
                         </StackPanel>
                     </StackPanel>
@@ -116,8 +111,8 @@
                   LegendPlacement="Inside" LegendPosition="TopRight" LegendBackground="Transparent"
                   LegendBorder="Transparent" LegendMaxWidth="110" LegendMargin="10" LegendFontSize="12">
             <oxy:Plot.Series>
-                <oxy:LineSeries Title="Accurate" ItemsSource="{Binding AccuratePlot}"  Smooth="True"/>
-                <oxy:LineSeries Title="Approx" ItemsSource="{Binding ApproxPlot}"  Smooth="True"/>
+                <oxy:LineSeries Title="{Binding Locale[#AccurateLineSeries]}" ItemsSource="{Binding AccuratePlot}"  Smooth="True"/>
+                <oxy:LineSeries Title="{Binding Locale[#ApproxLineSeries]}" ItemsSource="{Binding ApproxPlot}"  Smooth="True"/>
             </oxy:Plot.Series>
         </oxy:Plot>
 

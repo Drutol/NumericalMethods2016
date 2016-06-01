@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
@@ -165,17 +164,17 @@ namespace NumMethods5.ViewModel
             }
         }
 
-        private string _maxIter = "100";
+        //private string _maxIter = "100";
 
-        public string MaxIterBind
-        {
-            get { return _maxIter; }
-            set
-            {
-                _maxIter = value;
-                RaisePropertyChanged(() => MaxIterBind);
-            }
-        }
+        //public string MaxIterBind
+        //{
+        //    get { return _maxIter; }
+        //    set
+        //    {
+        //        _maxIter = value;
+        //        RaisePropertyChanged(() => MaxIterBind);
+        //    }
+        //}
 
         private string _precision = "7";
 
@@ -311,14 +310,12 @@ namespace NumMethods5.ViewModel
                     timer.Start();
                     ApproxPlot =
                         NumCore.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, nodesCount,
-                            new ApproximationByPolynomialLevel(prec, UseCotes), out error)
+                            new ApproximationByPolynomialLevel(prec), out error)
                             .Select(x => new DataPoint(x.X, x.Y))
                             .ToList();
                     timer.Stop();
                     ApproxTime = timer.ElapsedTicks.ToString();
                     Error = error.ToString();
-                    //Polynomial = string.Join("", NumCoreApprox.NumCore.GetPolynomialCoeffs(prec).Reverse());
-                    //var a = GetPolynom(prec);
                     Polynomial = GetPolynom(prec);
                 }
                 catch (Exception e)
@@ -335,7 +332,6 @@ namespace NumMethods5.ViewModel
             {
                 try
                 {
-
                     var From = double.Parse(ApproximateFromXBind);
                     var To = double.Parse(ApproximateToXBind);
                     if (From >= To)
@@ -375,8 +371,6 @@ namespace NumMethods5.ViewModel
                 }
             }
         }
-
-        public bool UseCotes { get; set; }
 
         public MainViewModel()
         {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NumMethods5.NumCore
+﻿namespace NumMethods5.NumCore
 {
         public class Interval
         {
@@ -27,16 +21,11 @@ namespace NumMethods5.NumCore
         public abstract class ApproximationCriterium
         {
             public ApproximationModes ApproximationMode { get; set; }
-            public bool UseCotes;
-            protected ApproximationCriterium(bool cotes)
-            {
-                UseCotes = cotes;
-            }
         }
 
         public class ApproximationByPolynomialLevel : ApproximationCriterium
         {
-            public ApproximationByPolynomialLevel(int level, bool useCotes) : base(useCotes)
+            public ApproximationByPolynomialLevel(int level)
             {
                 ApproximationMode = ApproximationModes.PolynomialLevel;
                 Level = level;
@@ -46,7 +35,7 @@ namespace NumMethods5.NumCore
 
         public class ApproximationByAccuracy : ApproximationCriterium
         {
-            public ApproximationByAccuracy(double acc, bool useCotes) : base(useCotes)
+            public ApproximationByAccuracy(double acc)
             {
                 ApproximationMode = ApproximationModes.Accuracy;
                 Accuracy = acc;
