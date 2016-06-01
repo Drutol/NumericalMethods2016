@@ -37,6 +37,7 @@ namespace NumMethods5.NumCore
                 poly.Coefficients.Add(NumCore.Silnia(level)/
                                       (NumCore.Silnia(i)*NumCore.Silnia(level - i))*
                        (Math.Pow(-1, i)/NumCore.Silnia(i)));
+            poly.Coefficients.Reverse();
             return poly;
         }
 

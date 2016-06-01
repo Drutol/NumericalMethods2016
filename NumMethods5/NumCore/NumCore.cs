@@ -71,8 +71,7 @@ namespace NumMethods5.NumCore
             {
                 var temp = fun.GetValue(laguerreNode.Item1)*poly.GetValue(laguerreNode.Item1);
                 sum += laguerreNode.Item2*temp;
-            }   
-            //sum = LaguerreNodes.Sum(node => node.Item2 * fun.GetValue(node.Item1) * poly.GetValue(node.Item1));
+            }           
             return sum;
         }
 
