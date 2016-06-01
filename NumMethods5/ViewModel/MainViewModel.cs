@@ -265,10 +265,18 @@ namespace NumMethods5.ViewModel
             /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2079",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
         };
 
-        private string GetPolynom(int prec)
+        private string GetPolynom(Polynomial approx,int prec)
         {
             string result="";
-            List<double> coefs = NumCore.NumCore.GetPolynomialCoeffs(prec).ToList();
+            List<double> coefs = approx.Coefficients;
+            var pr = prec;
+            foreach (var coef in coefs)
+            {
+                string key = "x" + (pr/10 > 0 ? PolynomCoefs[pr/10]+PolynomCoefs[pr%10] : PolynomCoefs[pr]);
+                PolynomialList.Add(new KeyValuePair<string, double>(key,coef));
+                pr--;
+            }
+
             for ( int i=prec/10;i>=0;i--)
             {
                 for (int j = prec%10; j >=0; j--)
@@ -290,37 +298,47 @@ namespace NumMethods5.ViewModel
             }
             return result;
         }
+        public ObservableCollection<KeyValuePair<string, double>> PolynomialList { get; set; } = new ObservableCollection<KeyValuePair<string, double>>();
+
         #endregion
+
+        public ICommand CopyToClipboardCommand => new RelayCommand(CopyToClipboard);
+
+        private void CopyToClipboard()
+        {
+            
+        }
 
         public ICommand CalculateCommand => new RelayCommand(DoMaths);
 
         private void DoMaths()
         {
+            PolynomialList.Clear();
             int nodesCount, prec;
             if (!int.TryParse(NodesCountBind, out nodesCount) || !int.TryParse(PrecisionBind, out prec)) 
-                MessageBox.Show("Method arguments could not be parsed.", "Parsing error!", MessageBoxButton.OK,
+                MessageBox.Show(Locale["#MethArgParsing"], Locale["#ParsingErr"], MessageBoxButton.OK,
                     MessageBoxImage.Error);
             else
                 try
                 {
                     AccuratePlot =
                         NumCore.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
-                    double error;
+                    Polynomial approx;
                     var timer = new Stopwatch();
                     timer.Start();
                     ApproxPlot =
                         NumCore.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, nodesCount,
-                            new ApproximationByPolynomialLevel(prec), out error)
+                            new ApproximationByPolynomialLevel(prec, UseCotes), out approx)
                             .Select(x => new DataPoint(x.X, x.Y))
                             .ToList();
                     timer.Stop();
                     ApproxTime = timer.ElapsedTicks.ToString();
-                    Error = error.ToString();
-                    Polynomial = GetPolynom(prec);
+                    Error = NumCore.NumCore.GetError(SelectedFunction, approx).ToString();
+                    Polynomial = GetPolynom(approx,prec);
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.Message + "could not be parsed.\n (._.) ( l: ) ( .-. ) ( :l ) (._.)", "Parsing error!", MessageBoxButton.OK,
+                    MessageBox.Show(e.Message + Locale["#BadIntervalCont"], Locale["#ParsingErr"], MessageBoxButton.OK,
                         MessageBoxImage.Error);
                 }
 
@@ -335,7 +353,7 @@ namespace NumMethods5.ViewModel
                     var From = double.Parse(ApproximateFromXBind);
                     var To = double.Parse(ApproximateToXBind);
                     if (From >= To)
-                        throw new ArgumentException("Approximation interval data ");
+                        throw new Exception();
                     return new Interval
                     {
                      From = From,
@@ -344,7 +362,7 @@ namespace NumMethods5.ViewModel
                 }
                 catch (Exception)
                 {
-                    throw new ArgumentException("Approximation interval data ");
+                    throw new ArgumentException(Locale["#BadApproxInterval"]);
                 }
             }
         }
@@ -358,7 +376,7 @@ namespace NumMethods5.ViewModel
                     var From = double.Parse(DrawFromXBind);
                     var To = double.Parse(DrawToXBind);
                     if (From >= To)
-                        throw new ArgumentException("Drawing interval data ");
+                        throw new Exception();
                     return new Interval
                     {
                         From = From,
@@ -367,10 +385,12 @@ namespace NumMethods5.ViewModel
                 }
                 catch (Exception)
                 {
-                    throw new ArgumentException("Drawing interval data ");
+                    throw new ArgumentException(Locale["#BadDrawingInterval"]);
                 }
             }
         }
+
+        public bool UseCotes { get; set; }
 
         public MainViewModel()
         {

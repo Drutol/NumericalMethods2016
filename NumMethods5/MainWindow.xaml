@@ -42,7 +42,7 @@
                         <StackPanel Orientation="vertical">
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel Margin="0,5,2.5,0">
-                                    <TextBlock TextWrapping="Wrap" Width="100" Text="{Binding Locale[#ApproxInterval]}"/>
+                                    <TextBlock TextWrapping="Wrap" MinWidth="100" Text="{Binding Locale[#ApproxInterval]}"/>
                                     <TextBlock Text="{Binding Locale[#FromX]}" />
                                     <TextBox TextAlignment="Center" 
                                              Text="{Binding ApproximateFromXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
@@ -64,7 +64,7 @@
                                 <TextBlock Text="{Binding Locale[#MethArgs]}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Locale[#NodesCount]}" VerticalAlignment="Center"/>
-                                    <TextBox Margin="37,5,5,0" Width="100" 
+                                    <TextBox Margin="5,5,5,0" Width="100" 
                                              TextAlignment="Center" 
                                              Text="{Binding NodesCountBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>
@@ -76,7 +76,7 @@
                                 </StackPanel>-->
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Locale[#Precision]}"/>
-                                    <TextBox Margin="58,5,5,0" Width="100" 
+                                    <TextBox Margin="5,5,5,0" Width="100" 
                                              TextAlignment="Center" 
                                              Text="{Binding PrecisionBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>
@@ -84,10 +84,15 @@
                         </StackPanel>
                     </StackPanel>
                 </Border>
-                <Button Margin="5" Width="150" VerticalAlignment="Center" HorizontalAlignment="Center"
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox VerticalAlignment="Center" Margin="5"
+                              IsChecked="{Binding UseCotes,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                              Content="{Binding Locale[#UseCotes]}"/>
+                    <Button Margin="5" Width="150" VerticalAlignment="Center"
                         Content="{Binding Locale[#Meth]}" 
                         Command="{Binding CalculateCommand}"/>
-                <TextBlock Text="{Binding Locale[#Results]}" Margin="2" HorizontalAlignment="Left"/>
+                </StackPanel>
+                <TextBlock Text="{Binding Locale[#Results]}" Margin="2,0,2,2" HorizontalAlignment="Left"/>
                 <Border BorderBrush="DarkGray" BorderThickness="2" Margin="5" Padding="5">
                     <StackPanel>
                         <StackPanel>
@@ -99,14 +104,43 @@
                             <TextBlock Text="{Binding Error}" />
                         </StackPanel>
                         <StackPanel>
-                            <TextBlock Text="{Binding Locale[#ApproxPolynom]}"/>
-                            <TextBlock Text="{Binding Polynomial}" TextWrapping="Wrap"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Locale[#ApproxPolynom]}"/>
+                                <Button Content="{Binding Locale[#CPToClipboard]}"
+                                        Command="{Binding CopyToClipboardCommand}"/>
+                            </StackPanel>
+                            <!--<TextBlock Text="{Binding Polynomial}" TextWrapping="Wrap"/>-->
+                            <DataGrid ItemsSource="{Binding PolynomialList}"
+                              Margin="5,5,10,0"
+                              Height="100" Width="Auto"
+                              ColumnWidth="*" CanUserAddRows="False"
+                              VerticalScrollBarVisibility="Visible"
+                              HorizontalAlignment="Center"
+                              CanUserResizeRows="False"
+                              IsReadOnly="True"
+                              Background="Transparent" BorderBrush="Transparent" AutoGenerateColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Binding="{Binding Key}" MinWidth="50" Width="Auto">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#DataGridKey]}"
+                                       TextWrapping="Wrap" />
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Value}" MinWidth="50" Width="Auto">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock Text="{Binding Source={StaticResource Locator},Path=Main.Locale[#DataGridValue]}"
+                                       TextWrapping="Wrap" />
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
                         </StackPanel>
                     </StackPanel>
                 </Border>
+                
             </StackPanel>
         </Grid>
-        <oxy:Plot Title="Plot" Grid.Column="1"
+        <oxy:Plot Title="{Binding Locale[#Plot]}" Grid.Column="1"
                   IsLegendVisible="True" LegendTitle="Legend" LegendOrientation="Horizontal" 
                   LegendPlacement="Inside" LegendPosition="TopRight" LegendBackground="Transparent"
                   LegendBorder="Transparent" LegendMaxWidth="110" LegendMargin="10" LegendFontSize="12">
