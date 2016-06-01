@@ -18,26 +18,5 @@ namespace NumMethods5.NumCore
 
             return result;
         }
-
-        public static Polynomial operator +(Polynomial lewy, Polynomial prawy)
-        {
-            int size = lewy.Coefficients.Count;
-            if (prawy.Coefficients.Count > size)
-                size = prawy.Coefficients.Count;
-            Polynomial nowy = new Polynomial();
-            for(int i=0;i<size;i++)
-                nowy.Coefficients.Add(0);
-            // dopisujemy wspolczynniki lewego
-            for (int i = 0; i < lewy.Coefficients.Count; i++)
-            {
-                nowy.Coefficients[size - 1 - i] += lewy.Coefficients[lewy.Coefficients.Count - 1 - i];
-            }
-            // dopisujemy wspolczynniki prawego
-            for (int i = 0; i < prawy.Coefficients.Count; i++)
-            {
-                nowy.Coefficients[size - 1 - i] += prawy.Coefficients[prawy.Coefficients.Count - 1 - i];
-            }
-            return nowy;
-        }
     }
 }
