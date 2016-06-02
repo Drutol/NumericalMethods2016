@@ -22,7 +22,7 @@ namespace NumMethods5.NumCore
                 yield return new DataPoint(i,fun.GetValue(i));
         }
 
-        public static IEnumerable<Node> GetApproximatedPlotDataPoints(IFunction fun, Interval interval,int nodeCount,ApproximationCriterium mode,out double error)
+        public static IEnumerable<Node> GetApproximatedPlotDataPoints(IFunction fun, Interval interval,int nodeCount,ApproximationCriterium mode,out Polynomial approx)
         {
             var nodes = new List<Node>();
             nodes.MakeNodes(interval,nodeCount);
@@ -30,10 +30,9 @@ namespace NumMethods5.NumCore
             if (mode is ApproximationByPolynomialLevel)
                 level = (mode as ApproximationByPolynomialLevel).Level;
             fun.EnableWeight = false;
-            var approx = mode.UseCotes ? GetApproxPolynomial(fun, level,NewNewtonCotes) : GetApproxPolynomial(fun,level,LaguerreIntegration);
+            approx = mode.UseCotes ? GetApproxPolynomial(fun, level,NewNewtonCotes) : GetApproxPolynomial(fun,level,LaguerreIntegration);
             foreach (var t in nodes)
                 t.Y = approx.GetValue(t.X);
-            error = GetError(fun, approx);
             return nodes;
         }
 
@@ -113,7 +112,7 @@ namespace NumMethods5.NumCore
             return new Polynomial {Coefficients = coeffs.ToList()};
         }
 
-        private static double GetError(IFunction fun, Polynomial poly)
+        public static double GetError(IFunction fun, Polynomial poly)
         {
             double sum = 0;
             foreach (var laguerreNode in LaguerreNodes)
