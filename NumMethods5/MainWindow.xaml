@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" xmlns:oxy="http://oxyplot.org/wpf"
-        Title="MainWindow" Height="575" Width="1000"
+        Title="MainWindow" Height="630" Width="1000"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Grid Background="#E6E6E6">
 
@@ -74,11 +74,26 @@
                                              TextAlignment="Center" 
                                              Text="{Binding MaxIterBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>-->
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Locale[#Precision]}"/>
-                                    <TextBox Margin="5,5,5,0" Width="100" 
-                                             TextAlignment="Center" 
-                                             Text="{Binding PrecisionBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                <StackPanel>
+                                    <TextBlock Text="Approximate by:"/>
+                                    <TabControl>
+                                        <TabItem Header="Polynomial degree" IsSelected="{Binding PrecModeBind}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock VerticalAlignment="Center" Text="Degree"/>
+                                                <TextBox Margin="5" Width="100" 
+                                                 TextAlignment="Center" 
+                                                 Text="{Binding PolynomialDegreeBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                            </StackPanel>
+                                        </TabItem>
+                                        <TabItem Header="Margin error">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock VerticalAlignment="Center" Text="Value"/>
+                                                <TextBox Margin="5" Width="100" 
+                                                 TextAlignment="Center" 
+                                                 Text="{Binding ErrorMarginBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                            </StackPanel>
+                                        </TabItem>
+                                    </TabControl>   
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>

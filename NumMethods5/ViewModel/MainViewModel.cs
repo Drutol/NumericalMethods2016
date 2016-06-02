@@ -176,15 +176,27 @@ namespace NumMethods5.ViewModel
         //    }
         //}
 
-        private string _precision = "7";
+        private string _polynomialDegree = "7";
 
-        public string PrecisionBind
+        public string PolynomialDegreeBind
         {
-            get { return _precision; }
+            get { return _polynomialDegree; }
             set
             {
-                _precision = value.Replace(".", ",");
-                RaisePropertyChanged(() => PrecisionBind);
+                _polynomialDegree = value;
+                RaisePropertyChanged(() => PolynomialDegreeBind);
+            }
+        }
+
+        private string _errorMargin = "1";
+
+        public string ErrorMarginBind
+        {
+            get { return _errorMargin; }
+            set
+            {
+                _errorMargin = value.Replace(".", ",");
+                RaisePropertyChanged(() => ErrorMarginBind);
             }
         }
 
@@ -315,33 +327,77 @@ namespace NumMethods5.ViewModel
         {
             PolynomialList.Clear();
             int nodesCount, prec;
-            if (!int.TryParse(NodesCountBind, out nodesCount) || !int.TryParse(PrecisionBind, out prec)) 
-                MessageBox.Show(Locale["#MethArgParsing"], Locale["#ParsingErr"], MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            else
-                try
-                {
-                    AccuratePlot =
-                        NumCore.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
-                    Polynomial approx;
-                    var timer = new Stopwatch();
-                    timer.Start();
-                    ApproxPlot =
-                        NumCore.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, nodesCount,
-                            new ApproximationByPolynomialLevel(prec, UseCotes), out approx)
-                            .Select(x => new DataPoint(x.X, x.Y))
-                            .ToList();
-                    timer.Stop();
-                    ApproxTime = timer.ElapsedTicks.ToString();
-                    Error = NumCore.NumCore.GetError(SelectedFunction, approx).ToString();
-                    Polynomial = GetPolynom(approx,prec);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message + Locale["#BadIntervalCont"], Locale["#ParsingErr"], MessageBoxButton.OK,
+            if (PrecModeBind)
+            {
+                if (!int.TryParse(NodesCountBind, out nodesCount) || !int.TryParse(PolynomialDegreeBind, out prec))
+                    MessageBox.Show(Locale["#MethArgParsing"], Locale["#ParsingErr"], MessageBoxButton.OK,
                         MessageBoxImage.Error);
-                }
-
+                else
+                    try
+                    {
+                        AccuratePlot =
+                            NumCore.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
+                        Polynomial approx;
+                        var timer = new Stopwatch();
+                        timer.Start();
+                        ApproxPlot =
+                            NumCore.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, nodesCount,
+                                new ApproximationByPolynomialLevel(prec, UseCotes), out approx)
+                                .Select(x => new DataPoint(x.X, x.Y))
+                                .ToList();
+                        timer.Stop();
+                        ApproxTime = timer.ElapsedTicks.ToString();
+                        Error = NumCore.NumCore.GetError(SelectedFunction, approx).ToString();
+                        Polynomial = GetPolynom(approx, prec);
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message + Locale["#BadIntervalCont"], Locale["#ParsingErr"],
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    }
+            }
+            else
+            {
+                double eps = 0;
+                if (!int.TryParse(NodesCountBind, out nodesCount) || !double.TryParse(ErrorMarginBind, out eps))
+                    MessageBox.Show(Locale["#MethArgParsing"], Locale["#ParsingErr"], MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                else
+                    try
+                    {
+                        prec = 0;
+                        AccuratePlot =
+                            NumCore.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
+                        Polynomial approx;
+                        double err;
+                        var timer = new Stopwatch();
+                        timer.Start();
+                        do
+                        {
+                            ApproxPlot =
+                                NumCore.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval,
+                                    nodesCount,
+                                    new ApproximationByPolynomialLevel(prec++, UseCotes), out approx)
+                                    .Select(x => new DataPoint(x.X, x.Y))
+                                    .ToList();
+                            err = NumCore.NumCore.GetError(SelectedFunction, approx);
+                            if (double.IsNaN(err))
+                                MessageBox.Show(
+                                    $"Couldn't get that little error and received NaN value at {prec} degree Polynomial.",
+                                    "Too little error margin!", MessageBoxButton.OK, MessageBoxImage.Error);
+                        } while (err-Math.Abs(eps)>0);
+                        timer.Stop();
+                        ApproxTime = timer.ElapsedTicks.ToString();
+                        Error = err.ToString();
+                        Polynomial = GetPolynom(approx, prec-1);
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message + Locale["#BadIntervalCont"], Locale["#ParsingErr"], MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    }
+            }
         }
 
         private Interval ApproxInterval
@@ -389,6 +445,8 @@ namespace NumMethods5.ViewModel
                 }
             }
         }
+
+        public bool PrecModeBind { get; set; }
 
         public bool UseCotes { get; set; }
 
