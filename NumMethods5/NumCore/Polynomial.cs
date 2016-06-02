@@ -9,13 +9,12 @@ namespace NumMethods5.NumCore
 
         public double GetValue(double x)
         {
-            double result = Coefficients[0];
+            var result = Coefficients[0];
             foreach (var coeff in Coefficients.Skip(1))
             {
                 result *= x;
                 result += coeff;
             }
-
             return result;
         }
     }

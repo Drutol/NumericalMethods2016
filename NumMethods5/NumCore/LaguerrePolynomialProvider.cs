@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace NumMethods5.NumCore
 {
     public class LaguerrePolynomialProvider
     {
-        private readonly Dictionary<int,Polynomial> _laguerrePolynomials = new Dictionary<int, Polynomial>();
+        private readonly Dictionary<int, Polynomial> _laguerrePolynomials = new Dictionary<int, Polynomial>();
 
         public Polynomial this[int i]
         {
@@ -18,7 +14,6 @@ namespace NumMethods5.NumCore
                 var newPoly = new Polynomial();
                 if (_laguerrePolynomials.ContainsKey(i))
                 {
-                    
                     newPoly.Coefficients.AddRange(_laguerrePolynomials[i].Coefficients);
                     return newPoly;
                 }
@@ -34,19 +29,18 @@ namespace NumMethods5.NumCore
         private Polynomial BuildLaguerrePolynomial(int level)
         {
             var poly = new Polynomial();
-            int start = 0;
+            var start = 0;
             //if (_laguerrePolynomials.Count != 0)
             //{
             //    start = _laguerrePolynomials.Keys.Where(i => i < level).Max();
             //    poly.Coefficients = _laguerrePolynomials[start].Coefficients;
             //}
-            for (int i = start; i <= level; i++)
-                poly.Coefficients.Add(NumCore.Silnia(level)/
-                                      (NumCore.Silnia(i)*NumCore.Silnia(level - i))*
-                       (Math.Pow(-1, i)/NumCore.Silnia(i)));
+            for (var i = start; i <= level; i++)
+                poly.Coefficients.Add(NumCore.Factorial(level)/
+                                      (NumCore.Factorial(i)*NumCore.Factorial(level - i))*
+                                      (Math.Pow(-1, i)/NumCore.Factorial(i)));
             poly.Coefficients.Reverse();
             return poly;
         }
-
     }
 }
