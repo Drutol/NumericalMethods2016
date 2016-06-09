@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -115,7 +117,26 @@ namespace NumMethods6.ViewModel
         private void DoMaths()
         {
             MatrixRequest?.Invoke(); //updates matrix
-            //TODO : Maths
+                                     //TODO : Maths
+            double x = 0;
+            var points = new double[]
+            {InitialConditions.J1, InitialConditions.J2, InitialConditions.C, InitialConditions.Mu};
+            var fun = new List<RungeKutta.SmallRkDelegate>
+            {
+                new RungeKutta.SmallRkDelegate(((d, d1) => 2*d*d1*d1)),
+                new RungeKutta.SmallRkDelegate(((d, d1) => -d*d1/Math.Sin(x))),
+                new RungeKutta.SmallRkDelegate(((d, d1) => d*d1+2)),
+                new RungeKutta.SmallRkDelegate(((d, d1) => d1)),
+            };
+            var results = new List<DataPoint>();
+            while (x < 5)
+            {
+                var result = RungeKutta.rk4(x, points, 0.1, fun);
+                x += .1;
+                results.Add(new DataPoint(x, result.First()));
+            }
+            DifferentialDataPoints = results;
+
         }
 
         #endregion
