@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumMethods4Lib", "NumMethod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumMethods5", "NumMethods5\NumMethods5.csproj", "{BD85A70C-F467-44C6-80EE-B61200556050}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumMethods6", "NumMethods6\NumMethods6.csproj", "{D0A2A43B-FEC0-4AAE-A7C6-6F47C248090E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{BD85A70C-F467-44C6-80EE-B61200556050}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD85A70C-F467-44C6-80EE-B61200556050}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD85A70C-F467-44C6-80EE-B61200556050}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0A2A43B-FEC0-4AAE-A7C6-6F47C248090E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0A2A43B-FEC0-4AAE-A7C6-6F47C248090E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0A2A43B-FEC0-4AAE-A7C6-6F47C248090E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0A2A43B-FEC0-4AAE-A7C6-6F47C248090E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
