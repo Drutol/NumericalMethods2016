@@ -20,42 +20,39 @@ namespace NumMethods5.ViewModel
         {
             PolynomialList.Clear();
             double eps = 0;
-            if (true)
-            {
-                int nodesCount,degree;
-                if (!int.TryParse(NodesCountBind, out nodesCount) || !int.TryParse(PolynomialDegreeBind, out degree) ||
-                    (!ApproxByExplicitDegree && !double.TryParse(ErrorMarginBind, out eps)))
-                    MessageBox.Show(Locale["#MethArgParsing"], Locale["#ParsingErr"], MessageBoxButton.OK,
+            int nodesCount,degree;
+            if (!int.TryParse(NodesCountBind, out nodesCount) || !int.TryParse(PolynomialDegreeBind, out degree) ||
+                (!ApproxByExplicitDegree && !double.TryParse(ErrorMarginBind, out eps)))
+                MessageBox.Show(Locale["#MethArgParsing"], Locale["#ParsingErr"], MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            else
+                try
+                {
+                    AccuratePlot =
+                        NumCore.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
+                    Polynomial approx;
+                    var timer = new Stopwatch();
+                    timer.Start();
+                    ApproximationCriterium criterium;
+                    if (ApproxByExplicitDegree)
+                        criterium = new ApproximationByPolynomialLevel(degree, UseCotes);
+                    else
+                        criterium = new ApproximationByAccuracy(eps, UseCotes);
+                    var points =
+                        NumCore.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, nodesCount,
+                            criterium, out approx);
+                    timer.Stop();
+                    ApproxPlot = points.Select(x => new DataPoint(x.X, x.Y)).ToList();
+                    ApproxTime = timer.ElapsedTicks.ToString();
+                    Error = NumCore.NumCore.GetError(SelectedFunction, approx).ToString();
+                    Polynomial = GetPolynom(approx);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message + Locale["#BadIntervalCont"], Locale["#ParsingErr"],
+                        MessageBoxButton.OK,
                         MessageBoxImage.Error);
-                else
-                    try
-                    {
-                        AccuratePlot =
-                            NumCore.NumCore.GetAccuratePlotDataPoints(SelectedFunction, DrawInterval).ToList();
-                        Polynomial approx;
-                        var timer = new Stopwatch();
-                        timer.Start();
-                        ApproximationCriterium criterium;
-                        if (ApproxByExplicitDegree)
-                            criterium = new ApproximationByPolynomialLevel(degree, UseCotes);
-                        else
-                            criterium = new ApproximationByAccuracy(eps, UseCotes);
-                        var points =
-                            NumCore.NumCore.GetApproximatedPlotDataPoints(SelectedFunction, ApproxInterval, nodesCount,
-                                criterium, out approx);
-                        timer.Stop();
-                        ApproxPlot = points.Select(x => new DataPoint(x.X, x.Y)).ToList();
-                        ApproxTime = timer.ElapsedTicks.ToString();
-                        Error = NumCore.NumCore.GetError(SelectedFunction, approx).ToString();
-                        Polynomial = GetPolynom(approx);
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show(e.Message + Locale["#BadIntervalCont"], Locale["#ParsingErr"],
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error);
-                    }
-            }
+                }
         }
 
         #region Just locale things.
@@ -351,24 +348,15 @@ namespace NumMethods5.ViewModel
 
         private List<string> PolynomCoefs { get; } = new List<string>
         {
-            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2070",
-            /* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
-            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u00B9",
-            /* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
-            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u00B2",
-            /* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
-            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u00B3",
-            /* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
-            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2074",
-            /* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
-            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2075",
-            /* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
-            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2076",
-            /* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
-            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2077",
-            /* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
-            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2078",
-            /* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2070",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u00B9",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u00B2",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u00B3",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2074",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2075",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2076",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2077",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
+            /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2078",/* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
             /*(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ */"\u2079" /* ✧ﾟ･: *ヽ(◕ヮ◕ヽ)*/
         };
 
