@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,20 +23,73 @@ namespace NumMethods6.MathCore
 
     public static class RungeKutta
     {
-        public delegate double SmallRkDelegate(double x, double y);
+        public delegate double DiffFun(double t, List<double> variables);
+        public delegate double DynamicDiffFun(double t, dynamic variables);
 
-        static double sixth = 1.0 / 6.0;
-
-        public static IEnumerable<double> rk4(double x, double[] y, double dx, List<SmallRkDelegate> f)
+        public static IEnumerable<double> Rk4(double x, double[] y, double dx, List<DiffFun> f)
         {
-            double halfdx = 0.5 * dx;
-            var k1 = f.Select(fun => dx*fun(x, y.Sum())).ToList();
-            var k2 = f.Select(fun => dx*fun(x + halfdx, y.Select((val, i) => val + halfdx*k1[i]).Sum())).ToList();
-            var k3 = f.Select(fun => dx*fun(x + halfdx, y.Select((val, i) => val + halfdx*k2[i]).Sum())).ToList();
-            var k4 = f.Select(fun => dx*fun(x + dx, y.Select((val, i) => val + halfdx*k3[i]).Sum())).ToList();
+            double halfdx = 0.5 * x;
+            var k1 = f.Select(fun => dx*fun(x,new List<double> { y[0],y[1],y[2],y[3]})).ToList();
+            var k2 = f.Select(fun => dx*fun(x + halfdx,new List<double> { 
+                y[0] + halfdx * k1[0],
+                y[1] + halfdx * k1[1],
+                y[2] + halfdx * k1[2],
+                y[3] + halfdx * k1[3]})).ToList();
+            var k3 = f.Select(fun => dx * fun(x + halfdx,new List<double> { 
+                y[0] + halfdx * k2[0],
+                y[1] + halfdx * k2[1],
+                y[2] + halfdx * k2[2],
+                y[3] + halfdx * k2[3]})).ToList();
+            var k4 = f.Select(fun => dx * fun(x + dx, new List<double> {
+                y[0] + dx * k3[0],
+                y[1] + dx * k3[1],
+                y[2] + dx * k3[2],
+                y[3] + dx * k3[3]})).ToList();
+            return y.Select((val, i) => val + (k1[i] + 2*k2[i] + 2*k3[i] + k4[i])/6.0);
+
+        }
+
+
+        public static IEnumerable<double> Rk4(double x, double[] y, double dx, List<DynamicDiffFun> f,
+            List<string> parameters)
+        {
+            double halfdx = 0.5*x;
+            
+
+            var k0 = new List<double>();
+            for (int i = 0; i < y.Length; i++)
+                k0.Add(0);
+            var k1 = f.Select(fun => dx *(double)fun(x, GetDynamicVariables(parameters,y))).ToList();
+            //var k1 = f.Select(fun => dx*(double)fun(x + halfdx, GetDynamicVariables(parameters, y, k0, 0))).ToList();
+            var k2 = f.Select(fun => dx*(double)fun(x + halfdx, GetDynamicVariables(parameters, y, k1, halfdx))).ToList();
+            var k3 = f.Select(fun => dx*(double)fun(x + halfdx, GetDynamicVariables(parameters, y, k2, halfdx))).ToList();
+            var k4 = f.Select(fun => dx*(double)fun(x + dx, GetDynamicVariables(parameters, y, k3, dx))).ToList();
+
+            //var k3 = f.Select(fun => dx*fun(x + halfdx, y.Select((val, i) => val + halfdx*k2[i]).Sum())).ToList();
+            //var k4 = f.Select(fun => dx*fun(x + dx, y.Select((val, i) => val + halfdx*k3[i]).Sum())).ToList();
 
             return y.Select((val, i) => val + (k1[i] + 2*k2[i] + 2*k3[i] + k4[i])/6.0);
 
+        }
+
+        private static dynamic GetDynamicVariables(List<string> parameters, double[] inits,List<double> kn,double dx)
+        {
+            var dyn = new ExpandoObject() as IDictionary<string, object>; //dynamic object Implements IDictionary
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                dyn.Add(parameters[i], inits[i] + dx*kn[i]); //thanks to implementation we can now call dyn.x for example
+            }              
+            return dyn;
+        }
+
+        private static dynamic GetDynamicVariables(List<string> parameters, double[] inits)
+        {
+            var dyn = new ExpandoObject() as IDictionary<string, object>; //dynamic object Implements IDictionary
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                dyn.Add(parameters[i], inits[i]); //thanks to implementation we can now call dyn.x for example
+            }              
+            return dyn;
         }
     }
 
@@ -51,11 +105,11 @@ namespace NumMethods6.MathCore
             this.target = target;
         }
 
-        public IEnumerable<DataPoint> Run(double[] args,List<RungeKutta.SmallRkDelegate> fun)
+        public IEnumerable<DataPoint> Run(double[] args,List<RungeKutta.DiffFun> fun)
         {
             while (x < target)
             {
-                var result = RungeKutta.rk4(x, args, dx, fun);
+                var result = RungeKutta.Rk4(x, args, dx, fun);
                 x += dx;
                 yield return new DataPoint(x,result.First());
             }
