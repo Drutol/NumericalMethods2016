@@ -3,13 +3,18 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using NumMethods4Lib.MathCore;
 using NumMethods6.MathCore;
 using OxyPlot;
 
 
 namespace NumMethods6.ViewModel
 {
+    public class Interval
+    {
+        public double From { get; set; }
+        public double To { get; set; }
+    }
+
     public delegate void RequestVariableMatrix();
 
     public class MainViewModel : ViewModelBase
@@ -46,10 +51,10 @@ namespace NumMethods6.ViewModel
             {
                 new Function1(),
                 new Function2(),
-                new Function3(),
+                new Function3()
             };
 
-        public IFunction CurrentlySelectedFunction { get; set; }
+        public IFunction CurrentlySelectedFunction { get; set; } = new Function1();
 
         private double[,] _matrix { get; set; } = {
             {-InitialConditions.R/InitialConditions.L, -InitialConditions.K/InitialConditions.L, 0, 0},

@@ -7,6 +7,7 @@ namespace NumMethods4Lib.MathCore
 {
     public abstract class Function
     {
+
         private Func<double,double> _currentFunc;
         protected abstract double GetWeightValue(double x);
         protected abstract double GetNormalValue(double x);
@@ -74,7 +75,4 @@ namespace NumMethods4Lib.MathCore
 
         public string TextRepresentation => "x^2+4x+10";
     }
-
-
-
 }

@@ -7,7 +7,7 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:dataGrid2D="http://gu.se/DataGrid2D"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" DataContext="{Binding Source={StaticResource Locator},Path=Main}">
+        Title="MainWindow" Height="450" Width="620" DataContext="{Binding Source={StaticResource Locator},Path=Main}">
    
     <Grid>
         <Grid.RowDefinitions>

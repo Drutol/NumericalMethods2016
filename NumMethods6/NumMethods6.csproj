@@ -91,7 +91,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MathCore\DevirativeDefinitions.cs" />
+    <Compile Include="MathCore\IFunction.cs" />
     <Compile Include="MathCore\InitialConditions.cs" />
+    <Compile Include="MathCore\MethodsTabelau.cs" />
+    <Compile Include="MathCore\NumCore.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">
