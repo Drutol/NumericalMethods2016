@@ -1,79 +1,137 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NumMethods4Lib.MathCore;
-using NumMethods6.ViewModel;
+using System.Windows.Markup;
+using OxyPlot;
 
 namespace NumMethods6.MathCore
 {
+    public class Node
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+    }
+
     class NumCore
     {
-        public class Node
-        {
-            public double X { get; set; }
-            public double Y { get; set; }
-        }
+        
+    }
 
-        private MethodsTabelau RK4 = new MethodsTabelau
-        {
-            Nodes = {.0,.5,.5,1.0 },
-            RKMatrix = new double[4,4]
-            {
-                { 0,0,0,0},
-                { 1.0/2.0,0,0,0 },
-                { 0,1.0/2.0,0,0 },
-                { 0,0,1.0,0 }
-            },
-            Weights = { 1.0 / 3.0, 1.0 / 6.0, 1.0 / 6.0, 1.0 / 3.0 }
-        };
+    public static class RungeKutta
+    {
+        public delegate double DiffFun(double t, List<double> variables);
+        public delegate double DynamicDiffFun(double t, dynamic variables);
 
-        private MethodsTabelau Ralston = new MethodsTabelau
+        public static IEnumerable<double> Rk4(double x, double[] y, double dx, List<DiffFun> f)
         {
-            Nodes = { 0, 2.0 / 3.0 },
-            RKMatrix = new double[2,2]
-            {
-                { 0,0},
-                { 2.0/3.0,0}
-            },
-            Weights = {1.0/4.0,3.0/4.0}
-        };
+            double halfdx = 0.5 * x;
+            var k1 = f.Select(fun => dx*fun(x,new List<double> { y[0],y[1],y[2],y[3]})).ToList();
+            var k2 = f.Select(fun => dx*fun(x + halfdx,new List<double> { 
+                y[0] + halfdx * k1[0],
+                y[1] + halfdx * k1[1],
+                y[2] + halfdx * k1[2],
+                y[3] + halfdx * k1[3]})).ToList();
+            var k3 = f.Select(fun => dx * fun(x + halfdx,new List<double> { 
+                y[0] + halfdx * k2[0],
+                y[1] + halfdx * k2[1],
+                y[2] + halfdx * k2[2],
+                y[3] + halfdx * k2[3]})).ToList();
+            var k4 = f.Select(fun => dx * fun(x + dx, new List<double> {
+                y[0] + dx * k3[0],
+                y[1] + dx * k3[1],
+                y[2] + dx * k3[2],
+                y[3] + dx * k3[3]})).ToList();
+            return y.Select((val, i) => val + (k1[i] + 2*k2[i] + 2*k3[i] + k4[i])/6.0);
 
-        private double GetIncrementY(IFunction source, double x, double y, double h, int range, MethodsTabelau method)
-        {
-            return y+h*(method.RKMatrix[range,]);
         }
 
 
-        public List<Node> RungeKuty(Interval interval,int precision,MethodsTabelau method, IFunction fun, double y0, double x0, double h)
+        public static IEnumerable<double> Rk4(double x, double[] y, double dx, List<DynamicDiffFun> f,
+            List<string> parameters)
         {
-            List<Node> result = new List<Node>();
+            double halfdx = 0.5*x;
+            
 
-            double step = Math.Abs(interval.To - interval.From)/precision;
+            var k0 = new List<double>();
+            for (int i = 0; i < y.Length; i++)
+                k0.Add(0);
+            var k1 = f.Select(fun => dx *(double)fun(x, GetDynamicVariables(parameters,y))).ToList();
+            //var k1 = f.Select(fun => dx*(double)fun(x + halfdx, GetDynamicVariables(parameters, y, k0, 0))).ToList();
+            var k2 = f.Select(fun => dx*(double)fun(x + halfdx, GetDynamicVariables(parameters, y, k1, halfdx))).ToList();
+            var k3 = f.Select(fun => dx*(double)fun(x + halfdx, GetDynamicVariables(parameters, y, k2, halfdx))).ToList();
+            var k4 = f.Select(fun => dx*(double)fun(x + dx, GetDynamicVariables(parameters, y, k3, dx))).ToList();
 
-            for (double i = interval.From; i <= interval.To; i += step)
-                result.Add(new Node {X=i});
+            //var k3 = f.Select(fun => dx*fun(x + halfdx, y.Select((val, i) => val + halfdx*k2[i]).Sum())).ToList();
+            //var k4 = f.Select(fun => dx*fun(x + dx, y.Select((val, i) => val + halfdx*k3[i]).Sum())).ToList();
 
-            result[0].Y = y0;
+            return y.Select((val, i) => val + (k1[i] + 2*k2[i] + 2*k3[i] + k4[i])/6.0);
 
-            for (int i = 1; i < result.Count; i++)
+        }
+
+        private static dynamic GetDynamicVariables(List<string> parameters, double[] inits,List<double> kn,double dx)
+        {
+            var dyn = new ExpandoObject() as IDictionary<string, object>; //dynamic object Implements IDictionary
+            for (int i = 0; i < parameters.Count; i++)
             {
-                result[i].Y = result[i - 1].Y + h*1;
-            }
-            var sum = 0.0;
-            for (int i = 0; i < result.Count; i++)
+                dyn.Add(parameters[i], inits[i] + dx*kn[i]); //thanks to implementation we can now call dyn.x for example
+            }              
+            return dyn;
+        }
+
+        private static dynamic GetDynamicVariables(List<string> parameters, double[] inits)
+        {
+            var dyn = new ExpandoObject() as IDictionary<string, object>; //dynamic object Implements IDictionary
+            for (int i = 0; i < parameters.Count; i++)
             {
-                for (int j = 0; j < 0; j++)
-                {
-                    sum = fun.GetValue(result[i].X+method.Nodes[i]*h, result[i].Y+method.RKMatrix[i,j]*);
-                }
-            }
-
-
-
-
-            return result;
+                dyn.Add(parameters[i], inits[i]); //thanks to implementation we can now call dyn.x for example
+            }              
+            return dyn;
         }
     }
+
+    public class Equation
+    {
+        double x, y, dx, target;
+
+        public Equation(double x, double y, double dx, double target)
+        {
+            this.x = x;
+            this.y = y;
+            this.dx = dx;
+            this.target = target;
+        }
+
+        public IEnumerable<DataPoint> Run(double[] args,List<RungeKutta.DiffFun> fun)
+        {
+            while (x < target)
+            {
+                var result = RungeKutta.Rk4(x, args, dx, fun);
+                x += dx;
+                yield return new DataPoint(x,result.First());
+            }
+        }
+
+        private double dy_dt(double t, double y)
+        {
+            return y;
+        }
+    }
+
+    class RK4
+    {
+        public delegate double Calc(double t, double y);
+        public double Runge(double t, double y, double dt, Calc yp)
+        {
+            double k1 = dt * yp(t, y);
+            double k2 = dt * yp(t + 0.5 * dt, y + k1 * 0.5 * dt);
+            double k3 = dt * yp(t + 0.5 * dt, y + k2 * 0.5 * dt);
+            double k4 = dt * yp(t + dt, y + k3 * dt);
+            return (y + (1 / 6) * (k1 + 2 * k2 + 2 * k3 + k4));
+        }
+    }
+
 }
