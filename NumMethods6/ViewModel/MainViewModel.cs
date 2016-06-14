@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using NumMethods4Lib.MathCore;
 using NumMethods6.MathCore;
 using OxyPlot;
 
@@ -15,6 +17,13 @@ namespace NumMethods6.ViewModel
     {
         public double From { get; set; }
         public double To { get; set; }
+    }
+
+    public enum Method
+    {
+        RK4,
+        Ralston,
+        User
     }
 
     public delegate void RequestVariableMatrix();
@@ -91,7 +100,7 @@ namespace NumMethods6.ViewModel
             }
         }
 
-        private string _integrationStep = "1";
+        private string _integrationStep = "10";
         public string IntegrationStepBind
         {
             get { return _integrationStep; }
@@ -104,22 +113,69 @@ namespace NumMethods6.ViewModel
 
         public double IntegrationStep => double.Parse(IntegrationStepBind.Replace(".", ","));
 
-        private string _diffDegree = "4";
-        public string DiffDegreeBind
-        {
-            get { return _diffDegree; }
-            set
-            {
-                _diffDegree = value;
-                RaisePropertyChanged(() => DiffDegreeBind);
-            }
-        }
+        //private string _diffDegree = "4";
+        //public string DiffDegreeBind
+        //{
+        //    get { return _diffDegree; }
+        //    set
+        //    {
+        //        _diffDegree = value;
+        //        RaisePropertyChanged(() => DiffDegreeBind);
+        //    }
+        //}
 
-        public double DiffDegree => double.Parse(DiffDegreeBind.Replace(".", ","));
+        //public double DiffDegree => double.Parse(DiffDegreeBind.Replace(".", ","));
 
         public ICommand DoMathsCommand => new RelayCommand(DoMaths);
 
+        private string _fromX = "0";
 
+        public string FromXBind
+        {
+            get { return _fromX; }
+            set
+            {
+                _fromX = value.Replace(".",",");
+                RaisePropertyChanged(() => FromXBind);
+            }
+        }
+
+        private string _toX = "10";
+
+        public string ToXBind
+        {
+            get { return _toX; }
+            set
+            {
+                _toX = value.Replace(".", ",");
+                RaisePropertyChanged(() => ToXBind);
+            }
+        }
+
+        public Interval DrawingInterval
+        {
+            get
+            {
+                try
+                {
+                    var from = int.Parse(_fromX);
+                    var to = int.Parse(_toX);
+                    if(from>to)
+                        throw new Exception("From is bigger than to.");
+                    return new Interval
+                    {
+                        From = from,
+                        To = to
+                    };
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message + "Change interval.", "Interval parsing error.",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
+            }
+        }
 
         #endregion
 
@@ -130,25 +186,24 @@ namespace NumMethods6.ViewModel
         public const int C = 60;
         public const float Mu = 0.6f;
         public const float J2 = 0.2f;
-        public const int M0 = 60;
-        public const int Ut = 60;
-
-        private double u(double t, double x, double y, double z, double w)
-        {
-            return 1;
-        }
-
-        private double M0Function(double t, double x, double y, double z, double w)
-        {
-            return 1;
-        }
-
-
+        
         private void DoMaths()
         {
             MatrixRequest?.Invoke(); //updates matrix
                                      //TODO : Maths
-            double X = 0;
+            double X = DrawingInterval.From;
+            double step;
+
+            if (double.TryParse(_integrationStep, out step))
+            {
+                if (step != 0)
+                    step = 1/step;
+            }
+            else
+            {
+                MessageBox.Show("Bad step value.", "step balue parse err", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             var fun = new List<RungeKutta.DiffFun>
             {
@@ -166,21 +221,21 @@ namespace NumMethods6.ViewModel
             var results1 = new List<DataPoint>();
             //var points = new double[]
             //{0, 0 , 0 ,0};
-            //while (X < 3)
+            //while (X < DrawingInterval.To)
             //{
-            //    X += .1;
-            //    var result = RungeKutta.Rk4(X, points, 0.1, fun);
+            //    X += step;
+            //    var result = RungeKutta.Rk4(X, points, step, fun);
             //    results.Add(new DataPoint(X, result.Skip(3).First()));
             //    results1.Add(new DataPoint(X, result.Skip(2).First()));
             //}
             var points = new double[]
             {1, 1};
-            while (X < 100)
+            while (X < DrawingInterval.To)
             {             
-                var result = RungeKutta.Rk4(X, points, .05, dynFun, new List<string> { "x", "y" });
+                var result = RungeKutta.Rk4(X, points, step, dynFun, new List<string> { "x", "y" });
                 results.Add(new DataPoint(X, result.First()));
                 results1.Add(new DataPoint(X, result.Skip(1).First()));
-                X += .05;
+                X += step;
             }
             DifferentialDataPoints = results;
             ComparisionDataPoints = results1;
