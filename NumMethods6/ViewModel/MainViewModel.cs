@@ -95,6 +95,7 @@ namespace NumMethods6.ViewModel
             {
                 DifferentialDataPoints = CoeffFunctionsAvaibleToDraw[value].Item2;
                 _selecedCoeffFunctionIndex = value;
+                RaisePropertyChanged(() => DifferentialDataPoints);
             }
         }
 
@@ -215,11 +216,13 @@ namespace NumMethods6.ViewModel
         {
             MatrixRequest?.Invoke(); //updates matrix
             double t, toX, step;
+            DiffMethod method;
             try
             {
                 t = DrawingInterval.From;
                 toX = DrawingInterval.To;
                 step = IntegrationStep;
+                method = CurrentlySelectedMethod;
             }
             catch (Exception)
             {
@@ -252,12 +255,22 @@ namespace NumMethods6.ViewModel
            var cmp = new List<DataPoint>();
             List<List<DataPoint>> results = coeffFunctions.Select(coeffFunction => new List<DataPoint>()).ToList();
             while (t < toX)
-            {             
+            {
                 //kutta
-                var result = DifferentialService.Ralson(t, points, step, dynFun, coeffFunctions);
-                int i = 0;              
+                IEnumerable<double> result = new List<double>();
+                switch (method)
+                {
+                    case DiffMethod.RK4:
+                        result = DifferentialService.Rk4(t, points, step, dynFun, coeffFunctions);
+                        break;
+                    case DiffMethod.Ralston:
+                        result = DifferentialService.Ralston(t, points, step, dynFun, coeffFunctions);
+                        break;
+                }
+                
+                int i = 0;
                 foreach (var d in result)
-                    results[i++].Add(new DataPoint(t,d));
+                    results[i++].Add(new DataPoint(t, d));
 
                 if (t + step > toX)
                     step = toX - t;
@@ -267,8 +280,7 @@ namespace NumMethods6.ViewModel
                 cmp.Add(new DataPoint(t, CurrentlySelectedFunction.GetValue(t)));
                 t += step;
             }
-            CoeffFunctionsAvaibleToDraw =
-                coeffFunctions.Select((coeff, i) => new Tuple<string,List<DataPoint>>(coeff, results[i])).ToList();
+            CoeffFunctionsAvaibleToDraw = coeffFunctions.Select((coeff, i) => new Tuple<string, List<DataPoint>>(coeff, results[i])).ToList();
             SelectedCoeffFunctionIndex = 0;
             ComparisionDataPoints = cmp;
         }

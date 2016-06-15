@@ -34,7 +34,7 @@ namespace NumMethods6.MathCore
             return y.Select((val, i) => val + (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) / 6.0);
         }
 
-        public static IEnumerable<double> Ralson(double x, IEnumerable<double> y, double step, List<DynamicDiffFun> f, List<string> parameters)
+        public static IEnumerable<double> Ralston(double x, IEnumerable<double> y, double step, List<DynamicDiffFun> f, List<string> parameters)
         {
             var k1 = f.Select(fun => step * (double)fun(x, GetDynamicVariables(parameters, y))).ToList();
 
