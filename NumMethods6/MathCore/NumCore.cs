@@ -43,24 +43,24 @@ namespace NumMethods6.MathCore
         public delegate double DiffFun(double t, List<double> variables);
         public delegate double DynamicDiffFun(double t, dynamic variables);
 
-        public static IEnumerable<double> Rk4(double x, double[] y, double step, List<DiffFun> f)
-        {
-            double halfdx = 0.5*x;
-            var k1 = f.Select(fun => step*fun(x, new List<double> {y[0], y[1], y[2], y[3]})).ToList();
-            var k2 = f.Select(fun => step*fun(x + halfdx, new List<double>
-            {
-                y[0] + halfdx*k1[0], y[1] + halfdx*k1[1], y[2] + halfdx*k1[2], y[3] + halfdx*k1[3]
-            })).ToList();
-            var k3 = f.Select(fun => step*fun(x + halfdx, new List<double>
-            {
-                y[0] + halfdx*k2[0], y[1] + halfdx*k2[1], y[2] + halfdx*k2[2], y[3] + halfdx*k2[3]
-            })).ToList();
-            var k4 = f.Select(fun => step*fun(x + step, new List<double>
-            {
-                y[0] + step*k3[0], y[1] + step*k3[1], y[2] + step*k3[2], y[3] + step*k3[3]
-            })).ToList();
-            return y.Select((val, i) => val + (k1[i] + 2*k2[i] + 2*k3[i] + k4[i])/6.0);
-        }
+        //public static IEnumerable<double> Rk4(double x, double[] y, double step, List<DiffFun> f)
+        //{
+        //    double halfdx = 0.5*x;
+        //    var k1 = f.Select(fun => step*fun(x, new List<double> {y[0], y[1], y[2], y[3]})).ToList();
+        //    var k2 = f.Select(fun => step*fun(x + halfdx, new List<double>
+        //    {
+        //        y[0] + halfdx*k1[0], y[1] + halfdx*k1[1], y[2] + halfdx*k1[2], y[3] + halfdx*k1[3]
+        //    })).ToList();
+        //    var k3 = f.Select(fun => step*fun(x + halfdx, new List<double>
+        //    {
+        //        y[0] + halfdx*k2[0], y[1] + halfdx*k2[1], y[2] + halfdx*k2[2], y[3] + halfdx*k2[3]
+        //    })).ToList();
+        //    var k4 = f.Select(fun => step*fun(x + step, new List<double>
+        //    {
+        //        y[0] + step*k3[0], y[1] + step*k3[1], y[2] + step*k3[2], y[3] + step*k3[3]
+        //    })).ToList();
+        //    return y.Select((val, i) => val + (k1[i] + 2*k2[i] + 2*k3[i] + k4[i])/6.0);
+        //}
 
 
         public static IEnumerable<double> Rk4(double x, double[] y, double step, List<DynamicDiffFun> f, List<string> parameters)
@@ -94,33 +94,7 @@ namespace NumMethods6.MathCore
         }
     }
 
-    public class Equation
-    {
-        double x, y, dx, target;
-
-        public Equation(double x, double y, double dx, double target)
-        {
-            this.x = x;
-            this.y = y;
-            this.dx = dx;
-            this.target = target;
-        }
-
-        public IEnumerable<DataPoint> Run(double[] args, List<RungeKutta.DiffFun> fun)
-        {
-            while (x < target)
-            {
-                var result = RungeKutta.Rk4(x, args, dx, fun);
-                x += dx;
-                yield return new DataPoint(x, result.First());
-            }
-        }
-
-        private double dy_dt(double t, double y)
-        {
-            return y;
-        }
-    }
+    
 
     class RK4
     {

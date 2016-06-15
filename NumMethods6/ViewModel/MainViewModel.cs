@@ -57,6 +57,30 @@ namespace NumMethods6.ViewModel
             }
         }
 
+        private List<Tuple<string, List<DataPoint>>> _coeffFunctionsAvaibleToDraw ;
+
+        public List<Tuple<string, List<DataPoint>>> CoeffFunctionsAvaibleToDraw
+        {
+            get { return _coeffFunctionsAvaibleToDraw; }
+            set
+            {
+                _coeffFunctionsAvaibleToDraw = value;
+                RaisePropertyChanged(() => CoeffFunctionsAvaibleToDraw);
+            }
+        }
+
+        private int _selecedCoeffFunctionIndex;
+
+        public int SelectedCoeffFunctionIndex
+        {
+            get { return _selecedCoeffFunctionIndex; }
+            set
+            {
+                DifferentialDataPoints = CoeffFunctionsAvaibleToDraw[value].Item2;
+                _selecedCoeffFunctionIndex = value;
+            }
+        }
+
         public ObservableCollection<IFunction> AvailableFunctions { get; }
             = new ObservableCollection<IFunction>
             {
@@ -214,11 +238,11 @@ namespace NumMethods6.ViewModel
             };
             var dynFun = new List<RungeKutta.DynamicDiffFun>
             {
-                ((d, variables) => variables.y),
-                ((d, variables) => -Math.Sin(variables.x) + Math.Sin(5*d))
+                (t, variables) => -R/L*variables.x-K/L*variables.y+1/L*60,
+                (t, variables) => -K/J1*variables.x-Mu/J1*variables.y-C/J1*variables.z-Mu/J1*variables.w,
+                (t, variables) => variables.y-variables.w,
+                (t, variables) => Mu/J2*variables.y+C/J2*variables.z-Mu/J2*variables.w-1/J2*60
             };
-            var results = new List<DataPoint>();
-            var results1 = new List<DataPoint>();
             //var points = new double[]
             //{0, 0 , 0 ,0};
             //while (X < DrawingInterval.To)
@@ -229,16 +253,23 @@ namespace NumMethods6.ViewModel
             //    results1.Add(new DataPoint(X, result.Skip(2).First()));
             //}
             var points = new double[]
-            {1, 1};
+            { 0,0,0,0};
+            var coeffFunctions = new List<string> { "x", "y", "z", "w" };
+            List<List<DataPoint>> results = coeffFunctions.Select(coeffFunction => new List<DataPoint>()).ToList();
             while (X < DrawingInterval.To)
             {             
-                var result = RungeKutta.Rk4(X, points, step, dynFun, new List<string> { "x", "y" });
-                results.Add(new DataPoint(X, result.First()));
-                results1.Add(new DataPoint(X, result.Skip(1).First()));
+                var result = RungeKutta.Rk4(X, points, 0.001, dynFun, coeffFunctions);
+                int i =0;
+                foreach (var d in result)
+                    results[i++].Add(new DataPoint(X,d));
+
+                //results.Add(new DataPoint(X, result.First()));
+                //results1.Add(new DataPoint(X, result.Skip(1).First()));
                 X += step;
             }
-            DifferentialDataPoints = results;
-            ComparisionDataPoints = results1;
+            CoeffFunctionsAvaibleToDraw =
+                coeffFunctions.Select((coeff, i) => new Tuple<string,List<DataPoint>>(coeff, results[i])).ToList();
+            SelectedCoeffFunctionIndex = 0;
         }
     }
 }
