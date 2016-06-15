@@ -70,9 +70,9 @@ namespace NumMethods4Lib.MathCore
 
         protected override double GetNormalValue(double x)
         {
-            return x * (x + 4) + 10;
+            return Math.Exp(x);
         }
 
-        public string TextRepresentation => "x^2+4x+10";
+        public string TextRepresentation => "e^x";
     }
 }
