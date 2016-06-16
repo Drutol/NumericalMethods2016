@@ -18,9 +18,9 @@
                   LegendPlacement="Inside" LegendPosition="TopRight" LegendBackground="Transparent"
                   LegendBorder="Transparent" LegendMaxWidth="110" LegendMargin="10" LegendFontSize="12">
             <oxy:Plot.Series>
-                <oxy:LineSeries Title="{Binding Locale[#AccurateLineSeries],FallbackValue=Comp}" ItemsSource="{Binding ComparisionDataPoints}"
-                                Smooth="True"/>
                 <oxy:LineSeries Title="{Binding Locale[#ApproxLineSeries],FallbackValue=Diff}" ItemsSource="{Binding DifferentialDataPoints}"
+                                Smooth="True"/>
+                <oxy:LineSeries Title="{Binding Locale[#AccurateLineSeries],FallbackValue=Comp}" ItemsSource="{Binding ComparisionDataPoints}"
                                 Smooth="True"/>
             </oxy:Plot.Series>
         </oxy:Plot>
