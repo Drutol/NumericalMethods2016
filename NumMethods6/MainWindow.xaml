@@ -6,7 +6,7 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:dataGrid2D="http://gu.se/DataGrid2D"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="780" DataContext="{Binding Source={StaticResource Locator},Path=Main}">
+        Title="MainWindow" Height="500" Width="800" DataContext="{Binding Source={StaticResource Locator},Path=Main}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -102,15 +102,15 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock Text="Ordinary differential equation:" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding Locale[#ODE],FallbackValue=Ordinary differential equation:}" HorizontalAlignment="Center" />
                     <DataGrid Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
                               HeadersVisibility="None"
                               CanUserAddRows="True"
                               dataGrid2D:ItemsSource.Array2D="{Binding ConstMatrix}" />
                 </StackPanel>
                 <StackPanel Grid.Column="1">
-                    <TextBlock Text="Starting values:" HorizontalAlignment="Center" />
-                    <DataGrid x:Name="VarGrid" Margin="10,10,0,0" HorizontalAlignment="Center"
+                    <TextBlock Text="{Binding Locale[#StartingVals],FallbackValue=Starting values:}" HorizontalAlignment="Center" />
+                    <DataGrid x:Name="VarGrid" Margin="0,10,0,0" HorizontalAlignment="Center"
                               VerticalAlignment="Center" HeadersVisibility="None"
                               CanUserAddRows="True"
                               dataGrid2D:ItemsSource.Array2D="{Binding VariableMatrix}" />

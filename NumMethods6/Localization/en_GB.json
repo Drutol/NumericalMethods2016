@@ -9,6 +9,8 @@
   "#CompLineSeries": "Comp",
   "#CompFunction": "Comparison function:",
   "#Plot": "Plot",
+  "#ODE": "Ordinary differential equation:",
+  "#StartingVals": "Starting values:",
   //exceptions
   "#BadDrawingInterval": "\"From t\" is bigger than \"To t\".",
   "#ParsingErrMsg": "Couldn't parse values.",
