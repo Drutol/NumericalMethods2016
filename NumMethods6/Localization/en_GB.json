@@ -1,0 +1,16 @@
+﻿{
+  "#FromX": "From t:",
+  "#ToX": "To t:",
+  "#Step": "Step:",
+  "#DoMaths": "Do maths.",
+  "#LangTooltip": "Zmień język.",
+  "#DiffLineSeries": "Diff",
+  "#ResFunction": "Result function:",
+  "#CompLineSeries": "Comp",
+  "#CompFunction": "Comparison function:",
+  "#Plot": "Plot",
+  //exceptions
+  "#BadDrawingInterval": "\"From t\" is bigger than \"To t\".",
+  "#ParsingErrMsg": "Couldn't parse values.",
+  "#ParsingErr": "Parsing error!"
+}

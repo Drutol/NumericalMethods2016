@@ -3,96 +3,121 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:NumMethods6"
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:dataGrid2D="http://gu.se/DataGrid2D"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="620" DataContext="{Binding Source={StaticResource Locator},Path=Main}">
-   <Grid>
+        Title="MainWindow" Height="500" Width="780" DataContext="{Binding Source={StaticResource Locator},Path=Main}">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <oxy:Plot Title="{Binding Locale[#Plot],FallbackValue=Plot}"
                   IsLegendVisible="True" LegendTitle="Legend" LegendOrientation="Horizontal"
                   LegendPlacement="Inside" LegendPosition="TopRight" LegendBackground="Transparent"
                   LegendBorder="Transparent" LegendMaxWidth="110" LegendMargin="10" LegendFontSize="12">
             <oxy:Plot.Series>
-                <oxy:LineSeries Title="{Binding Locale[#ApproxLineSeries],FallbackValue=Diff}" ItemsSource="{Binding DifferentialDataPoints}"
-                                Smooth="True"/>
-                <oxy:LineSeries Title="{Binding Locale[#AccurateLineSeries],FallbackValue=Comp}" ItemsSource="{Binding ComparisionDataPoints}"
-                                Smooth="True"/>
+                <oxy:LineSeries Title="{Binding Locale[#DiffLineSeries],FallbackValue=Diff}"
+                                ItemsSource="{Binding DifferentialDataPoints}"
+                                Smooth="True" />
+                <oxy:LineSeries Title="{Binding Locale[#CompLineSeries],FallbackValue=Comp}"
+                                ItemsSource="{Binding ComparisionDataPoints}"
+                                Smooth="True" />
             </oxy:Plot.Series>
         </oxy:Plot>
         <Grid Grid.Row="1" Background="#e6e6e6">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <TextBlock Text="Comparison function" Margin="10,5,10,0"/>
-                <ComboBox ItemsSource="{Binding AvailableFunctions}" SelectedItem="{Binding CurrentlySelectedFunction,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                <TextBlock Text="{Binding Locale[#CompFunction],FallbackValue=Comparison function:}" Margin="10,5,10,0" />
+                <ComboBox ItemsSource="{Binding AvailableFunctions}"
+                          SelectedItem="{Binding CurrentlySelectedFunction,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                           HorizontalAlignment="Stretch" VerticalAlignment="Top"
                           MinWidth="90" Height="20" Margin="10,5,10,2.5">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding TextRepresentation}"/>
+                            <TextBlock Text="{Binding TextRepresentation}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>
-            <ComboBox ItemsSource="{Binding CoeffFunctionsAvaibleToDraw}" SelectedIndex="{Binding SelectedCoeffFunctionIndex}"
-                      Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Top"
-                      MinWidth="40" Height="25" Margin="5,15,10,0">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Item1}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+            <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Orientation="Vertical">
+                <TextBlock Text="{Binding Locale[#ResFunction],FallbackValue=Result function:}" Margin="10,5,10,0" />
+                <ComboBox ItemsSource="{Binding CoeffFunctionsAvaibleToDraw}"
+                          SelectedIndex="{Binding SelectedCoeffFunctionIndex}"
+                          HorizontalAlignment="Center" VerticalAlignment="Top"
+                          MinWidth="40" Height="25" Margin="5,15,10,0">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Item1}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
             <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
                 <StackPanel VerticalAlignment="Top" Margin="5,0,2.5,0">
-                    <TextBlock Text="From t:"/>
-                    <TextBox TextAlignment="Center" Text="{Binding FromXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Text="To t:"/>
-                    <TextBox TextAlignment="Center" Text="{Binding ToXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="{Binding Locale[#FromX],FallbackValue=From t:}" />
+                    <TextBox TextAlignment="Center"
+                             Text="{Binding FromXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Text="{Binding Locale[#ToX],FallbackValue=To t:}" />
+                    <TextBox TextAlignment="Center"
+                             Text="{Binding ToXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Top" Margin="2.5,0,5,0">
                     <StackPanel VerticalAlignment="Top" Margin="0,0,2.5,0">
-                        <TextBlock Text="{Binding Locale[#ToX],FallbackValue=Step:}"/>
-                        <TextBox TextAlignment="Center" Text="{Binding IntegrationStepBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                    </StackPanel >
+                        <TextBlock Text="{Binding Locale[#Step],FallbackValue=Step:}" />
+                        <TextBox TextAlignment="Center"
+                                 Text="{Binding IntegrationStepBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,2">
                         <StackPanel Orientation="Vertical">
-                            <TextBlock Text="RK4: "/>
-                            <TextBlock Text="Ralston: "/>
+                            <TextBlock Text="RK4: " />
+                            <TextBlock Text="Ralston: " />
                         </StackPanel>
                         <StackPanel Orientation="Vertical">
-                            <RadioButton GroupName="Method" Command="{Binding ChooseMethodCommand}" CommandParameter="0" IsChecked="True"/>
-                            <RadioButton GroupName="Method" Command="{Binding ChooseMethodCommand}" CommandParameter="1" Margin="0,2"/>
+                            <RadioButton GroupName="Method" Command="{Binding ChooseMethodCommand}"
+                                         CommandParameter="0" IsChecked="True" />
+                            <RadioButton GroupName="Method" Command="{Binding ChooseMethodCommand}"
+                                         CommandParameter="1" Margin="0,2" />
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
+            <Button Grid.Column="0" Grid.Row="2" Margin="5,5" VerticalAlignment="Top" HorizontalAlignment="Center" Width="30" Height="20"
+                    Command="{Binding ChangeLanguageCommand}"
+                    ToolTip="{Binding Locale[#LangTooltip]}">
+                <Image Source="{Binding LangImgSourceBind}" />
+            </Button>
             <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <DataGrid Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None"
-                          CanUserAddRows="True"
-                          dataGrid2D:ItemsSource.Array2D="{Binding ConstMatrix}"/>
-                <DataGrid x:Name="VarGrid" Grid.Column="1" Margin="10,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None"
-                          CanUserAddRows="True"
-                          dataGrid2D:ItemsSource.Array2D="{Binding VariableMatrix}"/>
+                <StackPanel>
+                    <TextBlock Text="Ordinary differential equation:" HorizontalAlignment="Center" />
+                    <DataGrid Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                              HeadersVisibility="None"
+                              CanUserAddRows="True"
+                              dataGrid2D:ItemsSource.Array2D="{Binding ConstMatrix}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Starting values:" HorizontalAlignment="Center" />
+                    <DataGrid x:Name="VarGrid" Margin="10,10,0,0" HorizontalAlignment="Center"
+                              VerticalAlignment="Center" HeadersVisibility="None"
+                              CanUserAddRows="True"
+                              dataGrid2D:ItemsSource.Array2D="{Binding VariableMatrix}" />
+                </StackPanel>
             </Grid>
-            <Button Margin="0,5" Content="Do maths" Command="{Binding DoMathsCommand}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Center" MinWidth="200"/>
+            <Button Margin="0,5" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Content="{Binding Locale[#DoMaths],FallbackValue=Do maths.}"
+                    Command="{Binding DoMathsCommand}" HorizontalAlignment="Center" MinWidth="200" />
         </Grid>
     </Grid>
 </Window>

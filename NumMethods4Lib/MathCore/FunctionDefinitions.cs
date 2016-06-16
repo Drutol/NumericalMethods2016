@@ -40,10 +40,10 @@ namespace NumMethods4Lib.MathCore
 
         protected override double GetNormalValue(double x)
         {
-            return Math.Abs(x);
+            return 10*Math.Abs(x);
         }
 
-        public string TextRepresentation => "|t|";
+        public string TextRepresentation => "10*|t|";
     }
 
     public class Function2 : Function, IFunction
@@ -55,10 +55,10 @@ namespace NumMethods4Lib.MathCore
 
         protected override double GetNormalValue(double x)
         {
-            return Math.Cos(x);
+            return 5*Math.Cos(x);
         }
 
-        public string TextRepresentation => "cos(t)";
+        public string TextRepresentation => "5*cos(t)";
     }
 
     public class Function3 : Function, IFunction 

@@ -1,0 +1,16 @@
+﻿{
+  "#FromX": "Lewy t:",
+  "#ToX": "Prawy t:",
+  "#Step": "Step:",
+  "#DoMaths": "Oblicz.",
+  "#LangTooltip": "Change language.",
+  "#DiffLineSeries": "Diff",
+  "#ResFunction": "Funkcja \"Diff\":",
+  "#CompLineSeries": "Comp",
+  "#CompFunction": "Funkcja \"Comp\":",
+  "#Plot": "Wykres",
+  //exceptions
+  "#BadDrawingInterval": "\"Lewy t\" jest większy niż \"Prawy t\".",
+  "#ParsingErrMsg": "Błędnie podane dane.",
+  "#ParsingErr": "Złe dane!"
+}
