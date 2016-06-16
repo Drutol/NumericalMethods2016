@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Markup;
-using NumMethods6.ViewModel;
-using OxyPlot;
 
 namespace NumMethods6.MathCore
 {
     public static class DifferentialService
     {
         //final
-        private static double[] finalWeights = new double[] { 0.17476028, -0.55148053, 1.20553547, 0.17118478 };
+        private static double[] finalWeights = { 0.17476028, -0.55148053, 1.20553547, 0.17118478 };
         //step
         private static double[] stepWeights = { 0, 0.4, 0.45573726, 1 };
         //weight per k value
@@ -34,7 +28,7 @@ namespace NumMethods6.MathCore
             return y.Select((val, i) => val + (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) / 6.0);
         }
 
-        public static IEnumerable<double> Ralson(double x, IEnumerable<double> y, double step, List<DynamicDiffFun> f, List<string> parameters)
+        public static IEnumerable<double> Ralston(double x, IEnumerable<double> y, double step, List<DynamicDiffFun> f, List<string> parameters)
         {
             var k1 = f.Select(fun => step * (double)fun(x, GetDynamicVariables(parameters, y))).ToList();
 
