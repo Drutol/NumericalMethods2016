@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Gu.Wpf.DataGrid2D;
 using NumMethods6.ViewModel;
+using OxyPlot;
 
 namespace NumMethods6
 {

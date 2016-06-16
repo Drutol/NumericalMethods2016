@@ -9,7 +9,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using NumMethods4Lib.MathCore;
 using NumMethods6.MathCore;
 using OxyPlot;
-
+using static NumMethods6.MathCore.DifferentialService;
 
 namespace NumMethods6.ViewModel
 {
@@ -26,6 +26,8 @@ namespace NumMethods6.ViewModel
     }
 
     public delegate void RequestVariableMatrix();
+
+    public delegate IEnumerable<double> RungeKuttaMethod(double x, IEnumerable<double> y, double step, List<DynamicDiffFun> f, List<string> parameters); 
 
     public class MainViewModel : ViewModelBase
     {
@@ -267,22 +269,27 @@ namespace NumMethods6.ViewModel
             // var coeffFunctions = new List<string> { "x", "y", };
             // var points = new double[] { 1, 1 };
 
+            RungeKuttaMethod rungeKuttaMethod=Rk4;
+
+            switch (method)
+            {
+                case DiffMethod.RK4:
+                    rungeKuttaMethod = Rk4;
+                    break;
+                case DiffMethod.Ralston:
+                    rungeKuttaMethod = Ralston;
+                    break;
+            }
+
             var cmp = new List<DataPoint>();
             List<List<DataPoint>> results = coeffFunctions.Select(coeffFunction => new List<DataPoint>()).ToList();
             while (t < toX)
             {
-                //kuttas
+                //kutta
                 IEnumerable<double> result = new List<double>();
-                switch (method)
-                {
-                    case DiffMethod.RK4:
-                        result = DifferentialService.Rk4(t, points, step, dynFun, coeffFunctions);
-                        break;
-                    case DiffMethod.Ralston:
-                        result = DifferentialService.Ralston(t, points, step, dynFun, coeffFunctions);
-                        break;
-                }
                 
+                result = rungeKuttaMethod(t, points, step, dynFun, coeffFunctions);
+
                 int i = 0;
                 foreach (var d in result)
                     results[i++].Add(new DataPoint(t, d));
