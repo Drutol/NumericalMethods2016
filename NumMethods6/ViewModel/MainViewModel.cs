@@ -93,6 +93,8 @@ namespace NumMethods6.ViewModel
             get { return _selecedCoeffFunctionIndex; }
             set
             {
+                if ( value < 0 )
+                    return;
                 DifferentialDataPoints = CoeffFunctionsAvaibleToDraw[value].Item2;
                 _selecedCoeffFunctionIndex = value;
                 RaisePropertyChanged(() => DifferentialDataPoints);

@@ -35,15 +35,18 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <ComboBox ItemsSource="{Binding AvailableFunctions}" SelectedItem="{Binding CurrentlySelectedFunction,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                      HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                      MinWidth="90" Height="20" Margin="10,5,10,0">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding TextRepresentation}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+            <StackPanel>
+                <TextBlock Text="Comparison function" Margin="10,5,10,0"/>
+                <ComboBox ItemsSource="{Binding AvailableFunctions}" SelectedItem="{Binding CurrentlySelectedFunction,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                          MinWidth="90" Height="20" Margin="10,5,10,2.5">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding TextRepresentation}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
             <ComboBox ItemsSource="{Binding CoeffFunctionsAvaibleToDraw}" SelectedIndex="{Binding SelectedCoeffFunctionIndex}"
                       Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Top"
                       MinWidth="40" Height="25" Margin="5,15,10,0">
@@ -55,9 +58,9 @@
             </ComboBox>
             <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
                 <StackPanel VerticalAlignment="Top" Margin="5,0,2.5,0">
-                    <TextBlock Text="From X:"/>
+                    <TextBlock Text="From t:"/>
                     <TextBox TextAlignment="Center" Text="{Binding FromXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Text="To X:"/>
+                    <TextBlock Text="To t:"/>
                     <TextBox TextAlignment="Center" Text="{Binding ToXBind,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Top" Margin="2.5,0,5,0">

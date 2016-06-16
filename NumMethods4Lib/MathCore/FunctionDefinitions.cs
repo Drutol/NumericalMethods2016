@@ -43,7 +43,7 @@ namespace NumMethods4Lib.MathCore
             return Math.Abs(x);
         }
 
-        public string TextRepresentation => "|x|";
+        public string TextRepresentation => "|t|";
     }
 
     public class Function2 : Function, IFunction
@@ -58,7 +58,7 @@ namespace NumMethods4Lib.MathCore
             return Math.Cos(x);
         }
 
-        public string TextRepresentation => "cos(x)";
+        public string TextRepresentation => "cos(t)";
     }
 
     public class Function3 : Function, IFunction 
@@ -70,9 +70,9 @@ namespace NumMethods4Lib.MathCore
 
         protected override double GetNormalValue(double x)
         {
-            return Math.Exp(x);
+            return Math.Exp(2*x);
         }
 
-        public string TextRepresentation => "e^x";
+        public string TextRepresentation => "e^2t";
     }
 }
