@@ -7,7 +7,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using NumMethods4Lib.MathCore;
-using NumMethods6.MathCore;
+using NumMethods6.Localization;
 using OxyPlot;
 using static NumMethods6.MathCore.DifferentialService;
 
@@ -27,22 +27,171 @@ namespace NumMethods6.ViewModel
 
     public delegate void RequestVariableMatrix();
 
-    public delegate IEnumerable<double> RungeKuttaMethod(double x, IEnumerable<double> y, double step, List<DynamicDiffFun> f, List<string> parameters); 
+    public delegate IEnumerable<double> RungeKuttaMethod(
+        double x, IEnumerable<double> y, double step, List<DynamicDiffFun> f, List<string> parameters);
 
     public class MainViewModel : ViewModelBase
     {
-        public event RequestVariableMatrix MatrixRequest;
-
         public MainViewModel()
         {
             CurrentlySelectedFunction = AvailableFunctions[0];
         }
 
+        public event RequestVariableMatrix MatrixRequest;
+
+
+        private void DoMaths()
+        {
+            MatrixRequest?.Invoke(); //updates matrix
+            double t, toX, step;
+            IEnumerable<double> points;
+            double[,] ode;
+            DiffMethod method;
+            try
+            {
+                t = DrawingInterval.From;
+                toX = DrawingInterval.To;
+                step = IntegrationStep;
+                method = CurrentlySelectedMethod;
+                points = VariableMatrix.Cast<double>();
+                ode = ConstMatrix;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(Locale["#ParsingErrMsg"] + e.Message, Locale["#ParsingErr"], MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
+            var dynFun = new List<DynamicDiffFun>
+            {
+                (dt, vars) => ode[0, 0]*vars.x + ode[0, 1]*vars.y + ode[0, 2]*vars.z + ode[0, 3]*vars.w + ode[0, 4],
+                (dt, vars) => ode[1, 0]*vars.x + ode[1, 1]*vars.y + ode[1, 2]*vars.z + ode[1, 3]*vars.w + ode[1, 4],
+                (dt, vars) => ode[2, 0]*vars.x + ode[2, 1]*vars.y + ode[2, 2]*vars.z + ode[2, 3]*vars.w + ode[2, 4],
+                (dt, vars) => ode[3, 0]*vars.x + ode[3, 1]*vars.y + ode[3, 2]*vars.z + ode[3, 3]*vars.w + ode[3, 4]
+            };
+
+            var coeffFunctions = new List<string> {"x", "y", "z", "w"};
+
+            //Test case:
+            // *Produces beautiful e^ 2x
+            //*
+            //*
+            // var dynFun = new List<DifferentialService.DynamicDiffFun>
+            //{
+            //     (dt, variables) => -2*variables.x+4*variables.y,
+            //     (dt, variables) => 3*variables.x-variables.y
+            //};
+            // var coeffFunctions = new List<string> { "x", "y", };
+            // var points = new double[] { 1, 1 };
+
+            RungeKuttaMethod rungeKuttaMethod = Rk4;
+
+            switch (method)
+            {
+                case DiffMethod.RK4:
+                    rungeKuttaMethod = Rk4;
+                    break;
+                case DiffMethod.Ralston:
+                    rungeKuttaMethod = Ralston;
+                    break;
+            }
+
+            var cmp = new List<DataPoint>();
+            var results = coeffFunctions.Select(coeffFunction => new List<DataPoint>()).ToList();
+            while (t < toX)
+            {
+                //kutta
+                var result = rungeKuttaMethod(t, points, step, dynFun, coeffFunctions);
+
+                var i = 0;
+                foreach (var d in result)
+                    results[i++].Add(new DataPoint(t, d));
+
+                if (t + step > toX)
+                    step = toX - t;
+                points = result.ToArray();
+
+                //draw compare
+                if (CurrentlySelectedFunction != null)
+                    cmp.Add(new DataPoint(t, CurrentlySelectedFunction.GetValue(t)));
+                t += step;
+            }
+            CoeffFunctionsAvaibleToDraw =
+                coeffFunctions.Select((coeff, i) => new Tuple<string, List<DataPoint>>(coeff, results[i])).ToList();
+            ComparisionDataPoints = cmp;
+            SelectedCoeffFunctionIndex = 0;
+        }
+
+        #region Just locale things.
+
+        private Dictionary<string, string> _locale;
+
+        public Dictionary<string, string> Locale
+        {
+            get { return _locale; }
+            set
+            {
+                _locale = value;
+                RaisePropertyChanged(() => Locale);
+            }
+        }
+
+        private AvailableLocale _currentLocale;
+
+        public AvailableLocale CurrentLocale
+        {
+            get { return _currentLocale; }
+            set
+            {
+                _currentLocale = value;
+                switch (value)
+                {
+                    case AvailableLocale.PL:
+                        Locale = LocalizationManager.PlDictionary;
+                        break;
+                    case AvailableLocale.EN:
+                        Locale = LocalizationManager.EnDictionary;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(value), value, null);
+                }
+                //sets flag of next locale
+                LangImgSourceBind = LocalizationManager.GetNextLocale(value).ToString();
+            }
+        }
+
+        private string _langImgSource;
+
+        public string LangImgSourceBind
+        {
+            get { return _langImgSource; }
+            set
+            {
+                _langImgSource = $@"../Localization/{value}.png";
+                RaisePropertyChanged(() => LangImgSourceBind);
+            }
+        }
+
+        private ICommand _changeLanguageCommand;
+
+        public ICommand ChangeLanguageCommand =>
+            _changeLanguageCommand ?? (_changeLanguageCommand = new RelayCommand(() =>
+            {
+                if ((int)CurrentLocale == Enum.GetNames(typeof(AvailableLocale)).Length - 1)
+                    CurrentLocale = 0;
+                else
+                    CurrentLocale += 1;
+            }));
+
+        #endregion
+
         #region Props
+
         private DiffMethod CurrentlySelectedMethod { get; set; } = DiffMethod.RK4;
 
         public ICommand ChooseMethodCommand =>
-            new RelayCommand<string>(s => CurrentlySelectedMethod = (DiffMethod)int.Parse(s));
+            new RelayCommand<string>(s => CurrentlySelectedMethod = (DiffMethod) int.Parse(s));
 
         private IFunction _currentlySelectedFunction;
 
@@ -53,15 +202,17 @@ namespace NumMethods6.ViewModel
             {
                 _currentlySelectedFunction = value;
                 RaisePropertyChanged(() => CurrentlySelectedFunction);
-                var cmp = DifferentialDataPoints.Select(d => new DataPoint(d.X, CurrentlySelectedFunction.GetValue(d.X))).ToList();
+                var cmp =
+                    DifferentialDataPoints.Select(d => new DataPoint(d.X, CurrentlySelectedFunction.GetValue(d.X)))
+                        .ToList();
                 ComparisionDataPoints = cmp;
             }
         }
-        
+
         private double IntegrationStep => double.Parse(IntegrationStepBind.Replace(".", ","));
 
         public ICommand DoMathsCommand => new RelayCommand(DoMaths);
-        
+
         private List<DataPoint> _differentialDataPoints = new List<DataPoint>();
 
         public List<DataPoint> DifferentialDataPoints
@@ -86,7 +237,7 @@ namespace NumMethods6.ViewModel
             }
         }
 
-        private List<Tuple<string, List<DataPoint>>> _coeffFunctionsAvaibleToDraw ;
+        private List<Tuple<string, List<DataPoint>>> _coeffFunctionsAvaibleToDraw;
 
         public List<Tuple<string, List<DataPoint>>> CoeffFunctionsAvaibleToDraw
         {
@@ -105,7 +256,7 @@ namespace NumMethods6.ViewModel
             get { return _selecedCoeffFunctionIndex; }
             set
             {
-                if ( value < 0 )
+                if (value < 0)
                     return;
                 DifferentialDataPoints = CoeffFunctionsAvaibleToDraw[value].Item2;
                 _selecedCoeffFunctionIndex = value;
@@ -139,10 +290,10 @@ namespace NumMethods6.ViewModel
         }
 
         private double[,] _variableMatrix { get; set; } = {
-            { 0 },
-            { 0 },
-            { 0 },
-            { 0 }
+            {0},
+            {0},
+            {0},
+            {0}
         };
 
         public double[,] VariableMatrix
@@ -156,6 +307,7 @@ namespace NumMethods6.ViewModel
         }
 
         private string _integrationStep = "0.001";
+
         public string IntegrationStepBind
         {
             get { return _integrationStep; }
@@ -173,7 +325,7 @@ namespace NumMethods6.ViewModel
             get { return _fromX; }
             set
             {
-                _fromX = value.Replace(".",",");
+                _fromX = value.Replace(".", ",");
                 RaisePropertyChanged(() => FromXBind);
             }
         }
@@ -198,8 +350,8 @@ namespace NumMethods6.ViewModel
                 {
                     var from = double.Parse(_fromX);
                     var to = double.Parse(_toX);
-                    if(from>to)
-                        throw new Exception("\"From t\" is bigger than \"To t\".");
+                    if (from > to)
+                        throw new Exception(Locale["#BadDrawingInterval"]);
                     return new Interval
                     {
                         From = from,
@@ -212,9 +364,11 @@ namespace NumMethods6.ViewModel
                 }
             }
         }
+
         #endregion
 
         #region constants
+
         private const int K = 2;
         private const float R = 0.5f;
         private const float L = 0.001f;
@@ -222,90 +376,7 @@ namespace NumMethods6.ViewModel
         private const int C = 60;
         private const float Mu = 0.6f;
         private const float J2 = 0.2f;
+
         #endregion
-
-
-        private void DoMaths()
-        {
-            MatrixRequest?.Invoke(); //updates matrix
-            double t, toX, step;
-            IEnumerable<double> points;
-            double[,] ode;
-            DiffMethod method; 
-            try
-            {
-                t = DrawingInterval.From;
-                toX = DrawingInterval.To;
-                step = IntegrationStep;
-                method = CurrentlySelectedMethod;
-                points = VariableMatrix.Cast<double>();
-                ode = ConstMatrix;
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Couldn't parse values." + e.Message, "Parse error.", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            var dynFun = new List<DifferentialService.DynamicDiffFun>
-            {
-                (dt, vars) => ode[0,0]*vars.x+ode[0,1]*vars.y+ode[0,2]*vars.z+ode[0,3]*vars.w+ode[0,4],
-                (dt, vars) => ode[1,0]*vars.x+ode[1,1]*vars.y+ode[1,2]*vars.z+ode[1,3]*vars.w+ode[1,4],
-                (dt, vars) => ode[2,0]*vars.x+ode[2,1]*vars.y+ode[2,2]*vars.z+ode[2,3]*vars.w+ode[2,4],
-                (dt, vars) => ode[3,0]*vars.x+ode[3,1]*vars.y+ode[3,2]*vars.z+ode[3,3]*vars.w+ode[3,4]
-            };
-            
-            var coeffFunctions = new List<string> { "x", "y", "z", "w" };
-
-            //Test case:
-            // *Produces beautiful e^ 2x
-            //*
-            //*
-            // var dynFun = new List<DifferentialService.DynamicDiffFun>
-            //{
-            //     (dt, variables) => -2*variables.x+4*variables.y,
-            //     (dt, variables) => 3*variables.x-variables.y
-            //};
-            // var coeffFunctions = new List<string> { "x", "y", };
-            // var points = new double[] { 1, 1 };
-
-            RungeKuttaMethod rungeKuttaMethod=Rk4;
-
-            switch (method)
-            {
-                case DiffMethod.RK4:
-                    rungeKuttaMethod = Rk4;
-                    break;
-                case DiffMethod.Ralston:
-                    rungeKuttaMethod = Ralston;
-                    break;
-            }
-
-            var cmp = new List<DataPoint>();
-            List<List<DataPoint>> results = coeffFunctions.Select(coeffFunction => new List<DataPoint>()).ToList();
-            while (t < toX)
-            {
-                //kutta
-                IEnumerable<double> result = new List<double>();
-                
-                result = rungeKuttaMethod(t, points, step, dynFun, coeffFunctions);
-
-                int i = 0;
-                foreach (var d in result)
-                    results[i++].Add(new DataPoint(t, d));
-
-                if (t + step > toX)
-                    step = toX - t;
-                points = result.ToArray();
-
-                //draw compare
-                if(CurrentlySelectedFunction != null)
-                    cmp.Add(new DataPoint(t, CurrentlySelectedFunction.GetValue(t)));
-                t += step;
-            }
-            CoeffFunctionsAvaibleToDraw = coeffFunctions.Select((coeff, i) => new Tuple<string, List<DataPoint>>(coeff, results[i])).ToList();
-            ComparisionDataPoints = cmp;
-            SelectedCoeffFunctionIndex = 0;
-        }
     }
 }
