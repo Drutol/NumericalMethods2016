@@ -117,6 +117,14 @@ namespace NumMethods6.ViewModel
                     cmp.Add(new DataPoint(t, CurrentlySelectedFunction.GetValue(t)));
                 t += step;
             }
+
+            //FUN FUN FUN FUN FUN FUN FUN FUN FUN FUN FUN FUN FUN
+            //for (int i = 0; i < results.Count; i++)
+            //{
+            //    results[0][i] = new DataPoint(results[1][i].Y,results[0][i].Y);
+            //}
+            //FUN FUN FUN FUN FUN FUN FUN FUN FUN FUN FUN FUN FUN
+
             CoeffFunctionsAvaibleToDraw =
                 coeffFunctions.Select((coeff, i) => new Tuple<string, List<DataPoint>>(coeff, results[i])).ToList();
             ComparisionDataPoints = cmp;
